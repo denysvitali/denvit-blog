@@ -5,7 +5,7 @@ theme = "minimal-tbmfw"
 
 [params]
 site_author = "Denys Vitali"
-site_description = "Tales from tech"
+site_description = "Tech tales"
 location = "Lugano, Switzerland"
 
 piwik_enabled = true

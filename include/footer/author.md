@@ -1,0 +1,1 @@
+Denys Vitali, born on Sep 29th 1996, is an IT Student which is currently studying for the Bachelor of Science in Computer Engineering at the University of Applied Sciences and Arts of Southern Switzerland ([SUPSI](http://supsi.ch/)).  
