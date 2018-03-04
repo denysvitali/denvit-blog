@@ -2,3 +2,12 @@ baseURL = "https://denv.it/"
 languageCode = "en-us"
 title = "Denys Vitali's Blog"
 theme = "minimal-tbmfw"
+
+[params]
+site_author = "Denys Vitali"
+site_description = "Tales from tech"
+location = "Lugano, Switzerland"
+
+piwik_enabled = true
+piwik_host = "piwik.vps.denv.it"
+piwik_site_id = 2
