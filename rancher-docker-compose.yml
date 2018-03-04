@@ -1,9 +1,6 @@
-version: '3'
+version: '2'
 services:
     webhook:
-        build: .
         image: dvitali/denvit-blog-webhook:latest
         volumes:
-            - denvit_blog:/data
-volumes:
-    denvit_blog:
+            - /srv/http/denvit/blog:/data
