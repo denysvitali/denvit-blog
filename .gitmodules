@@ -1,0 +1,3 @@
+[submodule "themes/minimal-tbmfw"]
+	path = themes/minimal-tbmfw
+	url = https://github.com/denysvitali/hugo-thebestmotherfuckingblog
