@@ -23,7 +23,7 @@ Thanks to the switch from Wordpress to Hugo, there have been a lot of improvemen
 - I can now write footnotes [^1] with ease!    
   
 It is still a work in progress though, but it seems to be quite minimal and functional.  
-![The blog, now](/2018/03/hello-blog-1.jpg)
+![The blog, now](/blog/2018/03/hello-blog-1.jpg)
 
 ### Code Highlighting
 What I find pretty handy about hugo is that the code can be automatically highlighted,
