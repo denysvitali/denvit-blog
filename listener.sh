@@ -8,5 +8,6 @@ while { echo -en $RESPONSE; } | nc -l -p 80; do
 	else
 		git -C /data/ pull
 	fi
+  cd /data/themes/minimal-tbmfw/ && npm install && gulp
 	hugo -s /data/ -d /data/public/
 done
