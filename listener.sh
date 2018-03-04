@@ -7,6 +7,7 @@ while { echo -en $RESPONSE; } | nc -l -p 80; do
 		git clone --recursive https://github.com/denysvitali/denvit-blog /data/
 	else
 		git -C /data/ pull
+    git submodule update --recursive --remote
 	fi
   cd /data/themes/minimal-tbmfw/ && npm install && gulp
 	hugo -s /data/ -d /data/public/
