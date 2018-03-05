@@ -13,3 +13,4 @@ piwik_host = "piwik.vps.denv.it"
 piwik_site_id = 2
 
 disqusShortname = "denvit"
+main_website = "https://denv.it/"
