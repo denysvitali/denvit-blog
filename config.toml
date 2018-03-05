@@ -1,4 +1,4 @@
-baseURL = "https://denv.it/blog/"
+baseURL = "https://denv.it/blog"
 languageCode = "en-us"
 title = "Denys Vitali's Blog"
 theme = "minimal-tbmfw"
