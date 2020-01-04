@@ -1,1 +1,1 @@
-My name is **Denys Vitali**, I was born on Sep 29th 1996. I'm an IT Student who's currently studying for the Bachelor of Science in Computer Engineering at the University of Applied Sciences and Arts of Southern Switzerland ([SUPSI](http://supsi.ch/)).  
+My name is **Denys Vitali**, I was born on Sep 29th 1996. I'm an IT Engineer working as a DevOps / Backend Engineer at [Nanos](https://nanos.ai/)

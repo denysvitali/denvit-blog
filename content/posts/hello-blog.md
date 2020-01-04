@@ -4,7 +4,7 @@ date: 2018-03-04T13:49:05+01:00
 categories: ["Blog", "Tech"]
 ---
 
-Well, I finally found the time time to ditch my old WordPress blog and replace it with this shiny-new
+Well, I finally found the time to ditch my old WordPress blog and replace it with this shiny-new
 static blog generated with [Hugo](https://gohugo.io/).  
 I personally chose not to use any of the [kick-ass themes](https://themes.gohugo.io/) available, but I decided to port my [TheBestMotherfucking.website](https://thebestmotherfucking.website/) [theme](https://github.com/denysvitali/thebestmotherfuckingwebsite) to
 Hugo instead. I obviously found a good name for it: [The Best Motherfucking Blog Theme](https://github.com/denysvitali/hugo-thebestmotherfuckingblog).  
