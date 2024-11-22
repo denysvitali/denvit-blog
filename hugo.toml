@@ -1,8 +1,13 @@
 baseURL = 'https://denv.it/'
 languageCode = 'en-us'
-title = 'Denys Vitali'
+title = 'Just my blog'
 theme = 'pickles'
 
 [params]
 paginate = 10
 twitter="DenysVitali"
+# mastodon="@denvit"
+author="Denys Vitali"
+avatar="https://avatars2.githubusercontent.com/u/4939519?s=460&v=4"
+github="denysvitali"
+bio="I like to write about technology, I'm always eager to learn new things and I'm a huge fan of open source software."
