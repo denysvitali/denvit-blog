@@ -1,0 +1,8 @@
+baseURL = 'https://denv.it/'
+languageCode = 'en-us'
+title = 'Denys Vitali'
+theme = 'pickles'
+
+[params]
+paginate = 10
+twitter="DenysVitali"
