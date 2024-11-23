@@ -151,3 +151,22 @@ With the recent Apple Silicon push and the amazing work of [aarch64-laptops](htt
   
 There are still a few assumptions made by some software distributors (especially Docker Images) where they assume that you're running on `x86_64`, but this is getting better and better, especially given the "recent" additions of [multi-platform builds](https://docs.docker.com/build/building/multi-platform/) on Docker.
 
+
+## Setting up a node
+
+### Lessons learned
+
+Before I start with the details, I want to immediately share some lessons learned - so that you can avoid some of the mistakes I made:
+
+- **Don't spend half a day debugging `iptables`**: postmarketOS comes with `nftables` and the default rules in `/etc/nftables.nft` are the reason why your Kubernetes network might get messed up
+
+- Docker, Kubernetes and K3s require some kernel modules / configs to be enabled:
+    - Try to run a Docker container first, and eventually use [moby's `check-config.sh`](https://github.com/moby/moby/blob/master/contrib/check-config.sh)
+
+    - Use [k3s's `check-config.sh`](https://github.com/k3s-io/k3s/blob/master/contrib/util/check-config.sh) to check if your kernel is ready. In my case ([`dumpling`](https://wiki.postmarketos.org/wiki/OnePlus_5T_(oneplus-dumpling)) was missing some kernel configs, but [`instantnoodlep`](https://wiki.postmarketos.org/wiki/OnePlus_8_Pro_(oneplus-instantnoodlep)) was fine)
+
+    - Kubernetes doesn't come with a `check-config.sh` file - but your Container Network Interface (CNI) might require some kernel features that Docker / K3s don't need. In the case of Flannel, make sure you have most / all the `CONFIG_NETFILTER_XTABLES` options enabled in your kernel, as well as `CONFIG_VXLAN`.
+
+### OnePlus 5T (dumpling)
+
+

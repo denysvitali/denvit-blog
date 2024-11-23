@@ -1,6 +1,6 @@
 baseURL = 'https://denv.it/'
 languageCode = 'en-us'
-title = 'Just my blog'
+title = '/dev/random'
 theme = 'pickles'
 
 [params]
