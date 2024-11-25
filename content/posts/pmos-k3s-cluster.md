@@ -1,14 +1,14 @@
 +++
-date = '2024-11-22T20:17:14+01:00'
-draft = false
+date = '2024-11-25T0:00:00+01:00'
+draft = true
 title = 'postmarketOS-powered Kubernetes cluster'
 thumbnail = '/images/pmos-k3s-cluster.jpg'
 tags = ['kubernetes', 'postmarketos', 'k3s', 'homelab', 'linux']
 +++
 
 Having a few Raspberry Pi 4s at my disposal, I found myself somewhat dissatisfied with their processing capabilities and power management features.
-This led me to explore alternative solutions, particularly given the collection of old smartphones gathering dust in my drawer. T
-hese devices, while outdated for daily use, still pack considerable computing power.
+This led me to explore alternative solutions, particularly given the collection of old smartphones gathering dust in my drawer. 
+These devices, while outdated for daily use, still pack considerable computing power.
 In this article, I'll walk through how I transformed these old smartphones into a functional Kubernetes cluster using postmarketOS, giving them a second life as computing nodes.
 
 <!--more-->
@@ -488,7 +488,7 @@ Since I deeply care about reducing e-waste and getting others to use their old d
 Unfortunately this device doesn't have the backlight described in the device tree, and it's therefore not possible (at the moment) to turn it off. This is not a big issue for me, but it would be a good candidate for a future patch.
 
 
-### Conclusion
+## Conclusion
 
 After joining the second node to the cluster, I have now a small cluster of 3 nodes that I can use to run my workloads, and I'm happy that I can reuse old devices that would have otherwise kept collecting dust in my drawer.
 
