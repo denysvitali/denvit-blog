@@ -1,5 +1,5 @@
 +++
-date = '2024-11-25T0:00:00+01:00'
+date = '2024-11-25T00:00:00+01:00'
 draft = true
 title = 'postmarketOS-powered Kubernetes cluster'
 thumbnail = '/images/pmos-k3s-cluster.jpg'
