@@ -1,6 +1,6 @@
 +++
 date = '2024-11-25T00:00:00+01:00'
-draft = true
+draft = false
 title = 'postmarketOS-powered Kubernetes cluster'
 thumbnail = '/images/pmos-k3s-cluster.jpg'
 tags = ['kubernetes', 'postmarketos', 'k3s', 'homelab', 'linux']
