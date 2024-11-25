@@ -481,7 +481,7 @@ After many trial and errors in adapting and stiching together some configuration
 I then checked that the adapter was being recognized (`ip link show wlan0`) and tried to connect to my Wi-Fi network.
 Everything worked perfectly: I was able to join this device to the cluster and run some workloads on it, as with the previous device.  
   
-Since I deeply care about reducing e-waste and getting others to use their old devices, I've submitted my patch to the [sm8250-mainline kernel repo](https://gitlab.com/sm8250-mainline/linux/-/merge_requests/8) and added a not on the [device page](https://wiki.postmarketos.org/wiki/OnePlus_8_Pro_(oneplus-instantnoodlep)#Known_Issues) until the patch is picked up by the postmarketOS kernel.
+Since I deeply care about reducing e-waste and getting others to use their old devices, I've submitted my patch to the [sm8250-mainline kernel repo](https://gitlab.com/sm8250-mainline/linux/-/merge_requests/8) and added a note on the [device page](https://wiki.postmarketos.org/wiki/OnePlus_8_Pro_(oneplus-instantnoodlep)#Known_Issues) until the patch is picked up by the postmarketOS kernel.
 
 #### Backlight
 
