@@ -134,7 +134,7 @@ In the next sections you'll see what I mean by this.
 Despite this, you can still play it safe and buy an used device that is already (partially) [supported by the community](https://wiki.postmarketos.org/wiki/Devices).  
   
 Before you complain about the lack of support for your device: make sure to also check the "Testing" section of the [postmarketOS Devices](https://wiki.postmarketos.org/wiki/Devices) page:
-it's easy to miss that part and might sound scary, but a "testing" device is generally just a device that doesn't have full support for all the features and that doesn't have a ready to use firmware image. With [`pmbootstrap`](https://docs.postmarketos.org/pmbootstrap/usage.html) setting up an already upstremed testing device is really a breeze!
+it's easy to miss that part and might sound scary, but a "testing" device is generally just a device that doesn't have full support for all the features and that doesn't have a ready to use firmware image. With [`pmbootstrap`](https://docs.postmarketos.org/pmbootstrap/usage.html) setting up an already upstreamed testing device is really a breeze!
 
 ## What is postmarketOS?
 
@@ -258,7 +258,7 @@ Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkMa
 
 Since our goal is to use this device as a Kubernetes node, we'll have to configure the device accordingly. In my setup, I'll be using [k3s](https://k3s.io/), a lightweight Kubernetes distribution that is perfect for low-resource devices.  
   
-This part assumes that you've already setup the master node(s) somewhere else, but if you want this to be the master node, you can adapt my steps and follow the [documnetation](https://docs.k3s.io/installation/configuration).
+This part assumes that you've already setup the master node(s) somewhere else, but if you want this to be the master node, you can adapt my steps and follow the [documentation](https://docs.k3s.io/installation/configuration).
 
 Assuming:
 - A master node with the IP `192.168.10.11`
@@ -310,7 +310,7 @@ You can now check the logs with `tail -f /var/log/k3s.log` and see if the node i
 
 ##### Missing kernel features
 
-If you havent't skipped over the "Lessons learned" section, you might have noticed that I mentioned that you should check if your kernel is ready for Docker / Kubernetes / K3s. We generally take for granted that the kernels shipped with our distributions are ready for using containers and orchestrators, but this is not always the case.  
+If you haven't skipped over the "Lessons learned" section, you might have noticed that I mentioned that you should check if your kernel is ready for Docker / Kubernetes / K3s. We generally take for granted that the kernels shipped with our distributions are ready for using containers and orchestrators, but this is not always the case.  
   
 Specifically, in the case of the `dumpling` kernel (`msm8998`), it seems like the [kernel config](https://gitlab.postmarketos.org/postmarketOS/pmaports/-/blob/master/device/testing/linux-postmarketos-qcom-msm8998/config-postmarketos-qcom-msm8998.aarch64) is missing some key features that are required to run `docker` and `k3s`.  
   
@@ -346,7 +346,7 @@ To debug the network issues, I've used `netshoot`:
 kubectl run tmp-shell --rm -i --tty --image nicolaka/netshoot
 ```
 
-This spawned a shell in a container that had all the network tools I needed to debug the issue. Of course I had to make sure that the container was running on the affected node (I actually used a daemonset to make sure it was running on all the nodes).
+This spawned a shell in a container that had all the network tools I needed to debug the issue. Of course I had to make sure that the container was running on the affected node (I actually used a `DaemonSet` to make sure it was running on all the nodes).
 
 The problems were:
 
