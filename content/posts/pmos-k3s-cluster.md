@@ -499,3 +499,11 @@ k3s-node-dumpling-cf0b07d4         Ready    <none>                 15d    v1.31.
 k3s-node-instantnoodlep-e577c75e   Ready    <none>                 2d8h   v1.31.2-k3s1
 master-1                           Ready    control-plane,master   14d    v1.31.2-k3s1
 ```
+
+
+### Pre-built images
+
+Since I've spent quite some time re-packing the boot image for `instantnoodlep`, I've decided to share the `boot.img`.
+Granted that you should never trust a random kernel image from the internet, this could save you a bit of time.
+
+- [`boot-repacked.img`](https://drive.google.com/file/d/1pQ5A0yJDBMO92uh4-qROcdpHTemuzKGx/view?usp=sharing)
