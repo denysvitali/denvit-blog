@@ -46,7 +46,7 @@
     </div>
     {{ else }}
     {{ partial "comment_custom.html" . }}
-    {{ if not .Drafts }}
+    {{ if not .Draft }}
     {{ partial "giscus.html" . }}
     {{ end }}
     {{ with ($.Param "disqus") }}
