@@ -9,11 +9,9 @@
            {{ partial "timestamp.html" . }}
         {{ end }}
         {{ if not (.Param "hideWordCount") }}
-        {{ if not (.Param "hideDate") }} | {{ end }}
            {{ partial "word_count.html" . }}
         {{ end }}
         {{ if not (.Param "hideReadingTime") }}
-        {{ if not (and (.Param "hideDate") (.Param "hideWordCount")) }} | {{ end }}
            {{ partial "reading_time.html" . }}
         {{ end }}
         </div>
@@ -27,8 +25,7 @@
   {{ with .Params.thumbnail }}
     <img src="{{ . }}" alt="thumbnail" class="p-article__thumbnail">
   {{ end }}
-  <aside class="hidden lg:block tableOfContentContainer" id="tableOfContentContainer">
-    <h3>Table of contents</h3>
+  <aside class="tableOfContentContainer" id="tableOfContentContainer">
     {{ .TableOfContents }}
   </aside>
   <section id="js-article" class="p-article__body">
