@@ -1,0 +1,8 @@
+name: denvit-blog
+
+inputs:
+  nixpkgs:
+    url: github:NixOS/nixpkgs/nixpkgs-unstable
+
+env:
+  HUGO_VERSION: "0.154.1"
