@@ -1,0 +1,5 @@
+{{- partial "footer_custom.html" . }}
+<script type="text/javascript" src="{{ .Site.BaseURL }}js/bundle.js" defer></script>
+{{ if .Site.Params.enableMobileNav | default true }}
+<script type="text/javascript" src="{{ .Site.BaseURL }}js/mobile-nav.js" defer></script>
+{{ end }}
