@@ -40,6 +40,11 @@ jobs:
       - name: Install devenv.sh
         run: nix profile install nixpkgs#devenv
 
+      - name: Install Node dependencies and build CSS
+        run: |
+          npm install
+          npm run build:css
+
       - name: Build with Hugo
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
