@@ -17,7 +17,4 @@ in
     npm install -g pagefind 2>/dev/null || true
     echo "Welcome to denvit-blog!"
   '';
-
-  tasks.dev = "hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --disableFastRender";
-  tasks.build = "hugo --gc --minify";
 }

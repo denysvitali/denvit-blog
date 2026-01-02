@@ -2,7 +2,7 @@ dev:
     devenv up
 
 build:
-    devenv run -- ./hugo --gc --minify
+    devenv run -- hugo --gc --minify
 
 shell:
     devenv shell

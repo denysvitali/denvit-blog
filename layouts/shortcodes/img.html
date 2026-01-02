@@ -1,4 +1,4 @@
-{{/* layouts/shortcodes/img.html - Responsive image shortcode with WebP support */ -}}
+{{/* layouts/shortcodes/img.html - Responsive image shortcode */ -}}
 {{- $src := .Get "src" -}}
 {{- $alt := .Get "alt" -}}
 {{- $class := .Get "class" -}}
@@ -6,34 +6,12 @@
 {{- $height := .Get "height" -}}
 {{- $loading := .Get "loading" | default "lazy" -}}
 
-{{- $resizes := slice 320 640 960 1280 -}}
-{{- $maxWidth := $width | default 1280 -}}
-
-<picture>
-  {{- /* WebP source */ -}}
-  <source type="image/webp" srcset="
-    {{- range $i, $size := $resizes -}}
-      {{- if gt $size $maxWidth -}}{{- break -}}{{- end -}}
-      {{- if $i }}, {{- end -}}{{- ($src | resources.Get | resize (printf "%dx" $size) | relURL) }} {{- $size }}w
-    {{- end -}}
-  " />
-
-  {{- /* Fallback JPG/PNG source */ -}}
-  <source srcset="
-    {{- range $i, $size := $resizes -}}
-      {{- if gt $size $maxWidth -}}{{- break -}}{{- end -}}
-      {{- if $i }}, {{- end -}}{{- ($src | resources.Get | resize (printf "%dx" $size) | relURL) }} {{- $size }}w
-    {{- end -}}
-  " />
-
-  {{- /* Fallback img tag */ -}}
-  <img
-    src="{{ ($src | resources.Get | resize (printf "%dx" ($width | default 800))) | relURL }}"
-    alt="{{ $alt }}"
-    {{- with $class }} class="{{ $class }}"{{- end }}
-    {{- with $width }} width="{{ $width }}"{{- end }}
-    {{- with $height }} height="{{ $height }}"{{- end }}
-    loading="{{ $loading }}"
-    decoding="async"
-  />
-</picture>
+<img
+  src="{{ $src }}"
+  alt="{{ $alt }}"
+  {{- with $class }} class="{{ $class }}"{{- end }}
+  {{- with $width }} width="{{ $width }}"{{- end }}
+  {{- with $height }} height="{{ $height }}"{{- end }}
+  loading="{{ $loading }}"
+  decoding="async"
+/>

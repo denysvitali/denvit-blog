@@ -4,14 +4,14 @@ dev:
 	devenv up
 
 build:
-	devenv run -- ./hugo --gc --minify
+	devenv run -- hugo --gc --minify
 
 new-post:
 	@if [ -z "$(post)" ]; then echo "Usage: make new-post post=title-slug"; exit 1; fi
-	devenv run -- ./hugo new posts/$(post).md
+	devenv run -- hugo new posts/$(post).md
 
 validate:
-	devenv run -- ./hugo --gc --minify --dryRun
+	devenv run -- hugo --gc --minify
 
 clean:
 	rm -rf public resources
