@@ -27,4 +27,15 @@
     </div>
   </header>
   {{- partial "header_custom.html" . }}
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var toggle = document.querySelector('.mobile-menu-toggle');
+    var navWrapper = document.querySelector('.l-nav-wrapper');
+    if (toggle && navWrapper) {
+      toggle.addEventListener('click', function() {
+        navWrapper.classList.toggle('mobile-open');
+      });
+    }
+  });
+  </script>
   <main id="main" class="l-main">
