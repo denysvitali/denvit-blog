@@ -1,0 +1,12 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": ["node_modules", "themes", ".git"],
+  "words": [
+    "kubernetes",
+    "k3s",
+    "postmarketos",
+    "homelab",
+    "denv"
+  ]
+}

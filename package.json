@@ -1,0 +1,14 @@
+{
+  "name": "denvit-blog",
+  "private": true,
+  "scripts": {
+    "lint": "npm run lint:markdown && npm run lint:spell",
+    "lint:markdown": "markdownlint-cli2 'content/**/*.md'",
+    "lint:spell": "cspell 'content/**/*.md'",
+    "format": "markdownlint-cli2 'content/**/*.md' --fix"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.15.0",
+    "cspell": "^8.0.0"
+  }
+}

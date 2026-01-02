@@ -1,0 +1,11 @@
+{
+  "config": {
+    "MD013": false, // Line length
+    "MD033": false, // Inline HTML
+    "MD041": false  // First line H1
+  },
+  "ignoreFiles": [
+    "node_modules/**",
+    "themes/**"
+  ]
+}
