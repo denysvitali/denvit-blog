@@ -1,26 +1,26 @@
 .PHONY: dev build new-post validate clean lint lint:spell lint:markdown
 
 dev:
-	hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --disableFastRender --liveReloadPort 35729
+	nix-shell shell.nix --run "hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --disableFastRender"
 
 build:
-	hugo --gc --minify
+	nix-shell shell.nix --run "hugo --gc --minify"
 
 new-post:
 	@if [ -z "$(post)" ]; then echo "Usage: make new-post post=title-slug"; exit 1; fi
-	hugo new posts/$(post).md
+	nix-shell shell.nix --run "hugo new posts/$(post).md"
 
 validate:
-	hugo --gc --minify --dryRun
+	nix-shell shell.nix --run "hugo --gc --minify --dryRun"
 
 clean:
 	rm -rf public resources
 
 lint:
-	npm run lint
+	nix-shell shell.nix --run "npm run lint"
 
 lint:spell:
-	npm run lint:spell
+	nix-shell shell.nix --run "npm run lint:spell"
 
 lint:markdown:
-	npm run lint:markdown
+	nix-shell shell.nix --run "npm run lint:markdown"

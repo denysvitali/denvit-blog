@@ -1,23 +1,20 @@
-{ pkgs, ... }:
-
 let
   hugoVersion = "0.154.1";
+  pkgs = import <nixpkgs> {};
 in
-pkgs.devenv.mkShell {
+pkgs.mkShell {
   name = "denvit-blog";
-  packages = [
-    pkgs.hugo
-    pkgs.nodejs
-    pkgs.pnpm
-    pkgs.just
+  packages = with pkgs; [
+    hugo
+    nodejs
+    pnpm
+    just
   ];
 
-  enterShell = ''
+  shellHook = ''
     npm install -g pagefind 2>/dev/null || true
     echo "Welcome to denvit-blog development environment!"
   '';
 
-  env = {
-    HUGO_VERSION = hugoVersion;
-  };
+  HUGO_VERSION = hugoVersion;
 }

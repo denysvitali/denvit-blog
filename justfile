@@ -1,8 +1,8 @@
 dev:
-    hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --disableFastRender
+    nix-shell shell.nix --run "hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --disableFastRender"
 
 build:
-    hugo --gc --minify
+    nix-shell shell.nix --run "hugo --gc --minify"
 
 [group('posts')]
 default:
