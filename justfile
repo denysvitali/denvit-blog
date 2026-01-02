@@ -1,8 +1,11 @@
 dev:
-    nix-shell shell.nix --run "hugo server --bind 0.0.0.0 --port 1313 --buildDrafts --disableFastRender"
+    devenv up
 
 build:
-    nix-shell shell.nix --run "hugo --gc --minify"
+    devenv run -- ./hugo --gc --minify
+
+shell:
+    devenv shell
 
 [group('posts')]
 default:

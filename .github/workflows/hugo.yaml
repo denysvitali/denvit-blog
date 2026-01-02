@@ -37,17 +37,20 @@ jobs:
             substituters = https://cache.nixos.org https://devenv.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= devenv.cachix.org-1:XVxkRQ/ScL7WeZ1XuLKR4X8RPgYSn6O4pFmsM5G7cPs=
 
+      - name: Install devenv.sh
+        run: nix profile install nixpkgs#devenv
+
       - name: Build with Hugo
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
           HUGO_ENVIRONMENT: production
           TZ: Europe/Zurich
         run: |
-          nix-shell shell.nix --run "hugo --gc --minify --baseURL ${{ steps.pages.outputs.base_url }}/"
+          devenv run -- ./hugo --gc --minify --baseURL ${{ steps.pages.outputs.base_url }}/
 
       - name: Index with Pagefind
         run: |
-          nix-shell shell.nix --run "pagefind --site public"
+          devenv run -- pagefind --site public
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
