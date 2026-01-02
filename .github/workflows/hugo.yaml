@@ -46,11 +46,11 @@ jobs:
           HUGO_ENVIRONMENT: production
           TZ: Europe/Zurich
         run: |
-          devenv run -- ./hugo --gc --minify --baseURL ${{ steps.pages.outputs.base_url }}/
+          nix-shell -p hugo pagefind --run "hugo --gc --minify --baseURL ${{ steps.pages.outputs.base_url }}/"
 
       - name: Index with Pagefind
         run: |
-          devenv run -- pagefind --site public
+          nix-shell -p hugo pagefind --run "pagefind --site public"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
