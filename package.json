@@ -5,7 +5,9 @@
     "lint": "npm run lint:markdown && npm run lint:spell",
     "lint:markdown": "markdownlint-cli2 'content/**/*.md'",
     "lint:spell": "cspell 'content/**/*.md'",
-    "format": "markdownlint-cli2 'content/**/*.md' --fix"
+    "format": "markdownlint-cli2 'content/**/*.md' --fix",
+    "build:css": "cd themes/pickles && npm run build",
+    "postinstall": "cd themes/pickles && npm install"
   },
   "devDependencies": {
     "markdownlint-cli2": "^0.15.0",
