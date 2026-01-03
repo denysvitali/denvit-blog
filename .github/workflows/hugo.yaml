@@ -42,9 +42,7 @@ jobs:
 
       - name: Install Node dependencies and build CSS
         run: |
-          eval "$(devenv shell)"
-          npm install
-          npm run build:css
+          devenv shell --cmd "npm install && npm run build:css"
 
       - name: Build with Hugo
         env:
