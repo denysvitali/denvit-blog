@@ -42,6 +42,7 @@ jobs:
 
       - name: Install Node dependencies and build CSS
         run: |
+          eval "$(devenv shell)"
           npm install
           npm run build:css
 
