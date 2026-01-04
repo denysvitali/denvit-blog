@@ -14,10 +14,5 @@ in
 
   env.HUGO_VERSION = hugoVersion;
 
-  enterShell = ''
-    npm install -g pagefind 2>/dev/null || true
-    # Install theme dependencies and build CSS
-    cd themes/pickles && npm install && npm run build
-    echo "Welcome to denvit-blog!"
-  '';
+  enterShell = '';
 }

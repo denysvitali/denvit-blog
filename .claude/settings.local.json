@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git submodule:*)",
+      "Bash(cat:*)",
+      "Bash(devenv shell:*)",
+      "Bash(yarn run build:*)",
+      "Bash(make build-css)",
+      "Bash(hugo:*)"
+    ]
+  }
+}
