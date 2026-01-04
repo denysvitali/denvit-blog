@@ -6,3 +6,16 @@ inputs:
 
 env:
   HUGO_VERSION: "0.154.1"
+
+packages:
+  - hugo
+  - nodejs
+  - pnpm
+  - just
+  - sass
+
+hooks:
+  preStart: |
+    sass themes/pickles/assets/scss/style.scss:static/css/style.css --style=compressed --no-source-map
+
+enterShell: ''

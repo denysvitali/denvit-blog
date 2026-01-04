@@ -1,6 +1,7 @@
 /public
 /resources
 /.hugo_build.lock
+/static/css/style.css
 
 # devenv
 /.direnv
