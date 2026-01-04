@@ -15,4 +15,5 @@ in
   env.HUGO_VERSION = hugoVersion;
 
   enterShell = '';
+'';
 }
