@@ -2,6 +2,7 @@
 /resources
 /.hugo_build.lock
 /static/css/style.css
+*.css.map
 
 # devenv
 /.direnv
