@@ -7,7 +7,7 @@ build: build-css
 	nix-shell -p hugo nodejs --run "hugo --gc --minify"
 
 build-css:
-	cd themes/pickles && npm run build
+	npx sass-embedded themes/pickles/assets/scss/style.scss:static/css/style.css --style=compressed --no-source-map 2>/dev/null
 
 new-post:
 	@if [ -z "$(post)" ]; then echo "Usage: make new-post post=title-slug"; exit 1; fi

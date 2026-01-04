@@ -19,7 +19,6 @@ author="Denys Vitali"
 avatar="https://avatars2.githubusercontent.com/u/4939519?s=460&v=4"
 github="denysvitali"
 bio="I enjoy writing about technology, with a passion for reverse engineering and software development in Go. I'm always eager to learn new things and am a huge fan of open source software, particularly Kubernetes and cloud-native technologies."
-custom_css = ["css/custom.css"]
 
 [taxonomies]
 tag = "tags"
