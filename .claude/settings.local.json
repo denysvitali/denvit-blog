@@ -6,7 +6,11 @@
       "Bash(devenv shell:*)",
       "Bash(yarn run build:*)",
       "Bash(make build-css)",
-      "Bash(hugo:*)"
+      "Bash(hugo:*)",
+      "Bash(curl:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(git push)"
     ]
   }
 }
