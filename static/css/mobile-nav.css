@@ -1,14 +1,12 @@
 /* Mobile navigation overrides - Apple-style minimal */
 
-/* Constrain the navigation wrapper to match main content width */
-.l-nav-wrapper {
-  width: 96%;
-  max-width: 800px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
+@media (min-width: 768px) {
+  /* Desktop nav wrapper styles */
+  .l-nav-wrapper {
+    width: auto;
+    margin: 0;
+    gap: 8px;
+  }
 }
 
 @media (max-width: 767px) {
@@ -18,114 +16,182 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     background: transparent;
     border: none;
     cursor: pointer;
     margin: 0;
-
-    span {
-      display: block;
-      width: 18px;
-      height: 1px;
-      background: currentColor;
-      margin: 3px 0;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Hide desktop menu on mobile */
-  .p-menu {
+  .mobile-menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text);
+    margin: 4px 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    border-radius: 1px;
+  }
+
+  /* Hide desktop menu on mobile - only target menu in header, not overlay */
+  .l-nav-wrapper .p-menu {
     display: none !important;
   }
-}
 
-/* Full-screen mobile menu overlay */
-.mobile-menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(color.$color-bg, 0.95);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.mobile-menu-overlay.is-open {
-  opacity: 1;
-  visibility: visible;
-}
-
-.mobile-menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.mobile-menu-logo {
-  font-family: fontFamily.$SF-Mono;
-  font-size: 1.4rem;
-  color: color.$color-text;
-  text-decoration: none;
-}
-
-.mobile-menu-close {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-
-  span {
-    display: block;
-    width: 18px;
-    height: 1px;
-    background: currentColor;
-    margin: 3px 0;
+  /* Mobile header inner layout */
+  .l-header-inner {
+    gap: 4px;
   }
-}
 
-.mobile-menu-content {
-  flex: 1;
-}
+  /* Hide search toggle on mobile - search is in hamburger menu */
+  .search-toggle {
+    display: none !important;
+  }
 
-.mobile-menu-content .p-menu__lists {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+  /* Full-screen mobile menu overlay */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: 0 24px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
 
-.mobile-menu-content .p-menu__listitem a {
-  display: block;
-  padding: 12px 16px;
-  font-size: 1.6rem;
-  font-weight: 500;
-  color: color.$color-text;
-  text-decoration: none;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
+  /* Prevent body scroll when menu is open */
+  body.has-open-menu {
+    overflow: hidden;
+  }
 
-.mobile-menu-content .p-menu__listitem a:hover {
-  background-color: color.$color-bg-secondary;
-}
+  .mobile-menu-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
 
-.mobile-menu-search {
-  margin-top: 24px;
+  .mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 52px;
+    margin-bottom: 24px;
+  }
+
+  .mobile-menu-logo {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 1.4rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .mobile-menu-close {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-menu-close span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: 1px;
+  }
+
+  /* Hide the middle span - only use 2 for the X */
+  .mobile-menu-close span:nth-child(2) {
+    display: none;
+  }
+
+  .mobile-menu-close span:first-child {
+    transform: rotate(45deg);
+    position: absolute;
+  }
+
+  .mobile-menu-close span:last-child {
+    transform: rotate(-45deg);
+    position: absolute;
+  }
+
+  .mobile-menu-close {
+    position: relative;
+  }
+
+  .mobile-menu-content {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .mobile-menu-content .p-menu__lists {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-menu-content .p-menu__listitem {
+    list-style: none;
+    margin: 0;
+  }
+
+  .mobile-menu-content .p-menu__listitem a {
+    display: block;
+    padding: 14px 12px;
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.15s ease;
+  }
+
+  .mobile-menu-content .p-menu__listitem a:hover,
+  .mobile-menu-content .p-menu__listitem a:active {
+    background-color: var(--color-bg-secondary);
+  }
+
+  .mobile-menu-search {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Search input in mobile menu */
+  .mobile-menu-search .search-input-wrapper {
+    width: 100%;
+  }
+
+  .mobile-menu-search input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1.6rem;
+    background: var(--color-bg-secondary);
+    border: none;
+    border-radius: 12px;
+    color: var(--color-text);
+  }
+
+  .mobile-menu-search input[type="text"]::placeholder {
+    color: var(--color-text-tertiary);
+  }
 }
