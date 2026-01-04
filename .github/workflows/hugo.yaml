@@ -37,12 +37,12 @@ jobs:
             substituters = https://cache.nixos.org https://devenv.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= devenv.cachix.org-1:XVxkRQ/ScL7WeZ1XuLKR4X8RPgYSn6O4pFmsM5G7cPs=
 
-      - name: Install devenv.sh
-        run: nix profile install nixpkgs#devenv
+      - name: Install pnpm
+        run: npm install -g pnpm
 
-      - name: Install Node dependencies and build CSS
+      - name: Install Node dependencies
         run: |
-          devenv shell "npm install && npm run build:css"
+          cd themes/pickles && pnpm install
 
       - name: Build with Hugo
         env:
