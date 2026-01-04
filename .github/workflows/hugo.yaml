@@ -44,6 +44,10 @@ jobs:
         run: |
           cd themes/pickles && pnpm install
 
+      - name: Build CSS
+        run: |
+          cd themes/pickles && npx sass-embedded assets/scss/style.scss:static/css/style.css --load-path=node_modules
+
       - name: Build with Hugo
         env:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache

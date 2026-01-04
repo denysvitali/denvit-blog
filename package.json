@@ -6,6 +6,7 @@
     "lint:markdown": "markdownlint-cli2 'content/**/*.md'",
     "lint:spell": "cspell 'content/**/*.md'",
     "format": "markdownlint-cli2 'content/**/*.md' --fix",
+    "build:css": "cd themes/pickles && npx sass-embedded assets/scss/style.scss:static/css/style.css --load-path=node_modules",
     "postinstall": "cd themes/pickles && pnpm install"
   },
   "devDependencies": {
