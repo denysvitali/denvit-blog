@@ -20,7 +20,8 @@ The name of this post isn't just a clever play on words. I truly am a happier en
 
 I had many ideas and too little time to work on everything. The frustrating part wasn't programming itself - it was the gap between imagination and available hours. As I [wrote on Hacker News](https://news.ycombinator.com/item?id=45881365):
 
-> I truly enjoy programming, but the most frustrating part for me was that I had many ideas and too little time to work on everything. Thanks to AI I can now work on many side projects at the time, and most importantly just get stuff done quickly and most of the time in good enough (or sometimes excellent) results. I'm both amazed and a bit sad, but the reality is that my output has increased significantly - although the quality might have dropped a bit in certain areas. Time is limited, and if I can increase my results in the same way as the electric street lights, I can simply look back at the past and smile that I lived in a time where lighting up gas-powered street lights was considered a skill. As you perfectly put it, it's not about the process per se, it's about the result. And the result is that now the lights are only 80% lit. In a few months / years we'll probably reach the threshold where the electric street lights will be brighter than the gas-powered ones, and you'd be a fool if you decide to still light them up one by one.
+> I truly enjoy programming, but the most frustrating part for me was that I had many ideas and too little time to work on everything.
+> Thanks to AI I can now work on many side projects at the time, and most importantly just get stuff done quickly and most of the time in good enough (or sometimes excellent) results.
 
 With the same amount of time I can now build more things. The output increase is significant. It's not about the process, it's about the result. And Happy + Claude Code makes this possible from anywhere - my Daylight DC-1, my phone, or my desktop.
 
