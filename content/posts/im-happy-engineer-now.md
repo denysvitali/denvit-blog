@@ -325,7 +325,7 @@ Before wrapping up, here are some key takeaways from setting up this infrastruct
 
 3. **Provider switching isn't session-based**: Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` or individual sessions created on the host. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
 
-4. **Tailscale is a life saver**: It lets me access the Happy server without exposing it to the public internet. I also avoid the hassle of configuring mTLS certificates in the Happy app - Tailscale handles all the authentication and encryption at the network level. The Kubernetes Tailscale Operator keeps the workspace image clean.
+4. **Tailscale is a life saver**: It lets me access the Happy server without exposing it to the public internet. I also avoid the hassle of configuring mTLS certificates in the Happy app - Tailscale handles all the authentication and encryption at the network level. And if I ever need to, I can SSH directly into the container.
 
 5. **Environment variables work for now**: The current workaround for using multiple LLM providers requires setting environment variables before starting `happy daemon`. A native configuration file would be cleaner.
 
