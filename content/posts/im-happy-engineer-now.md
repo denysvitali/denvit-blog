@@ -23,7 +23,7 @@ I had many ideas and too little time to work on everything. The frustrating part
 > I truly enjoy programming, but the most frustrating part for me was that I had many ideas and too little time to work on everything.
 > Thanks to AI I can now work on many side projects at the time, and most importantly just get stuff done quickly and most of the time in good enough (or sometimes excellent) results.
 
-With the same amount of time I can now build more things. The output increase is significant. It's not about the process, it's about the result. And Happy + Claude Code makes this possible from anywhere - my Daylight DC-1, my phone, or my desktop.
+With the same amount of time I can now build more things. The output increase is significant. It's not about the process, it's about the result. And Happy + Claude Code makes this possible from anywhere.
 
 ## What is Happy?
 
@@ -36,7 +36,7 @@ Key features:
 - **Session sync** - Continue conversations across devices
 - **Push notifications** - Get alerted when input is needed
 
-I mostly use Happy on mobile devices (my [Daylight DC-1](https://www.daylightcomputer.com/dc-1) tablet and smartphone), so I do sync sessions between these two devices. When I need to continue a session on my desktop, I simply push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
+I mostly use Happy on mobile devices (my [Daylight DC-1]([https://www.daylightcomputer.com/dc-1](https://daylightcomputer.com/product)) tablet and smartphone), so I do sync sessions between these two devices. When I need to continue a session on my desktop, I simply push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
 
 To get started, simply run:
 ```bash
