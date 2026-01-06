@@ -11,6 +11,8 @@ I'm now officially a Happy engineer!
 
 In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works.
 
+Happy is becoming more and more my IDE - with voice commands, file editing, and MCP tool integration, I rarely need a traditional code editor anymore.
+
 <!--more-->
 <!-- toc -->
 
