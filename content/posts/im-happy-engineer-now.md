@@ -11,7 +11,7 @@ I'm now officially a Happy engineer!
 
 In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works.
 
-Happy is becoming more and more my IDE - with voice commands, file editing, and MCP tool integration, I rarely need a traditional code editor anymore.
+Happy is becoming more and more my IDE - with MCP tool integration and remote development capabilities, I rarely need a traditional setup anymore.
 
 <!--more-->
 <!-- toc -->
@@ -37,6 +37,8 @@ Key features:
 - **End-to-end encryption** - Uses TweetNaCl (same as Signal), zero-knowledge architecture
 - **Session sync** - Continue conversations across devices
 - **Push notifications** - Get alerted when input is needed
+
+I haven't used the TTS or voice input features yet - the text interface is already powerful enough for my needs.
 
 I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), so I do sync sessions between these two devices. When I need to continue a session on my desktop, I simply push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
 
@@ -81,16 +83,9 @@ This means I can connect from my phone, laptop, or any device with Tailscale ins
 
 I also use Happy on my Android phone. However, I had to patch the Android app because my Kubernetes cluster uses a private CA, and the default Happy mobile apps won't trust my certificate. I submitted a fix in [slopus/happy#278](https://github.com/slopus/happy/pull/278).
 
-The PR added:
-- Android network security config to allow custom CAs
-- GitHub Actions CI for building APKs automatically
-- Release APK builds instead of debug builds for standalone usage
-- Caching and parallel execution for faster builds
-- Parallel builds across CPU architectures (ABIs)
-
 ### Annoyances
 
-There's also a persistent bug ([slopus/happy#236](https://github.com/slopus/happy/issues/236)) where the Android app incorrectly reports a "call" as active when the app is open or in the background. This happens 100% of the time on Android and is particularly annoying when connected via Bluetooth (car, headphones) - the audio playback stops to let the app handle the "call" (TTS output). To make the device stop reporting a call in progress to Bluetooth devices, the app must be force closed.
+One quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open.
 
 ## LLM Release Lag
 
@@ -108,11 +103,11 @@ Currently, I'm using Happy with three different models depending on the task:
 
 | Model | Plan | Cost | Best For |
 |-------|------|------|----------|
-| **MiniMax M2.1** | [Starter](https://api.minimax.io/pricing) | $2 first month, then $10/month | Lightweight tasks, quick one-shots |
-| **GLM 4.7** | [Lite](https://open.bigmodel.cn/) | $6/month (valid to 2026-01-23) | Frontend, general coding |
-| **Claude Opus 4.5** | [Pro](https://www.anthropic.com/claude-code) | $17/month | Complex planning, multi-step tasks |
+| **MiniMax M2.1** | [Starter](https://platform.minimax.io/subscribe/coding-plan) | $2 first month, then $10/month | Lightweight tasks, quick one-shots |
+| **GLM 4.7** | [Lite](https://z.ai/subscribe) | $6/month (valid to 2026-01-23) | Frontend, general coding |
+| **Claude Opus 4.5** | [Pro](https://claude.com/product/claude-code) | $17/month | Complex planning, multi-step tasks |
 
-#### [MiniMax M2.1](https://api.minimax.io/pricing)
+#### [MiniMax M2.1](https://platform.minimax.io/subscribe/coding-plan)
 
 **What I like:**
 - Very cheap, especially the $2 first month offer
@@ -126,7 +121,7 @@ Currently, I'm using Happy with three different models depending on the task:
 
 ---
 
-#### [GLM 4.7](https://open.bigmodel.cn/) (Zhipu AI)
+#### [GLM 4.7](https://z.ai/subscribe) (Zhipu AI)
 
 **What I like:**
 - Very cheap at $6/month (or ~$3 via the coding plan)
@@ -142,7 +137,7 @@ Currently, I'm using Happy with three different models depending on the task:
 
 ---
 
-#### [Claude Opus 4.5](https://www.anthropic.com/claude-code) (via Claude Code Pro)
+#### [Claude Opus 4.5](https://claude.com/product/claude-code) (via Claude Code Pro)
 
 **What I like:**
 - Excellent output quality generally
@@ -313,7 +308,7 @@ In the past, I used Claude Code directly in a terminal by SSH-ing into my contai
 2. **Mobile pain point**: Using tmux on a mobile device (via Termux or similar) is cumbersome
 3. **Keyboard autocomplete**: Typing every single character without keyboard autocomplete support was frustrating
 
-Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The iOS app is even optimized for iPad and supports:
+Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The app features:
 - Dark theme
 - Audio mode
 - Custom server URLs
@@ -326,11 +321,11 @@ Before wrapping up, here are some key takeaways from setting up this infrastruct
 
 1. **Private CA handling requires code changes**: If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority.
 
-2. **Community-maintained clients lag behind**: The Happy app has only 17 contributors, so new Anthropic model releases aren't always immediately available. Having alternative providers (MiniMax, GLM) as fallbacks is essential.
+2. **Community-maintained clients lag behind**: The Happy app has only 17 contributors, so new Anthropic model releases and Claude Code versions aren't always immediately available. For example, when Opus 4.5 was released, it wasn't in the app's model list until an update. Even new Sonnet releases take time to appear. This also means you can't easily use new models without overriding them via environment variables. Having alternative providers (MiniMax, GLM) as fallbacks is essential.
 
-3. **Tailscale makes remote access trivial**: By offloading Tailscale to the Kubernetes Operator, I didn't need to bundle the Tailscale client in my workspace image. This keeps the image smaller and more secure.
+3. **Provider switching isn't session-based**: Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` or individual sessions created on the host. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
 
-4. **MCP servers enhance workflow**: Having gh-actions-mcp, argocd-mcp, and woodpecker-ci-mcp integrated with Claude Code enables powerful workflows without leaving the terminal.
+4. **Tailscale is a life saver**: It lets me access the Happy server without exposing it to the public internet. I also avoid the hassle of configuring mTLS certificates in the Happy app - Tailscale handles all the authentication and encryption at the network level. The Kubernetes Tailscale Operator keeps the workspace image clean.
 
 5. **Environment variables work for now**: The current workaround for using multiple LLM providers requires setting environment variables before starting `happy daemon`. A native configuration file would be cleaner.
 
