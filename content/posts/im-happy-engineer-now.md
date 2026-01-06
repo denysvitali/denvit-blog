@@ -280,6 +280,8 @@ I use a GitHub PAT with access limited to only my authorized repositories. Withi
 
 - **[woodpecker-ci-mcp](https://github.com/denysvitali/woodpecker-ci-mcp)** - Access Woodpecker CI build statuses, manage pipelines, and retrieve logs for debugging CI failures.
 
+My current approach uses a single workspace for convenience. For stronger security, you could have one workspace per repository with individual PATs for each - that way a compromised token only affects one repo.
+
 ### Data Flow
 
 ```mermaid
