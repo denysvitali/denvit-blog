@@ -319,7 +319,7 @@ Happy solves these issues by providing a proper client-server architecture that 
 
 Before wrapping up, here are some key takeaways from setting up this infrastructure:
 
-1. **Private CA handling requires code changes**: If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority.
+1. **Private CA handling requires code changes**: If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority. However, with Tailscale you can skip TLS entirely since Tailscale already encrypts the connection.
 
 2. **Community-maintained clients lag behind**: The Happy app has only 17 contributors, so new Anthropic model releases and Claude Code versions aren't always immediately available. For example, when Opus 4.5 was released, it wasn't in the app's model list until an update. Even new Sonnet releases take time to appear. This also means you can't easily use new models without overriding them via environment variables. Having alternative providers (MiniMax, GLM) as fallbacks is essential.
 
