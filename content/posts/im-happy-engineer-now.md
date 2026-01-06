@@ -2,7 +2,7 @@
 date = '2025-01-05T00:00:00+01:00'
 draft = false
 hidden = true
-publishdate = '2026-01-31T00:00:00+01:00'
+publishdate = '2026-01-06T00:00:00+01:00'
 tags = ['kubernetes', 'claude-code', 'happy', 'self-hosted', 'homelab']
 title = "I'm an Happy engineer now"
 +++
