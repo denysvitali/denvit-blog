@@ -36,7 +36,7 @@ Key features:
 - **Session sync** - Continue conversations across devices
 - **Push notifications** - Get alerted when input is needed
 
-I mostly use Happy on mobile devices (my [Daylight DC-1]([https://www.daylightcomputer.com/dc-1](https://daylightcomputer.com/product)) tablet and smartphone), so I do sync sessions between these two devices. When I need to continue a session on my desktop, I simply push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
+I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), so I do sync sessions between these two devices. When I need to continue a session on my desktop, I simply push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
 
 To get started, simply run:
 ```bash
