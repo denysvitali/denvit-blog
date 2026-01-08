@@ -4,14 +4,14 @@ draft = false
 hidden = true
 publishdate = '2026-01-06T00:00:00+01:00'
 tags = ['kubernetes', 'claude-code', 'happy', 'self-hosted', 'homelab']
-title = "I'm an Happy engineer now"
+title = "I'm a Happy engineer now"
 +++
 
 I'm now officially a Happy engineer!
 
 In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works.
 
-Happy is becoming more and more my IDE - with MCP tool integration and remote development capabilities, I rarely need a traditional setup anymore.
+Happy is becoming more and more my IDE, with MCP tool integration and remote development capabilities, I rarely need a traditional setup anymore.
 
 <!--more-->
 <!-- toc -->
@@ -23,9 +23,9 @@ The name of this post isn't just a clever play on words. I truly am a happier en
 I had many ideas and too little time to work on everything. The frustrating part wasn't programming itself - it was the gap between imagination and available hours. As I [wrote on Hacker News](https://news.ycombinator.com/item?id=45881365):
 
 > I truly enjoy programming, but the most frustrating part for me was that I had many ideas and too little time to work on everything.
-> Thanks to AI I can now work on many side projects at the time, and most importantly just get stuff done quickly and most of the time in good enough (or sometimes excellent) results.
+> Thanks to AI I can now work on many side projects at a time, and most importantly just get things done quickly and most of the time in good enough (or sometimes excellent) results.
 
-With the same amount of time I can now build more things. The output increase is significant. It's not about the process, it's about the result. And Happy + Claude Code makes this possible from anywhere.
+With the same amount of time I can now build more things. The output increase is significant. It's not about the process, it's about the result, and Happy + Claude Code makes this possible from anywhere.
 
 ## What is Happy?
 
@@ -58,6 +58,34 @@ I started using the public Happy server a while ago. However, over time, the API
 
 Since I rely on Claude Code for my daily work, I needed a reliable solution. The answer was clear: self-host the Happy server.
 
+### Prerequisites
+
+To replicate this setup, you'll need:
+
+- **Kubernetes cluster** with the Tailscale Operator configured
+- **Tailscale account** with tailnet set up
+- **Longhorn** for persistent storage
+- **CloudNativePG** operator for PostgreSQL
+- **OpenBao** or HashiCorp Vault for secrets management
+- **Backblaze B2** (or S3-compatible) for file storage
+
+## Why Not Claude Code via SSH?
+
+In the past, I used Claude Code directly in a terminal by SSH-ing into my container. This worked, but it was inconvenient for several reasons:
+
+1. **TUI flickering**: Claude Code's terminal UI flickers and behaves erratically when running over SSH, making it frustrating to use
+2. **Key combination problems**: Mobile SSH clients struggle with essential key combinations like `Ctrl+A`, `Ctrl+E`, or `Shift+Tab` that Claude Code relies on
+3. **No text correction or autocomplete**: Every character must be typed perfectly - no autocorrect, no word suggestions, no keyboard autocomplete
+4. **Copy/paste is painful**: Copying code snippets or multi-line prompts into an SSH session on mobile is clunky and error-prone
+5. **Readability issues**: Terminal text renders too small on mobile screens, making code review difficult
+
+Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The app features:
+- Dark theme
+- Audio mode
+- Custom server URLs
+- Better permissions UI
+- New session creation remotely
+
 ## The Happy Server Stack
 
 My Happy server runs on Kubernetes with the following components:
@@ -69,7 +97,51 @@ My Happy server runs on Kubernetes with the following components:
 | **Redis** | Single replica Redis 7 Alpine for caching/sessions |
 | **S3 Storage** | Backblaze B2 for file storage |
 
-The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from OpenBao. The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts.
+```mermaid
+flowchart TB
+    subgraph Devices["My Devices"]
+        D1["iPhone/Android"]
+        D2["Daylight Tablet"]
+        D3["Laptop"]
+    end
+
+    subgraph Tailscale["Tailscale Network"]
+        H1["Happy App"]
+        H2["Happy CLI"]
+    end
+
+    subgraph K8s["Kubernetes Cluster"]
+        S["Happy Server\n(Node.js/Express)"]
+        DB[(["PostgreSQL\n10Gi Longhorn"])]
+        R[("Redis")]
+        W["Workspace Pods\n(dev-workspace)"]
+    end
+
+    subgraph External["External Services"]
+        B2["Backblaze B2"]
+        LLM1["MiniMax API"]
+        LLM2["GLM API"]
+        LLM3["Claude API"]
+    end
+
+    D1 --> Tailscale
+    D2 --> Tailscale
+    D3 --> Tailscale
+
+    Tailscale --> S
+    S --> DB
+    S --> R
+    S --> B2
+    H2 --> W
+    W --> LLM1
+    W --> LLM2
+    W --> LLM3
+
+    style Tailscale fill:#663399
+    style K8s fill:#326CE5
+```
+
+The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork. The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts.
 
 ### Tailscale Integration
 
@@ -77,23 +149,17 @@ Both the Happy server and my workspaces are exposed via Tailscale:
 - **Happy Server**: `happy.<tailnet>.ts.net` - accessible from any Tailscale-connected device
 - **Workspaces**: Each workspace gets a Tailscale hostname like `workspace-denys.<tailnet>.ts.net`
 
-This means I can connect from my phone, laptop, or any device with Tailscale installed without exposing services to the public internet. The Kubernetes Tailscale Operator handles the network configuration automatically.
+This means I can connect from my phone, laptop, or any device with Tailscale installed without exposing services to the public internet. The Kubernetes Tailscale Operator handles the network configuration automatically, and I avoid the hassle of configuring mTLS certificates - Tailscale handles all authentication and encryption at the network level. If needed, I can SSH directly into the container.
 
 ## Patching the Android App
 
 I also use Happy on my Android phone. However, I had to patch the Android app because my Kubernetes cluster uses a private CA, and the default Happy mobile apps won't trust my certificate. I submitted a fix in [slopus/happy#278](https://github.com/slopus/happy/pull/278).
 
+If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority. However, with Tailscale you can skip TLS entirely since Tailscale already encrypts the connection.
+
 ### Annoyances
 
 One quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open.
-
-## LLM Release Lag
-
-One downside of using a third-party app that's not perfectly maintained is that new LLM releases often lag behind. For example, when Anthropic released Opus 4.5, it wasn't immediately available in the Happy Android app. Users had to wait for the app to be updated with the new model list.
-
-A workaround existed ([slopus/happy#244](https://github.com/slopus/happy/issues/244#issuecomment-3577085895)) where users could manually configure the model, but this wasn't documented well and required technical knowledge.
-
-This is one of the trade-offs of relying on community-maintained software rather than the official clients. The app has only 17 contributors and updates depend on their free time.
 
 ## My LLM Setup
 
@@ -107,54 +173,9 @@ Currently, I'm using Happy with three different models depending on the task:
 | **GLM 4.7** | [Lite](https://z.ai/subscribe) | $6/month (valid to 2026-01-23) | Frontend, general coding |
 | **Claude Opus 4.5** | [Pro](https://claude.com/product/claude-code) | $17/month | Complex planning, multi-step tasks |
 
-#### [MiniMax M2.1](https://platform.minimax.io/subscribe/coding-plan)
-
-**What I like:**
-- Very cheap, especially the $2 first month offer
-- Never stops - can run 1+ hour sessions without issues
-- Usage limits are very generous
-- Output is very good, sometimes even better than Claude Opus 4.5 for certain tasks
-- Surprisingly excellent at one-shotting stuff
-
-**Weaknesses:**
-- Not great at frontend development
-
----
-
-#### [GLM 4.7](https://z.ai/subscribe) (Zhipu AI)
-
-**What I like:**
-- Very cheap at $6/month (or ~$3 via the coding plan)
-- 3× usage of Claude Pro plan limits - very generous
-- Open source model
-- Surprisingly good at frontend and other tasks
-- Compatible with 10+ coding tools (Claude Code, Cursor, Cline, Kilo Code...)
-- "They cooked" - excellent results overall
-
-**Weaknesses:**
-- Validity period on the cheap plan (need to renew)
-- Less familiar to Western developers
-
----
-
-#### [Claude Opus 4.5](https://claude.com/product/claude-code) (via Claude Code Pro)
-
-**What I like:**
-- Excellent output quality generally
-- Strong planning capabilities
-- Now works with Pro plan (previously required Max for Opus 4.5)
-
-**Weaknesses:**
-- Very expensive compared to alternatives
-- Hit usage limits frequently, especially on Pro
-- Stops often during sessions
-- Planning features are difficult to use on mobile
-
----
-
-### Why Three Models?
-
 I use MiniMax for quick tasks and one-shots where I need speed and low cost. GLM 4.7 is my go-to for frontend work where it surprisingly excels. Claude Opus 4.5 is reserved for complex multi-step tasks that require careful planning.
+
+Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` or individual sessions created on the host. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
 
 To make this work, the `happy daemon` needs to be started with specific environment variables. I use a simple setup script that I source when needed:
 
@@ -168,6 +189,10 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL="MiniMax-M2.1"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1"
 # export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1-lightning"
 ```
+
+The current workaround for using multiple LLM providers requires setting environment variables before starting `happy daemon`. A native configuration file would be cleaner.
+
+Now that the LLM setup is configured, here's how I access these models through my cloud development environment.
 
 ## The Workspace Setup
 
@@ -185,7 +210,7 @@ The dev-workspace image is a **containerized development environment** designed 
 | **User Model** | Non-root user (UID 1000) from build to runtime |
 | **SSH Server** | Dropbear on port 2222 (non-privileged) |
 | **Multi-Arch** | Built for both AMD64 and ARM64 |
-| **Persistence** | Template-based PVC pattern for home + nix-store |
+| **Persistence** | Template-based PVC (PersistentVolumeClaim) pattern for home + nix-store |
 
 #### Pre-installed Tools
 
@@ -221,7 +246,7 @@ The workspace uses **single-user Nix** to maintain rootless container compatibil
 
 ```mermaid
 flowchart TD
-    subgraph Build["Container Image Build"]
+    subgraph ContainerBuild["Container Image Build"]
         direction TB
         A[1. Alpine base] --> B[2. Root installs Alpine packages]
         B --> C[3. Create workspace user UID 1000]
@@ -232,9 +257,9 @@ flowchart TD
         G --> H[8. Move /home/workspace to /home/template]
     end
 
-    Build -.-> |First pod start| Runtime["Runtime Kubernetes Pod"]
+    ContainerBuild -.-> |First pod start| PodRuntime
 
-    subgraph Runtime["Runtime Kubernetes Pod"]
+    subgraph PodRuntime["Runtime Kubernetes Pod"]
         direction TB
         I[1. entrypoint.sh detects empty /nix PVC] --> J[2. Copy /nix-template to /nix]
         J --> K[3. Sync home dir template to PVC]
@@ -242,8 +267,8 @@ flowchart TD
         L --> M[5. Source nix.sh → nix/devenv available]
     end
 
-    style Build fill:#e1f5fe
-    style Runtime fill:#f3e5f5
+    style ContainerBuild fill:#e1f5fe
+    style PodRuntime fill:#f3e5f5
 ```
 
 The Nix store (~4GB) is stored as `/nix-template` in the image and copied to the PVC on first run. This saves ~4GB by storing nix only once in the image.
@@ -272,7 +297,7 @@ Longhorn provides snapshots and backups. I configure automatic snapshots hourly 
 
 ### MCP Tools
 
-I use a GitHub PAT with access limited to only my authorized repositories. Within my workspace, I have several Model Context Protocol (MCP) servers configured to help me work with my projects:
+I use a GitHub Personal Access Token (PAT) with access limited to only my authorized repositories. Within my workspace, I have several [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers configured via `~/.config/claude/mcp.json` to help me work with my projects:
 
 - **[gh-actions-mcp](https://github.com/denysvitali/gh-actions-mcp)** - Interact with GitHub Actions. Check workflow status, list workflows, and manage runs directly from Claude Code.
 
@@ -280,56 +305,27 @@ I use a GitHub PAT with access limited to only my authorized repositories. Withi
 
 - **[woodpecker-ci-mcp](https://github.com/denysvitali/woodpecker-ci-mcp)** - Access Woodpecker CI build statuses, manage pipelines, and retrieve logs for debugging CI failures.
 
-My current approach uses a single workspace for convenience. For stronger security, you could have one workspace per repository with individual PATs for each - that way a compromised token only affects one repo.
+My current approach uses a single workspace for convenience. For stronger security, you could have one workspace per repository with individual GitHub PATs for each - that way a compromised token only affects one repo.
 
-### Data Flow
+### Quick Reference
 
-```mermaid
-flowchart LR
-    User((User)) --> T["Tailscale"]
-    T --> |SSH :2222 or Mosh :60000| WS["Workspace Container<br/>dev-workspace image"]
-    WS --> |HTTP| HS["Happy Server<br/>happy.happy.svc.cluster.local"]
-    HS --> PG[(PostgreSQL)]
-    HS --> Redis[(Redis)]
-    HS --> S3[(Backblaze B2)]
+| Component | Technology | Access |
+|-----------|------------|--------|
+| Happy Client | iOS/Android/Web | Tailscale network |
+| Happy Server | k8s + Node.js | `happy.<tailnet>.ts.net` |
+| Workspaces | dev-workspace container | SSH :2222 via Tailscale |
+| LLM Providers | MiniMax / GLM / Claude | Via Happy |
+| Secrets | OpenBao | Kubernetes integration |
+| Storage | Longhorn (60Gi) | Persistent volumes |
 
-    style User fill:#e3f2fd
-    style T fill:#f3e5f5
-    style WS fill:#c8e6c9
-    style HS fill:#fff9c4
-    style PG fill:#ffecb3
-    style Redis fill:#ffecb3
-    style S3 fill:#ffecb3
-```
+### Monthly Costs
 
-## Why Not Claude Code via SSH?
-
-In the past, I used Claude Code directly in a terminal by SSH-ing into my container. This worked, but it was inconvenient for several reasons:
-
-1. **Multiple TUI issues**: Claude Code's terminal UI has some quirks when running over SSH
-2. **Mobile pain point**: Using tmux on a mobile device (via Termux or similar) is cumbersome
-3. **Keyboard autocomplete**: Typing every single character without keyboard autocomplete support was frustrating
-
-Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The app features:
-- Dark theme
-- Audio mode
-- Custom server URLs
-- Better permissions UI
-- New session creation remotely
-
-## Lessons Learned
-
-Before wrapping up, here are some key takeaways from setting up this infrastructure:
-
-1. **Private CA handling requires code changes**: If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority. However, with Tailscale you can skip TLS entirely since Tailscale already encrypts the connection.
-
-2. **Community-maintained clients lag behind**: The Happy app has only 17 contributors, so new Anthropic model releases and Claude Code versions aren't always immediately available. For example, when Opus 4.5 was released, it wasn't in the app's model list until an update. Even new Sonnet releases take time to appear. This also means you can't easily use new models without overriding them via environment variables. Having alternative providers (MiniMax, GLM) as fallbacks is essential.
-
-3. **Provider switching isn't session-based**: Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` or individual sessions created on the host. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
-
-4. **Tailscale is a life saver**: It lets me access the Happy server without exposing it to the public internet. I also avoid the hassle of configuring mTLS certificates in the Happy app - Tailscale handles all the authentication and encryption at the network level. And if I ever need to, I can SSH directly into the container.
-
-5. **Environment variables work for now**: The current workaround for using multiple LLM providers requires setting environment variables before starting `happy daemon`. A native configuration file would be cleaner.
+| Service | Cost |
+|---------|------|
+| **LLM APIs** | ~$25/month (MiniMax $10 + GLM $6 + Claude Pro $17) |
+| **Backblaze B2** | ~$5/month for file storage |
+| **Tailscale** | Free for personal use |
+| **Kubernetes** | Self-hosted (no cloud costs) |
 
 ## Conclusion
 
