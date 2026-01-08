@@ -98,36 +98,33 @@ My Happy server runs on Kubernetes with the following components:
 | **S3 Storage** | Backblaze B2 for file storage |
 
 ```mermaid
-flowchart TB
-    subgraph Devices["My Devices"]
-        D1["iPhone/Android"]
-        D2["Daylight Tablet"]
-        D3["Laptop"]
+graph TB
+    subgraph Devices[My Devices]
+        D1[iPhone/Android]
+        D2[Daylight Tablet]
+        D3[Laptop]
     end
 
-    subgraph Tailscale["Tailscale Network"]
-        H1["Happy App"]
-        H2["Happy CLI"]
+    subgraph Tailscale[Tailscale Network]
+        H1[Happy App]
+        H2[Happy CLI]
     end
 
-    subgraph K8s["Kubernetes Cluster"]
-        S["Happy Server\n(Node.js/Express)"]
-        DB[(["PostgreSQL\n10Gi Longhorn"])]
-        R[("Redis")]
-        W["Workspace Pods\n(dev-workspace)"]
+    subgraph K8s[Kubernetes Cluster]
+        S["Happy Server"]
+        DB[(PostgreSQL)]
+        R[(Redis)]
+        W[Workspace Pods]
     end
 
-    subgraph External["External Services"]
-        B2["Backblaze B2"]
-        LLM1["MiniMax API"]
-        LLM2["GLM API"]
-        LLM3["Claude API"]
+    subgraph External[External Services]
+        B2[Backblaze B2]
+        LLM1[MiniMax API]
+        LLM2[GLM API]
+        LLM3[Claude API]
     end
 
-    D1 --> Tailscale
-    D2 --> Tailscale
-    D3 --> Tailscale
-
+    Devices --> Tailscale
     Tailscale --> S
     S --> DB
     S --> R
@@ -137,8 +134,10 @@ flowchart TB
     W --> LLM2
     W --> LLM3
 
-    style Tailscale fill:#663399
-    style K8s fill:#326CE5
+    classDef tailscale fill:#663399,color:#fff
+    classDef k8s fill:#326CE5,color:#fff
+    class Tailscale tailscale
+    class K8s k8s
 ```
 
 The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork. The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts.
@@ -242,36 +241,7 @@ The dev-workspace image is a **containerized development environment** designed 
 
 #### Nix/Devenv Setup
 
-The workspace uses **single-user Nix** to maintain rootless container compatibility:
-
-```mermaid
-flowchart TD
-    subgraph ContainerBuild["Container Image Build"]
-        direction TB
-        A[1. Alpine base] --> B[2. Root installs Alpine packages]
-        B --> C[3. Create workspace user UID 1000]
-        C --> D[4. Install Rust as workspace user]
-        D --> E[5. Install Nix single-user]
-        E --> F[6. Install devenv via nix profile]
-        F --> G[7. Move /nix to /nix-template<br/>saves ~4GB in image]
-        G --> H[8. Move /home/workspace to /home/template]
-    end
-
-    ContainerBuild -.-> |First pod start| PodRuntime
-
-    subgraph PodRuntime["Runtime Kubernetes Pod"]
-        direction TB
-        I[1. entrypoint.sh detects empty /nix PVC] --> J[2. Copy /nix-template to /nix]
-        J --> K[3. Sync home dir template to PVC]
-        K --> L[4. Fix Nix profile symlink]
-        L --> M[5. Source nix.sh → nix/devenv available]
-    end
-
-    style ContainerBuild fill:#e1f5fe
-    style PodRuntime fill:#f3e5f5
-```
-
-The Nix store (~4GB) is stored as `/nix-template` in the image and copied to the PVC on first run. This saves ~4GB by storing nix only once in the image.
+The workspace uses **single-user Nix** to maintain rootless container compatibility. The Nix store (~4GB) is stored as `/nix-template` in the image and copied to the PVC on first run, saving ~4GB by storing nix only once in the image.
 
 #### CI/CD Pipeline
 
