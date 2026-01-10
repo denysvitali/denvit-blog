@@ -29,18 +29,18 @@ With the same amount of time I can now build more things. The output increase is
 
 ## What is Happy?
 
-[Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code and OpenAI's Codex, built by the community. It lets you use Claude Code from your phone, tablet, or browser instead of being tied to a terminal or tmux session.
+[Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code and OpenAI's Codex, built by the community. See the [official documentation](https://happy.engineering/docs/) for full details. It lets you use Claude Code from your phone, tablet, or browser instead of being tied to a terminal or tmux session.
 
 Key features:
 - **Mobile & Web access** - Use Claude Code from iOS, Android, or browser
 - **Real-time voice** - Speak commands and watch them execute (not just dictation)
-- **End-to-end encryption** - Uses TweetNaCl (same as Signal), zero-knowledge architecture
+- **End-to-end encryption** - Zero-trust architecture with secure key exchange
 - **Session sync** - Continue conversations across devices
 - **Push notifications** - Get alerted when input is needed
 
 I haven't used the TTS or voice input features yet - the text interface is already powerful enough for my needs.
 
-I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them. When I need to continue a session on my desktop, I push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
+I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them via the [real-time sync feature](https://happy.engineering/docs/features/real-time-sync/). When I need to continue a session on my desktop, I push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
 
 To get started, simply run:
 ```bash
@@ -83,7 +83,7 @@ In the past, I used Claude Code directly in a terminal by SSH-ing into my contai
 4. **Copy/paste is painful**: Copying code snippets or multi-line prompts into an SSH session on mobile is clunky and error-prone
 5. **Readability issues**: Terminal text renders too small on mobile screens, making code review difficult
 
-Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The mobile app features a dark theme, audio mode, custom server URLs, a better permissions UI, and the ability to create new sessions remotely. Text input on mobile is finally a first-class citizen.
+Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The mobile app features a dark theme, [audio mode](https://happy.engineering/docs/features/voice-coding-with-claude-code/), custom server URLs, a better permissions UI, and the ability to create new sessions remotely. Text input on mobile is finally a first-class citizen.
 
 ## The Happy Server Stack
 
@@ -141,11 +141,13 @@ graph TB
 
 The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork.
 
+Tailscale offers a [free Personal plan](https://tailscale.com/pricing) for homelab use with up to 100 devices and 3 users.
+
 The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts, ensuring the database schema is up-to-date before accepting connections.
 
 ### Tailscale Integration
 
-Both the Happy server and my workspaces are exposed via Tailscale:
+Both the Happy server and my workspaces are exposed via [Tailscale Kubernetes Operator](https://tailscale.com/kb/1236/kubernetes-operator):
 - **Happy Server**: `happy.<tailnet>.ts.net` - accessible from any Tailscale-connected device
 - **Workspaces**: Each workspace gets a Tailscale hostname like `workspace-denys.<tailnet>.ts.net`
 
@@ -180,9 +182,9 @@ Currently, I'm using Happy with three different models:
 
 | Model | Plan | Cost | Best For |
 |-------|------|------|----------|
-| **MiniMax M2.1** | [Starter](https://platform.minimax.io/subscribe/coding-plan) | $2 first month, then $10/month | Lightweight tasks, quick one-shots |
-| **GLM 4.7** | [Lite](https://z.ai/subscribe) | $6/month (valid to 2026-01-23) | Frontend, general coding |
-| **Claude Opus 4.5** | [Pro](https://claude.com/product/claude-code) | $17/month | Complex planning, multi-step tasks |
+| **MiniMax M2.1** | [Starter](https://platform.minimax.io/subscribe/coding-plan) | $10/month | Lightweight tasks, quick one-shots |
+| **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend, general coding |
+| **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step tasks |
 
 I use MiniMax for quick tasks and one-shots where I need speed and low cost. GLM 4.7 is my go-to for frontend work where it surprisingly excels. Claude Opus 4.5 is reserved for complex multi-step tasks that require careful planning.
 
@@ -307,9 +309,9 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 
 | Service | Cost |
 |---------|------|
-| **LLM APIs** | ~$25/month (MiniMax $10 + GLM $6 + Claude Pro $17) |
+| **LLM APIs** | ~$25-30/month (MiniMax $10 + GLM $3-6 + Claude Pro $17-20) |
 | **Backblaze B2** | ~$5/month for file storage |
-| **Tailscale** | Free for personal use |
+| **Tailscale** | [Free for personal use](https://tailscale.com/pricing) |
 | **Kubernetes** | Self-hosted (no cloud costs) |
 
 ## Conclusion
@@ -327,6 +329,9 @@ If you're interested in a similar setup, here's how to begin:
 ### Resources
 
 - [Happy Official Site](https://happy.engineering)
+- [Happy Documentation](https://happy.engineering/docs/)
 - [Happy GitHub](https://github.com/slopus/happy)
+- [Happy CLI GitHub](https://github.com/slopus/happy-cli)
+- [Happy Server GitHub](https://github.com/slopus/happy-server)
 - [My dev-workspace image](https://github.com/denysvitali/dev-workspace)
 - [Kubernetes configuration](https://github.com/denysvitali/homelab) (coming soon)
