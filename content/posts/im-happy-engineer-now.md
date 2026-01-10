@@ -151,7 +151,11 @@ Both the Happy server and my workspaces are exposed via Tailscale:
 
 This means I can connect from my phone, laptop, or any device with Tailscale installed without exposing services to the public internet. The Kubernetes Tailscale Operator handles the network configuration automatically, eliminating the hassle of configuring mTLS certificates - Tailscale handles all authentication and encryption at the network level.
 
-The security trade-off is worth noting: anyone with access to your Tailscale network can reach these services. I mitigate this by only authorizing trusted devices to my tailnet. If needed, I can SSH directly into any workspace container for debugging.
+The security trade-off is worth noting: anyone with access to your Tailscale network can potentially reach these services. I mitigate this in two ways:
+1. Only authorizing trusted devices to my tailnet
+2. Using Tailscale ACLs to restrict which devices can connect to the Happy services
+
+If needed, I can SSH directly into any workspace container for debugging.
 
 ## Patching the Android App
 
