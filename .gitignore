@@ -1,6 +1,7 @@
 /public
 /resources
 /.hugo_build.lock
+/themes/static
 /static/css/style.css
 *.css.map
 
