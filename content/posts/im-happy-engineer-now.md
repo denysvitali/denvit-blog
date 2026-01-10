@@ -11,14 +11,14 @@ I'm now officially a Happy engineer!
 
 In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works.
 
-Happy is becoming more and more my IDE, with MCP tool integration and remote development capabilities, I rarely need a traditional setup anymore.
+Happy is becoming more and more my IDE. With MCP tool integration and remote development capabilities, I rarely need a traditional setup anymore.
 
 <!--more-->
 <!-- toc -->
 
 ## Why I'm Happy
 
-The name of this post isn't just a clever play on words. I truly am a happier engineer thanks to AI-assisted coding.
+The name of this post isn't just a clever play on words. I truly am a *happier* engineer thanks to AI-assisted coding.
 
 I had many ideas and too little time to work on everything. The frustrating part wasn't programming itself - it was the gap between imagination and available hours. As I [wrote on Hacker News](https://news.ycombinator.com/item?id=45881365):
 
@@ -40,7 +40,7 @@ Key features:
 
 I haven't used the TTS or voice input features yet - the text interface is already powerful enough for my needs.
 
-I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), so I do sync sessions between these two devices. When I need to continue a session on my desktop, I simply push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
+I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them. When I need to continue a session on my desktop, I push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
 
 To get started, simply run:
 ```bash
@@ -60,14 +60,18 @@ Since I rely on Claude Code for my daily work, I needed a reliable solution. The
 
 ### Prerequisites
 
-To replicate this setup, you'll need:
+To replicate this setup, you'll need a running Kubernetes cluster with the following components:
 
-- **Kubernetes cluster** with the Tailscale Operator configured
-- **Tailscale account** with tailnet set up
-- **Longhorn** for persistent storage
-- **CloudNativePG** operator for PostgreSQL
-- **OpenBao** or HashiCorp Vault for secrets management
-- **Backblaze B2** (or S3-compatible) for file storage
+| Component | Purpose | My Choice |
+|-----------|---------|-----------|
+| **Kubernetes cluster** | Container orchestration | Self-hosted (k3s) |
+| **Tailscale Operator** | Secure network access | Kubernetes Operator |
+| **Persistent Storage** | Database & file storage | Longhorn |
+| **PostgreSQL** | Happy server database | CloudNativePG |
+| **Secrets Management** | API keys, credentials | OpenBao |
+| **Object Storage** | File uploads | Backblaze B2 |
+
+Setting up a homelab cluster from scratch is a significant undertaking. I documented my journey in [postmarketOS-powered Kubernetes cluster](/posts/pmos-k3s-cluster/), which covers running Kubernetes on old smartphones.
 
 ## Why Not Claude Code via SSH?
 
@@ -79,12 +83,7 @@ In the past, I used Claude Code directly in a terminal by SSH-ing into my contai
 4. **Copy/paste is painful**: Copying code snippets or multi-line prompts into an SSH session on mobile is clunky and error-prone
 5. **Readability issues**: Terminal text renders too small on mobile screens, making code review difficult
 
-Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The app features:
-- Dark theme
-- Audio mode
-- Custom server URLs
-- Better permissions UI
-- New session creation remotely
+Happy solves these issues by providing a proper client-server architecture that works great on mobile devices. The mobile app features a dark theme, audio mode, custom server URLs, a better permissions UI, and the ability to create new sessions remotely. Text input on mobile is finally a first-class citizen.
 
 ## The Happy Server Stack
 
@@ -140,7 +139,9 @@ graph TB
     class K8s k8s
 ```
 
-The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork. The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts.
+The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork.
+
+The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts, ensuring the database schema is up-to-date before accepting connections.
 
 ### Tailscale Integration
 
@@ -148,7 +149,9 @@ Both the Happy server and my workspaces are exposed via Tailscale:
 - **Happy Server**: `happy.<tailnet>.ts.net` - accessible from any Tailscale-connected device
 - **Workspaces**: Each workspace gets a Tailscale hostname like `workspace-denys.<tailnet>.ts.net`
 
-This means I can connect from my phone, laptop, or any device with Tailscale installed without exposing services to the public internet. The Kubernetes Tailscale Operator handles the network configuration automatically, and I avoid the hassle of configuring mTLS certificates - Tailscale handles all authentication and encryption at the network level. If needed, I can SSH directly into the container.
+This means I can connect from my phone, laptop, or any device with Tailscale installed without exposing services to the public internet. The Kubernetes Tailscale Operator handles the network configuration automatically, eliminating the hassle of configuring mTLS certificates - Tailscale handles all authentication and encryption at the network level.
+
+The security trade-off is worth noting: anyone with access to your Tailscale network can reach these services. I mitigate this by only authorizing trusted devices to my tailnet. If needed, I can SSH directly into any workspace container for debugging.
 
 ## Patching the Android App
 
@@ -156,13 +159,18 @@ I also use Happy on my Android phone. However, I had to patch the Android app be
 
 If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority. However, with Tailscale you can skip TLS entirely since Tailscale already encrypts the connection.
 
+> [!NOTE]
+> Tailscale's encryption means you don't need TLS termination at all. This simplifies configuration and eliminates certificate management overhead - a significant advantage over traditional VPN solutions.
+
 ### Annoyances
 
 One quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open.
 
 ## My LLM Setup
 
-Currently, I'm using Happy with three different models depending on the task:
+I've configured my Happy setup to use different LLM providers depending on the task. This gives me flexibility to optimize for cost, speed, or capability as needed.
+
+Currently, I'm using Happy with three different models:
 
 ### LLM Comparison
 
@@ -174,7 +182,9 @@ Currently, I'm using Happy with three different models depending on the task:
 
 I use MiniMax for quick tasks and one-shots where I need speed and low cost. GLM 4.7 is my go-to for frontend work where it surprisingly excels. Claude Opus 4.5 is reserved for complex multi-step tasks that require careful planning.
 
-Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` or individual sessions created on the host. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
+### Provider Switching
+
+Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` when it starts. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
 
 To make this work, the `happy daemon` needs to be started with specific environment variables. I use a simple setup script that I source when needed:
 
@@ -189,13 +199,11 @@ export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1"
 # export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1-lightning"
 ```
 
-The current workaround for using multiple LLM providers requires setting environment variables before starting `happy daemon`. A native configuration file would be cleaner.
-
-Now that the LLM setup is configured, here's how I access these models through my cloud development environment.
-
 ## The Workspace Setup
 
-Each workspace is a complete development environment using my custom [dev-workspace](https://github.com/denysvitali/dev-workspace) container image. The workspace runs entirely as non-root for Kubernetes Pod Security Standards (restricted) compliance.
+When you create a session in Happy, it spawns a **workspace** - a complete development environment running in a Kubernetes pod. Each workspace gives you an isolated shell where Claude Code can read files, run commands, and manage your codebase.
+
+I use a custom [dev-workspace](https://github.com/denysvitali/dev-workspace) container image that provides everything I need for development. The workspace runs entirely as a non-root user for Kubernetes Pod Security Standards (restricted) compliance.
 
 ### Workspace Features
 
@@ -275,7 +283,10 @@ I use a GitHub Personal Access Token (PAT) with access limited to only my author
 
 - **[woodpecker-ci-mcp](https://github.com/denysvitali/woodpecker-ci-mcp)** - Access Woodpecker CI build statuses, manage pipelines, and retrieve logs for debugging CI failures.
 
-My current approach uses a single workspace for convenience. For stronger security, you could have one workspace per repository with individual GitHub PATs for each - that way a compromised token only affects one repo.
+> [!WARNING]
+> My current approach uses a single workspace for convenience. For stronger security isolation, consider running one workspace per repository with individual GitHub PATs for each - that way a compromised token only affects one repo.
+
+For my personal use case, the convenience of a shared workspace outweighs the security trade-off. Your tolerance for this risk may vary depending on your threat model.
 
 ### Quick Reference
 
@@ -299,4 +310,19 @@ My current approach uses a single workspace for convenience. For stronger securi
 
 ## Conclusion
 
-Self-hosting Happy has given me a reliable way to use Claude Code across all my devices. While it required some patching and customization, the flexibility and control are worth it. If you're interested in a similar setup, check out [Happy](https://happy.engineering), the [Happy repository](https://github.com/slopus/happy), and my Kubernetes configuration.
+Self-hosting Happy has given me a reliable way to use Claude Code across all my devices. While it required some patching and customization, the flexibility and control are worth it.
+
+### Getting Started
+
+If you're interested in a similar setup, here's how to begin:
+
+1. **Try the public server first**: Run `npm i -g happy-coder && happy` to test Happy with the default public server
+2. **Explore the ecosystem**: Check out [Happy](https://happy.engineering), the [Happy repository](https://github.com/slopus/happy), and the [community Discord](https://discord.gg/Happy)
+3. **Consider self-hosting**: If you need reliability, ensure you have a running Kubernetes cluster and review the prerequisites in this post
+
+### Resources
+
+- [Happy Official Site](https://happy.engineering)
+- [Happy GitHub](https://github.com/slopus/happy)
+- [My dev-workspace image](https://github.com/denysvitali/dev-workspace)
+- [Kubernetes configuration](https://github.com/denysvitali/homelab) (coming soon)
