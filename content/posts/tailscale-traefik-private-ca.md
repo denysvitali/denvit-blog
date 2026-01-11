@@ -1,5 +1,5 @@
 +++
-date = '2026-01-11T00:00:00+01:00'
+date = '2025-12-01T00:00:00+01:00'
 draft = true
 publishdate = '2026-01-20T00:00:00+01:00'
 tags = ['kubernetes', 'tailscale', 'traefik', 'homelab', 'networking', 'mtls']
