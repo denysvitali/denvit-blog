@@ -11,7 +11,8 @@
       "Bash(git commit:*)",
       "Bash(git add:*)",
       "Bash(git push)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "mcp__web-search__searxng_web_search"
     ]
   }
 }
