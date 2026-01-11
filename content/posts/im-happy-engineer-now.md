@@ -160,12 +160,7 @@ If needed, I can SSH directly into any workspace container for debugging.
 
 ## Patching the Android App
 
-I also use Happy on my Android phone. However, I had to patch the Android app because my Kubernetes cluster uses a private CA, and the default Happy mobile apps won't trust my certificate. I submitted a fix in [slopus/happy#278](https://github.com/slopus/happy/pull/278).
-
-If you're self-hosting with a private Kubernetes cluster, be prepared to patch the mobile apps to trust your CA. The default trust stores won't include your internal certificate authority. However, with Tailscale you can skip TLS entirely since Tailscale already encrypts the connection.
-
-> [!NOTE]
-> Tailscale's encryption means you don't need TLS termination at all. This simplifies configuration and eliminates certificate management overhead - a significant advantage over traditional VPN solutions.
+I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all - the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
 
 ### Annoyances
 
