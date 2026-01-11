@@ -106,14 +106,13 @@ graph TB
 
     subgraph Tailscale[Tailscale Network]
         H1[Happy App]
-        H2[Happy CLI]
     end
 
     subgraph K8s[Kubernetes Cluster]
         S["Happy Server"]
         DB[(PostgreSQL)]
         R[(Redis)]
-        W[Workspace Pods]
+        W["Workspace Pods<br/>(with Happy Daemon)"]
     end
 
     subgraph External[External Services]
@@ -128,7 +127,7 @@ graph TB
     S --> DB
     S --> R
     S --> B2
-    H2 --> W
+    S --> W
     W --> LLM1
     W --> LLM2
     W --> LLM3
