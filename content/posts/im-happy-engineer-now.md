@@ -132,7 +132,16 @@ My self-hosted Happy server runs on Kubernetes as a coordinated set of services.
 | **Happy Server** | Node.js/Express (`ghcr.io/denysvitali/happy-server`) | Main API server on port 3000 |
 | **PostgreSQL** | CloudNativePG (1 replica, 10Gi on Longhorn) | Persistent data storage |
 | **Redis** | Redis 7 Alpine (single replica) | Caching and session management |
-| **Object Storage** | Backblaze B2 (S3-compatible) | File uploads and attachments |
+| **Object Storage** | Backblaze B2 (bucket: `denvit-happy`) | File uploads and attachments |
+
+**Production Features:**
+
+The Happy Server deployment includes several production-ready configurations:
+- **Pod Disruption Budget**: Ensures minimum availability during maintenance
+- **Resource Limits**: 128Mi/100m requests, 512Mi limits for predictable performance
+- **Health Probes**: Liveness and readiness probes for automatic recovery
+- **Automatic Secret Refresh**: ExternalSecrets operator updates secrets on change
+- **Database Migration**: Init container runs `npx prisma migrate deploy` before startup
 
 ### System Architecture
 
@@ -246,9 +255,19 @@ Key benefits of this approach:
 - **Centralized rotation**: Rotate credentials once in OpenBao, all services update automatically
 - **Kubernetes integration**: Native support for Kubernetes authentication methods
 
-The Happy Server is configured with OpenBao's Kubernetes authentication method, allowing pods to authenticate using their service accounts and retrieve only the secrets they're authorized to access.
+**My OpenBao Configuration:**
 
-> **Alternative:** If OpenBao or Vault seems like overkill for your setup, you can start with Kubernetes Secrets (encrypted with [KMS](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)) and migrate to a dedicated secret manager later as your needs grow.
+OpenBao runs in a highly available configuration within the cluster:
+- **3 replicas** with Raft storage for automatic failover and data consistency
+- **Static key sealing** for secure initialization without complex unsealing procedures
+- **TLS certificate management** via cert-manager for secure communication
+- **Kubernetes authentication** allowing pods to authenticate using service accounts
+- **Path-based secret organization** for logical separation between services
+
+The Happy Server is configured with OpenBao's Kubernetes authentication method, allowing pods to authenticate using their service accounts and retrieve only the secrets they're authorized to access. Secrets are automatically synchronized to Kubernetes `Secret` resources using the [External Secrets Operator](https://external-secrets.io/), with automatic refresh when values change in OpenBao.
+
+> [!TIP]
+> If OpenBao or Vault seems like overkill for your setup, you can start with Kubernetes Secrets (encrypted with [KMS](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)) and migrate to a dedicated secret manager later as your needs grow.
 
 ### Network Architecture
 
@@ -261,6 +280,15 @@ My hybrid approach combines Tailscale's mesh networking with Traefik's Kubernete
 - **No internal TLS needed** because Tailscale encrypts everything at the network layer (WireGuard), simplifying certificate management
 - **Direct debugging access**: I can SSH into any workspace pod for troubleshooting if needed via Tailscale's direct pod access
 - **Private CA integration**: Custom Certificate Authority for internal services, enabling proper TLS without exposing services publicly
+
+**My Traefik Configuration:**
+
+Traefik runs as a DaemonSet for optimal performance and host network access:
+- **Custom HTTP port**: 31801 (instead of standard 80)
+- **Custom HTTPS port**: 31444 (instead of standard 443)
+- **Host networking**: Direct access to host network interfaces for better performance
+- **Metrics integration**: Prometheus metrics for monitoring ingress traffic
+- **SSL termination**: Handles TLS certificate management for Happy and other services
 
 This setup keeps everything private within my tailnet while maintaining clean separation between external access and internal services. The Happy server is only accessible through Tailscale, meaning no open ports on the public internet.
 
@@ -395,6 +423,18 @@ When you create a session in Happy, it spawns a **workspace**—a complete devel
 
 I use a custom [dev-workspace](https://github.com/denysvitali/dev-workspace) container image that provides everything I need for development. The workspace runs entirely as a non-root user for Kubernetes Pod Security Standards (restricted) compliance.
 
+**Multi-User Support:**
+
+The workspace system supports multiple users through a template-based approach:
+- Each user gets their own workspace pod with isolated storage
+- Individual PersistentVolumeClaims per workspace for data isolation
+- Template-based workspace definitions for easy provisioning
+- Per-user SSH keys for secure authentication
+- Separate Nix stores to prevent conflicts between users
+
+> [!TIP]
+> While I currently use a single workspace for convenience, the template-based system makes it easy to provision separate workspaces for different users or projects. Each workspace has its own storage quota and SSH credentials, providing strong isolation between users.
+
 > **Why custom workspaces?** While Happy provides default workspace images, building your own lets you:
 > - Pre-install your favorite tools and languages
 > - Configure shell preferences (zsh themes, git aliases, etc.)
@@ -456,10 +496,20 @@ The workspace uses **single-user Nix** to maintain rootless container compatibil
 
 #### NetworkPolicy
 
-The workspace only allows egress to:
-- Tailscale namespace
-- DNS (kube-dns)
-- Happy server (`happy.happy.svc.cluster.local`)
+The workspace employs strict network isolation for security:
+
+**Egress restrictions** (blocks all private networks):
+- Allows public internet access for LLM APIs and package downloads
+- Allows DNS queries (kube-dns)
+- Allows Happy server access (`happy.happy.svc.cluster.local`)
+- Allows Tailscale namespace access for VPN connectivity
+- Blocks all other private network ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16)
+
+**Ingress restrictions**:
+- Allows SSH access from Tailscale only (port 2222)
+- Blocks all other inbound connections
+
+This comprehensive network policy ensures that even if a workspace pod is compromised, it cannot access other services in the cluster or private networks.
 
 #### Storage
 
