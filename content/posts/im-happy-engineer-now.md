@@ -46,7 +46,7 @@ Despite what the [happy documentation](https://happy.engineering/docs/features/r
 > Are you actually trying to write code on your phone?
 > No. Absolutely not. That would be miserable to spend all day on my phone.
 
-I use Happy differently. I'm not always in front of my computer - commuting, waiting at the doctor's office, or just away from my desk. Being able to nudge or ping Claude Code from a mobile app to do something is actually a life saver.
+I don't use Happy the way it's advertised. When I'm commuting, waiting in line, or just away from my computer, being able to ping Claude Code from my phone to handle something is a real time-saver.
 
 One example: configuring my cluster at home. I can ask Happy to set up a particular Helm chart in my GitOps repository, and it just works. This is exactly how I set up Jellyfin on my new cluster - no laptop required, just a quick conversation from my phone.
 
