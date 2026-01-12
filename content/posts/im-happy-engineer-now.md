@@ -318,7 +318,7 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 | Service | Cost |
 |---------|------|
 | **LLM APIs** | ~$17-28/month (MiniMax $2 + GLM $3-6 + Claude Pro $17-20) |
-| **Backblaze B2** | ~$5/month for file storage |
+| **Backblaze B2** | Negligible (a few MBs) |
 | **Tailscale** | [Free for personal use](https://tailscale.com/pricing) |
 | **Kubernetes** | Self-hosted (no cloud costs) |
 
