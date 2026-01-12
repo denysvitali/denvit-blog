@@ -109,7 +109,7 @@ Access method is determined by DNS — each service gets one or the other:
 
 | DNS Record | Access Method | Example |
 |------------|---------------|---------|
-| `*.example.com` → Public IP | mTLS (internet) | Photo access on phone |
+| `*.example.com` → Public IP | mTLS (internet) | Web apps (Prometheus, Grafana) |
 | `*.example.com` → Tailscale IP | Tailscale-only | Internal tools, Immich |
 
 A service cannot be both — it's one or the other based on which IP the DNS resolves to.
