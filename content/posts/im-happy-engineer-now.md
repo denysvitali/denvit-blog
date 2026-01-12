@@ -68,18 +68,20 @@ Since I rely on Claude Code for my daily work, I needed a reliable solution. The
 
 ### Prerequisites
 
-To replicate this setup, you'll need a running Kubernetes cluster with the following components:
+> **Note:** This section describes my self-hosted setup. If you just want to use Happy without self-hosting, all you need is a computer running Claude Code and the [happy-cli](https://github.com/slopus/happy-cli) to connect to the public or your own Happy server.
 
-| Component | Purpose | My Choice |
-|-----------|---------|-----------|
-| **Kubernetes cluster** | Container orchestration | Self-hosted (k3s) |
-| **Tailscale Operator** | Secure network access | Kubernetes Operator |
-| **Persistent Storage** | Database & file storage | Longhorn |
-| **PostgreSQL** | Happy server database | CloudNativePG |
-| **Secrets Management** | API keys, credentials | OpenBao |
-| **Object Storage** | File uploads | Backblaze B2 |
+To self-host Happy like I do, you'll need a Kubernetes cluster with the following components:
 
-Setting up a homelab cluster from scratch is a significant undertaking. I documented my journey in [postmarketOS-powered Kubernetes cluster](/posts/pmos-k3s-cluster/), which covers running Kubernetes on old smartphones.
+| Component | Purpose |
+|-----------|---------|
+| **Kubernetes cluster** | Container orchestration |
+| **Tailscale Operator** | Secure network access |
+| **Persistent Storage** | Database & file storage |
+| **PostgreSQL** | Happy server database |
+| **Secrets Management** | API keys, credentials |
+| **Object Storage** | File uploads |
+
+My cluster runs on [Talos Linux](https://www.talos.dev/), a purpose-built OS for Kubernetes that simplifies cluster management.
 
 ## Why Not Claude Code via SSH?
 
