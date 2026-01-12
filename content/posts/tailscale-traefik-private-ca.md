@@ -46,11 +46,9 @@ flowchart TB
     end
 
     subgraph K8s["Kubernetes Cluster"]
-        subgraph Nodes["Kubernetes Nodes"]
-            subgraph TraefikPod["Traefik Pod (hostNetwork)"]
-                TS["Tailscale\nUDP: 41621"]
-                Traefik["Traefik\n:3443"]
-            end
+        subgraph TraefikPod["Traefik Pod (hostNetwork)"]
+            TS["Tailscale\nUDP: 41621"]
+            Traefik["Traefik\n:3443"]
         end
 
         subgraph Cluster["Internal Services"]
