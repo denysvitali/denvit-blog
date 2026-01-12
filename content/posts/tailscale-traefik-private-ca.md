@@ -153,18 +153,27 @@ Routes can be configured with different authentication modes:
 
 ```yaml
 routes:
-  # Tailscale-only access
-  happy:
+  # Tailscale-only: accessible only from within the tailnet
+  internal-tool:
     auth: tailscale-only
 
-  # Tailscale + forward-auth fallback
-  argocd:
+  # Tailscale + OIDC: direct access from tailnet, or internet access via OIDC identity provider
+  shared-service:
     auth: tailscale-bypass
 
-  # mTLS required
-  sensitive:
+  # mTLS required: client certificate required for all access
+  sensitive-api:
     auth: mtls-strict
 ```
+
+The `tailscale-bypass` mode creates two IngressRoutes:
+
+| EntryPoint | Access | Authentication |
+|------------|--------|----------------|
+| `ts-secure` | From Tailscale network | None (direct access) |
+| `websecure` | From internet | OIDC via `forward-auth` middleware |
+
+This allows internal users fast, auth-free access while external users authenticate through an identity provider like Auth0 or Google Workspace.
 
 ## UDP Port Assignment for Tailscale
 
