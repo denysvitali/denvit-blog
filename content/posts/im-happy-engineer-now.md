@@ -211,7 +211,7 @@ graph TB
 The architecture follows a clear flow:
 
 1. **Client Connection**: Your Happy app (mobile or web) connects through Tailscale, creating a secure peer-to-peer tunnel to your cluster. All traffic is encrypted at the network layer via Tailscale's WireGuard protocol.
-2. **Ingress Routing**: Traefik receives the traffic and routes it to the Happy Server service within Kubernetes. Traefik handles SSL termination and HTTP/HTTPS routing.
+2. **Ingress Routing**: Traffic routes through Traefik to the Happy Server service. (For details on my Tailscale + Traefik setup, see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post.)
 3. **Server Processing**: Happy Server handles authentication, session management, and workspace creation. It fetches sensitive credentials (API keys, database passwords) from OpenBao at runtime.
 4. **Session Management**: I use a single persistent workspace. When you create a session, the `happy-daemon` running inside the workspace spawns a new Claude instance, which then connects to your configured LLM provider.
 5. **LLM Integration**: The workspace connects directly to your configured LLM provider (MiniMax, GLM, or Anthropic) via HTTPS API calls. This connection is independent of the Happy server and happens directly from the workspace pod.
@@ -264,26 +264,7 @@ OpenBao runs in a highly available configuration within the cluster with multipl
 
 ### Network Architecture
 
-My hybrid approach combines Tailscale's mesh networking with Traefik's Kubernetes-native routing (full details in my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post):
-
-**Why this combination works well:**
-
-- **Tailscale** provides zero-configuration networking with built-in authentication and encryption using WireGuard protocol
-- **Traefik** offers intelligent ingress routing, SSL termination, and service discovery within the cluster via Kubernetes Ingress resources
-- **No internal TLS needed** because Tailscale encrypts everything at the network layer (WireGuard), simplifying certificate management
-- **Direct debugging access**: I can SSH into any workspace pod for troubleshooting if needed via Tailscale's direct pod access
-- **Private CA integration**: Custom Certificate Authority for internal services, enabling proper TLS without exposing services publicly
-
-**My Traefik Configuration:**
-
-Traefik runs as a DaemonSet for optimal performance and host network access:
-- **Custom HTTP port**: 31801 (instead of standard 80)
-- **Custom HTTPS port**: 31444 (instead of standard 443)
-- **Host networking**: Direct access to host network interfaces for better performance
-- **Metrics integration**: Prometheus metrics for monitoring ingress traffic
-- **SSL termination**: Handles TLS certificate management for Happy and other services
-
-This setup keeps everything private within my tailnet while maintaining clean separation between external access and internal services. The Happy server is only accessible through Tailscale, meaning no open ports on the public internet.
+I use Tailscale for secure access combined with Traefik for ingress routing within the cluster. This hybrid approach keeps everything private within my tailnet—no open ports on the public internet. For full details on this setup, see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post.
 
 ## Patching the Android App
 
