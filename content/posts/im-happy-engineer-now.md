@@ -7,7 +7,7 @@ title = "I'm a Happy engineer now"
 +++
 
 > [!NOTE]
-> This post is a living document. Even though it's published, I continue to refine and update it as my setup evolves.
+> This post is a living document. Even though it's published, I continue to refine and update it—perfectionism shouldn't prevent sharing useful information.
 
 I'm now officially a Happy engineer!
 
