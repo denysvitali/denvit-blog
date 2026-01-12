@@ -100,10 +100,10 @@ To self-host Happy like I do, you'll need a Kubernetes cluster with the followin
 
 | Component | Purpose | Recommended Implementation |
 |-----------|---------|---------------------------|
-| **Kubernetes cluster** | Container orchestration | Any K8s distribution (v1.24+) |
-| **Tailscale Operator** | Secure network access | [Tailscale Kubernetes Operator](https://tailscale.com/kb/1239/kubernetes-operator/) |
+| **Kubernetes cluster** | Container orchestration | Any K8s distribution (v1.27+) |
+| **Tailscale Operator** | Secure network access | [Tailscale Kubernetes Operator](https://tailscale.com/kb/1236/kubernetes-operator/) |
 | **Persistent Storage** | Database & file storage | Longhorn, Ceph, Rook, or cloud storage |
-| **PostgreSQL** | Happy server database | [CloudNativePG](https://cloudnative-pg.io/) operator (v1.22+) |
+| **PostgreSQL** | Happy server database | [CloudNativePG](https://cloudnative-pg.io/) operator (v1.28+) |
 | **Secrets Management** | API keys, credentials | OpenBao, HashiCorp Vault, or Kubernetes Secrets |
 | **Object Storage** | File uploads | Backblaze B2, MinIO, or S3-compatible storage |
 
@@ -298,7 +298,7 @@ Different tasks call for different tools. Here's how I think about it:
 
 | Model | Plan | Cost | Best For |
 |-------|------|------|----------|
-| **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month** (promotional pricing) | Quick one-offs, simple refactors, routine tasks |
+| **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month first month** (then $10/month) | Quick one-offs, simple refactors, routine tasks |
 | **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend work, React/Vue components, general coding |
 | **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step refactors, architecture |
 
@@ -382,7 +382,7 @@ After sourcing the appropriate script, start the Happy daemon with your configur
 
 ### Cost Optimization Strategy
 
-By mixing providers strategically, I keep my monthly LLM spending around $22-28 total instead of paying for Claude Pro for everything. Quick tasks that don't need Opus's reasoning capabilities go to MiniMax or GLM, saving the expensive model for when it actually matters.
+By mixing providers strategically, I keep my monthly LLM spending around $22-36 total ($22 during promotional periods, $36 after) instead of paying for Claude Pro for everything. Quick tasks that don't need Opus's reasoning capabilities go to MiniMax or GLM, saving the expensive model for when it actually matters.
 
 ## The Workspace Setup
 
@@ -496,7 +496,7 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 
 | Service | Cost |
 |---------|------|
-| **LLM APIs** | ~$17-28/month (MiniMax $2 + GLM $3-6 + Claude Pro $17-20) |
+| **LLM APIs** | ~$22-36/month (MiniMax $2-10 + GLM $3-6 + Claude Pro $17-20) |
 | **Backblaze B2** | Negligible (a few MBs) |
 | **Tailscale** | [Free for personal use](https://tailscale.com/pricing) |
 | **Kubernetes** | Self-hosted (no cloud costs) |
@@ -515,7 +515,7 @@ If you're interested in a similar setup, here's how to begin:
 
 1. **Try the public server first**: Run `npm install -g happy-coder && happy` to test Happy with the default public server. This costs nothing and lets you experience the mobile workflow before committing to self-hosting.
 
-2. **Explore the ecosystem**: Check out [Happy](https://happy.engineering), the [Happy repository](https://github.com/slopus/happy), and the [community Discord](https://discord.gg/Happy). The community is active and welcoming—great places to ask questions and learn from others' setups.
+2. **Explore the ecosystem**: Check out [Happy](https://happy.engineering), the [Happy repository](https://github.com/slopus/happy), and the [community Discord](https://discord.gg/fX9WBAhyfD). The community is active and welcoming—great places to ask questions and learn from others' setups.
 
 3. **Consider self-hosting**: If you find yourself relying on Happy daily (like I did), self-hosting gives you reliability and control. Start with a simple Kubernetes setup using [k3s](https://k3s.io/) or [microk8s](https://microk8s.io/), then review the prerequisites in this post for a production-grade deployment.
 
@@ -537,4 +537,4 @@ If you're interested in a similar setup, here's how to begin:
 
 ---
 
-**Have questions about my setup?** Feel free to reach out on [GitHub](https://github.com/denysvitali) or join the [Happy Discord](https://discord.gg/Happy) to chat with the community. I'm always happy to help fellow developers get started with their own Happy setups!
+**Have questions about my setup?** Feel free to reach out on [GitHub](https://github.com/denysvitali) or join the [Happy Discord](https://discord.gg/fX9WBAhyfD) to chat with the community. I'm always happy to help fellow developers get started with their own Happy setups!
