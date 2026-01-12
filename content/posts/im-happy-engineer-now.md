@@ -6,6 +6,9 @@ tags = ['kubernetes', 'claude-code', 'happy', 'self-hosted', 'homelab']
 title = "I'm a Happy engineer now"
 +++
 
+> [!NOTE]
+> This post is a living document. Even though it's published, I continue to refine and update it as my setup evolves.
+
 I'm now officially a Happy engineer!
 
 In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works. I'll also share practical details about my LLM provider strategy, workspace configuration, and the lessons I learned along the way.
@@ -481,6 +484,28 @@ The workspace employs strict network isolation for security:
 - Blocks all other inbound connections
 
 This comprehensive network policy ensures that even if a workspace pod is compromised, it cannot access other services in the cluster or private networks.
+
+#### Security Philosophy: Why I Run Agents in "YOLO Mode"
+
+You might wonder why I bother with strict network isolation if I'm going to let AI agents run with minimal oversight. Here's my reasoning: I run my agents in what some might call "bypass permissions" mode—or as I like to think of it, "YOLO mode."
+
+The magic of AI agents and LLMs is their ability to work autonomously. If I have to babysit them—approving every file read, every command execution, every tool call—then I might as well do the work myself. The whole point is that they can operate independently, making progress while I'm doing something else.
+
+That said, I'm not reckless. I've made a calculated risk assessment:
+
+**The worst that can happen:**
+- My Personal Access Token leaks → I rotate it
+- My repos get exposed → most are public already, and the private ones will be eventually
+- The container goes rogue → I prune it and spin up a fresh one
+
+**What I'm protecting against:**
+- A rogue agent on my home network → unacceptable
+- Unrestricted access to production infrastructure → unacceptable
+- Compromised credentials affecting systems outside my control → unacceptable
+
+By running agents in an isolated workspace with no local network access, I get the best of both worlds: the agents can work autonomously without constant approval, but they're contained in a sandbox where the blast radius is limited to things I can easily restore or replace. It's a balance between trusting the AI to do its job and maintaining sensible boundaries.
+
+For me, this is the sweet spot. The convenience of autonomous agents far outweighs the minimal risk of a compromised workspace container, especially when that container can't touch anything critical.
 
 #### Storage
 
