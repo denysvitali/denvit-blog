@@ -33,7 +33,7 @@ What makes this truly powerful is mobility. Happy + Claude Code means I'm no lon
 [Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code, built by the community to untether your AI-assisted development from a traditional terminal. Think of it as a remote control for your coding environment—one that works from your phone, tablet, or browser instead of locking you into a tmux session or SSH connection. The [official documentation](https://happy.engineering/docs/) covers everything in depth, but here's the practical overview.
 
 > [!NOTE]
-> Happy is the client application that connects to Claude Code. Claude Code itself must be installed and running in your workspace or development environment.
+> Happy is the client application that connects to Claude Code. Claude Code / Codex should be configured with the credentials prior to starting the daemon `happy daemon start` or it can be interactively configured: `happy` spawns a wrapped Claude Code (`claude`) CLI.
 
 ### Core Features
 
