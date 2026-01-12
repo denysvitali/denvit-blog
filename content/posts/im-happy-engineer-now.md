@@ -41,7 +41,7 @@ I haven't used the TTS or voice input features yet - the text interface is alrea
 
 I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them via the [real-time sync feature](https://happy.engineering/docs/features/real-time-sync/).
 
-Despite what the [Happy announcement post](https://happy.engineering/docs/features/real-time-sync/) says:
+Despite what the [happy documentation](https://happy.engineering/docs/features/real-time-sync/) says:
 
 > Are you actually trying to write code on your phone?
 > No. Absolutely not. That would be miserable to spend all day on my phone.
