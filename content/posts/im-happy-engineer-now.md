@@ -95,9 +95,6 @@ Since I rely on Claude Code for my daily work, I needed a reliable solution. The
 
 ### Prerequisites
 
-> [!NOTE]
-> This section describes my self-hosted setup. If you just want to use Happy without self-hosting, all you need is a computer running Claude Code and the [happy-cli](https://github.com/slopus/happy-cli) to connect to the public or your own Happy server.
-
 To self-host Happy like I do, you'll need a Kubernetes cluster with the following components:
 
 | Component | Purpose | Recommended Implementation |
