@@ -57,7 +57,7 @@ flowchart TB
         ArgoCD["ArgoCD"]
     end
 
-    Client -->|"DNS: happy.k2.k8s.best"| NAT
+    Client -->|"DNS: happy.example.com"| NAT
     NAT -->|"Direct UDP\nNo DERP"| TS
     TS -->|"TCP :3443"| Traefik
     Traefik -->|"Route by Host"| Happy
@@ -109,8 +109,8 @@ Access method is determined by DNS — each service gets one or the other:
 
 | DNS Record | Access Method | Example |
 |------------|---------------|---------|
-| `*.k2.k8s.best` → Public IP | mTLS (internet) | Photo access on phone |
-| `*.k2.k8s.best` → Tailscale IP | Tailscale-only | Internal tools, Immich |
+| `*.example.com` → Public IP | mTLS (internet) | Photo access on phone |
+| `*.example.com` → Tailscale IP | Tailscale-only | Internal tools, Immich |
 
 A service cannot be both — it's one or the other based on which IP the DNS resolves to.
 
