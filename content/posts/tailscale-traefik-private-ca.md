@@ -45,16 +45,18 @@ flowchart TB
         NAT["UDP Port NAT\n41621 → 192.168.10.21\n41622 → 192.168.10.22\n41623 → 192.168.10.23"]
     end
 
-    subgraph Nodes["Kubernetes Nodes"]
-        subgraph TraefikPod["Traefik Pod (hostNetwork)"]
-            TS["Tailscale\nUDP: 41621"]
-            Traefik["Traefik\n:3443"]
+    subgraph K8s["Kubernetes Cluster"]
+        subgraph Nodes["Kubernetes Nodes"]
+            subgraph TraefikPod["Traefik Pod (hostNetwork)"]
+                TS["Tailscale\nUDP: 41621"]
+                Traefik["Traefik\n:3443"]
+            end
         end
-    end
 
-    subgraph Cluster["Internal Services"]
-        Happy["Happy Server"]
-        ArgoCD["ArgoCD"]
+        subgraph Cluster["Internal Services"]
+            Happy["Happy Server"]
+            ArgoCD["ArgoCD"]
+        end
     end
 
     Client -->|"DNS: happy.example.com"| NAT
