@@ -7,7 +7,7 @@ title = "I'm a Happy engineer now"
 +++
 
 > [!NOTE]
-> This post is a living document. Even though it's published, I continue to refine and update it—perfectionism shouldn't prevent sharing useful information.
+> This post is essentially a draft that I'm actively updating—sometimes multiple times per hour. Perfectionism shouldn't prevent sharing useful information.
 
 I'm now officially a Happy engineer!
 
