@@ -257,14 +257,7 @@ Key benefits of this approach:
 
 **My OpenBao Configuration:**
 
-OpenBao runs in a highly available configuration within the cluster:
-- **3 replicas** with Raft storage for automatic failover and data consistency
-- **Static key sealing** for secure initialization without complex unsealing procedures
-- **TLS certificate management** via cert-manager for secure communication
-- **Kubernetes authentication** allowing pods to authenticate using service accounts
-- **Path-based secret organization** for logical separation between services
-
-The Happy Server is configured with OpenBao's Kubernetes authentication method, allowing pods to authenticate using their service accounts and retrieve only the secrets they're authorized to access. Secrets are automatically synchronized to Kubernetes `Secret` resources using the [External Secrets Operator](https://external-secrets.io/), with automatic refresh when values change in OpenBao.
+OpenBao runs in a highly available configuration within the cluster with multiple replicas for automatic failover. It uses Kubernetes authentication, allowing pods to authenticate using their service accounts and retrieve only the secrets they're authorized to access. Secrets are automatically synchronized to Kubernetes `Secret` resources using the [External Secrets Operator](https://external-secrets.io/), with automatic refresh when values change.
 
 > [!TIP]
 > If OpenBao or Vault seems like overkill for your setup, you can start with Kubernetes Secrets (encrypted with [KMS](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)) and migrate to a dedicated secret manager later as your needs grow.
