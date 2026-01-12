@@ -25,9 +25,11 @@ As Tailscale's documentation states, they ["can't guarantee direct connections o
 
 Cloud environments exacerbate this: [AWS NAT Gateways](https://tailscale.com/kb/1445/kubernetes-operator-customization) are particularly known for hard NAT behavior, forcing all traffic through DERP relays.
 
-For my setup, I wanted **direct peer-to-peer connectivity**. DERP relays add latency and become a bottleneck — I have a 10Gbps connection and I want to use all of it for services like my NGINX file server that serves Transmission downloads or any other bandwidth-intensive workload.
+For my setup, I wanted **direct peer-to-peer connectivity**. DERP relays add latency and become a bottleneck — according to Tailscale's documentation, "[relayed connections] typically have higher latency" and "peer relays offer lower latency and better performance than DERP servers"[^derp]. I have a 10Gbps connection and I want to use all of it for services like my NGINX file server that serves Transmission downloads or any other bandwidth-intensive workload.
 
 I haven't yet run iperf3 to properly benchmark the link, but I was able to download files at 30 MB/s (240 Mbps) while on 5G — which means the connection wasn't going through DERP servers, as those would be significantly slower over a typical mobile connection.
+
+My homelab has only **one public IPv4 address**, which is a common constraint for residential and small ISP connections. This means I can't assign a unique public IP to each node. Instead, I need to use port mapping (NAT) on my router to direct traffic to the correct node.
 
 ## The Solution: Traefik as the Ingress Layer
 
@@ -81,19 +83,56 @@ flowchart TB
 
 ## Why Both Tailscale AND a Private CA?
 
-You might wonder: if Tailscale already provides encryption at the network layer, why add a private CA?
+Two access paths for different use cases:
 
-The answer is **defense in depth and future flexibility**:
+| Method | Best For | Battery Impact |
+|--------|----------|----------------|
+| **Tailscale** | Laptops, desktops, servers | Minimal (always-on anyway) |
+| **mTLS** | Mobile devices | None (no background service) |
 
-| Layer | Purpose |
-|-------|---------|
-| **Tailscale** | Network-level encryption and authentication. Any device on my tailnet can reach Traefik. |
-| **Private CA (OpenBao)** | Application-level authentication via mTLS. Certain routes can require valid client certificates. |
+### The Problem with Tailscale on Mobile
 
-This hybrid approach lets me:
-- **Leave some routes public** (with forward-auth via OAuth)
-- **Require mTLS for sensitive routes** (client certificate required)
-- **Have a clean security model** even if Tailscale access is compromised
+Tailscale is excellent for permanent devices, but it keeps the WireGuard tunnel active in the background. User reports indicate noticeable battery drain on phones[^wireguard-battery], with some users reporting 5-10% additional battery usage with constant connection. For my Android devices, I needed a cleaner alternative.
+
+### The Solution: mTLS as Tailscale Alternative
+
+Both paths terminate at Traefik on the same port (3443). The difference is how the client authenticates:
+
+- **Tailscale**: Device has a tailnet identity
+- **mTLS**: Client presents a valid certificate signed by my private CA
+
+### Per-Service Access Control
+
+Access method is determined by DNS — each service gets one or the other:
+
+| DNS Record | Access Method | Example |
+|------------|---------------|---------|
+| `*.k2.k8s.best` → Public IP | mTLS (internet) | Photo access on phone |
+| `*.k2.k8s.best` → Tailscale IP | Tailscale-only | Internal tools, Immich |
+
+A service cannot be both — it's one or the other based on which IP the DNS resolves to.
+
+### Why Some Services Need Tailscale
+
+The reason is **broken mTLS support** in some applications. Take [Immich](https://github.com/immich-app/immich) as an example.
+
+**Issue #15230** ([meta: experimental network features](https://github.com/immich-app/immich/issues/15230)) documents that Immich's mTLS implementation is fundamentally broken:
+
+- mTLS, self-signed certs, and user-installed CAs are marked as **experimental features**
+- They **don't work reliably**: video playback, foreground/background uploads, downloads, and app crashes are all affected
+- The maintainers explicitly state these are **not a priority**
+
+**My PR #22768** ([better mTLS support](https://github.com/immich-app/immich/pull/22768)) attempted to fix this by integrating OkHttp with proper Android trust store support. However, it was closed with:
+
+> "In its current form, it doesn't address the underlying issue and contains significant implementation flaws."
+
+The maintainers have explicitly stated they won't prioritize fixing this issue and closed my PR. Until Immich ships a proper mTLS implementation, it **must remain Tailscale-only** — the network-layer authentication is the only reliable security boundary.
+
+This is the value of my hybrid approach: I can enforce security at the network layer when the application layer is broken.
+
+### Unified Security Model
+
+Both paths terminate at Traefik, which enforces consistent routing and authentication policies regardless of origin. Whether a client came through Tailscale or the internet, Traefik applies the same rules to the backend service.
 
 ## The Traefik Configuration
 
@@ -143,7 +182,7 @@ PORT=$((41600 + OCTET))
 | `192.168.10.22` | 22 | 41622 |
 | `192.168.10.23` | 23 | 41623 |
 
-This formula guarantees every node gets a unique port without manual coordination. The base port 41600 is Tailscale's default, and adding the node's last octet creates a deterministic, conflict-free mapping.
+This formula guarantees every node gets a unique port without manual coordination. I use 41600 as the base (you can use any port, Tailscale's default is 41641[^ports]), and adding the node's last octet creates a deterministic, conflict-free mapping (e.g., 41621 = 41600 + 21).
 
 ### Router Configuration
 
@@ -161,14 +200,24 @@ This ensures external connections reach the correct node while keeping the inter
 
 This setup is the foundation for a more sophisticated security model:
 
-1. **mTLS for workspace pods**: Each workspace could get a unique client certificate
-2. **Service-to-service auth**: Pods can authenticate to each other via mTLS
-3. **Zero-trust internal networking**: Internal services require validated certificates
+1. **Expand mTLS services**: Move more services to public mTLS access as apps get fixed
+2. **Service-to-service auth**: Pods authenticate to each other via mTLS certificates
+3. **Per-device certificates**: Issue certificates with device-specific metadata for audit trails
+4. **Zero-trust internal networking**: Internal services require validated certificates regardless of origin
 
 I'll explore these possibilities in future posts.
 
 ## Conclusion
 
-Combining Tailscale's ease of use with Traefik's flexibility and a private CA for application-level security gives me the best of all worlds. The architecture is more complex, but it provides a clear path to mTLS-based security without sacrificing the simplicity of Tailscale's network mesh.
+Combining Tailscale's ease of use with Traefik's flexibility and a private CA gives me the best of all worlds:
 
-For most homelabbers, pure Tailscale is the right choice. But if you need direct connectivity, custom TLS termination, or a path to mTLS, this hybrid approach is worth considering.
+- **Battery-efficient mobile access** via mTLS
+- **Tailscale for apps with broken mTLS** implementations
+- **Defense in depth** with multiple authentication layers
+- **Flexibility to choose per service** based on requirements
+
+The architecture is more complex, but it provides a clear path to internet-accessible services without Tailscale while keeping sensitive tools restricted to the tailnet.
+
+[^derp]: Tailscale DERP Servers - https://tailscale.com/kb/1232/derp-servers
+[^ports]: Tailscale Connection Types - https://tailscale.com/kb/1257/connection-types
+[^wireguard-battery]: WireGuard battery impact reports - https://news.ycombinator.com/item?id=22860871, https://primevpndefender.com/does-wireguard-vpn-drain-battery/
