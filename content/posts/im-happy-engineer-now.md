@@ -77,7 +77,7 @@ To self-host Happy like I do, you'll need a Kubernetes cluster with the followin
 | **Kubernetes cluster** | Container orchestration |
 | **Tailscale Operator** | Secure network access |
 | **Persistent Storage** | Database & file storage |
-| **PostgreSQL** | Happy server database |
+| **PostgreSQL** | Happy server database (CloudNativePG) |
 | **Secrets Management** | API keys, credentials |
 | **Object Storage** | File uploads |
 
