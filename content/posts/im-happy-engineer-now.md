@@ -32,7 +32,8 @@ What makes this truly powerful is mobility. Happy + Claude Code means I'm no lon
 
 [Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code, built by the community to untether your AI-assisted development from a traditional terminal. Think of it as a remote control for your coding environment—one that works from your phone, tablet, or browser instead of locking you into a tmux session or SSH connection. The [official documentation](https://happy.engineering/docs/) covers everything in depth, but here's the practical overview.
 
-> **Note:** Happy is the client application that connects to Claude Code. Claude Code itself must be installed and running in your workspace or development environment.
+> [!NOTE]
+> Happy is the client application that connects to Claude Code. Claude Code itself must be installed and running in your workspace or development environment.
 
 ### Core Features
 
@@ -94,7 +95,8 @@ Since I rely on Claude Code for my daily work, I needed a reliable solution. The
 
 ### Prerequisites
 
-> **Note:** This section describes my self-hosted setup. If you just want to use Happy without self-hosting, all you need is a computer running Claude Code and the [happy-cli](https://github.com/slopus/happy-cli) to connect to the public or your own Happy server.
+> [!NOTE]
+> This section describes my self-hosted setup. If you just want to use Happy without self-hosting, all you need is a computer running Claude Code and the [happy-cli](https://github.com/slopus/happy-cli) to connect to the public or your own Happy server.
 
 To self-host Happy like I do, you'll need a Kubernetes cluster with the following components:
 
@@ -231,7 +233,8 @@ The PostgreSQL instance is configured with:
 - **10Gi persistent volume** on Longhorn (scalable as needed)
 - **Daily backups** to an off-cluster S3-compatible target
 
-> **Note:** For a production setup, I recommend running PostgreSQL with 3 replicas for automatic failover. My single-replica configuration is sufficient for personal use but wouldn't survive a node failure without manual intervention.
+> [!NOTE]
+> For a production setup, I recommend running PostgreSQL with 3 replicas for automatic failover. My single-replica configuration is sufficient for personal use but wouldn't survive a node failure without manual intervention.
 
 ### Secrets Management
 
@@ -282,7 +285,8 @@ To work around this, you have two options:
 **Option 2: Use a reverse proxy with valid certificates (Recommended)**
 Instead of modifying the app, set up a reverse proxy (like Traefik or Nginx) with valid Let's Encrypt certificates. This is what I do—Traefik handles SSL termination and presents valid certificates to the Happy app, while Tailscale handles the secure transport layer.
 
-> **Security Note:** Option 2 is safer because you don't need to modify the app, and you get proper certificate validation. Tailscale's encryption happens at the network layer (below TLS), so you're not losing any security—just adding TLS on top for application compatibility.
+> [!WARNING]
+> Option 2 is safer because you don't need to modify the app, and you get proper certificate validation. Tailscale's encryption happens at the network layer (below TLS), so you're not losing any security—just adding TLS on top for application compatibility.
 
 ### Current Annoyances
 
@@ -371,9 +375,11 @@ source ~/setup-claude.sh      # For complex tasks (uses official Anthropic API)
 
 After sourcing the appropriate script, start the Happy daemon with your configured provider. This isn't seamless—it requires a bit of shell work before each session—but it lets me match the right model to the right task without breaking the bank.
 
-> **Security Note:** Store your API keys securely. Consider using a secret manager like [OpenBao](https://github.com/openbao/openbao), [HashiCorp Vault](https://www.vaultproject.io/), or at minimum [environment files](https://github.com/ko1nksm/shdotenv#readme) that aren't tracked in Git. Never commit API keys to version control.
+> [!WARNING]
+> Store your API keys securely. Consider using a secret manager like [OpenBao](https://github.com/openbao/openbao), [HashiCorp Vault](https://www.vaultproject.io/), or at minimum [environment files](https://github.com/ko1nksm/shdotenv#readme) that aren't tracked in Git. Never commit API keys to version control.
 
-> **Pro Tip:** You can make this easier by creating shell aliases:
+> [!TIP]
+> You can make this easier by creating shell aliases:
 > ```bash
 > alias happy-minimax='source ~/setup-minimax.sh && happy'
 > alias happy-glm='source ~/setup-glm.sh && happy'
@@ -479,7 +485,8 @@ I use a GitHub Personal Access Token (PAT) with access limited to only my author
 
 For my personal use case, the convenience of a shared workspace outweighs the security trade-off. Your tolerance for this risk may vary depending on your threat model.
 
-> **Alternative approach:** If you want better isolation without managing multiple workspaces, consider using [GitHub's fine-grained PATs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token) which can limit access to specific repositories and even specific permissions (read-only vs. read-write).
+> [!TIP]
+> If you want better isolation without managing multiple workspaces, consider using [GitHub's fine-grained PATs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token) which can limit access to specific repositories and even specific permissions (read-only vs. read-write).
 
 ### Quick Reference
 
@@ -533,7 +540,8 @@ If you're interested in a similar setup, here's how to begin:
 
 ### Alternatives
 
-> **Looking for something simpler?** If Happy seems too complex for your needs, some folks in the community recommend [HAPI](https://github.com/tiann/hapi/blob/main/docs/guide/why-hapi.md) as a lighter-weight alternative. I haven't tried it personally, so I can't vouch for it, but it might be worth exploring if you don't need all of Happy's features.
+> [!TIP]
+> If Happy seems too complex for your needs, some folks in the community recommend [HAPI](https://github.com/tiann/hapi/blob/main/docs/guide/why-hapi.md) as a lighter-weight alternative. I haven't tried it personally, so I can't vouch for it, but it might be worth exploring if you don't need all of Happy's features.
 
 ---
 
