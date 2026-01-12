@@ -1,5 +1,6 @@
 +++
 date = '2026-01-12T00:00:00+01:00'
+description = 'I explain what Happy is, why I self-host it, and how my Kubernetes-based setup works with multiple LLM providers.'
 draft = false
 publishdate = '2026-01-12T00:00:00+01:00'
 tags = ['kubernetes', 'claude-code', 'happy', 'self-hosted', 'homelab']
