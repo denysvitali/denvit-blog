@@ -132,7 +132,7 @@ My self-hosted Happy server runs on Kubernetes as a coordinated set of services.
 | **Happy Server** | Node.js/Express (`ghcr.io/denysvitali/happy-server`) | Main API server on port 3000 |
 | **PostgreSQL** | CloudNativePG (1 replica, 10Gi on Longhorn) | Persistent data storage |
 | **Redis** | Redis 7 Alpine (single replica) | Caching and session management |
-| **Object Storage** | Backblaze B2 (bucket: `denvit-happy`) | File uploads and attachments |
+| **Object Storage** | Backblaze B2 (S3-compatible) | File uploads and attachments |
 
 **Production Features:**
 
