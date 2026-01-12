@@ -8,61 +8,87 @@ title = "I'm a Happy engineer now"
 
 I'm now officially a Happy engineer!
 
-In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works.
+In this post, I'll explain what Happy is, why I decided to self-host it, and how my setup works. I'll also share practical details about my LLM provider strategy, workspace configuration, and the lessons I learned along the way.
 
-Happy is becoming more and more my IDE. With MCP tool integration and remote development capabilities, I rarely need a traditional setup anymore.
+Happy is becoming more than just a tool—it's evolving into my primary development environment. With MCP tool integration and remote development capabilities, I rarely need a traditional IDE setup anymore.
 
 <!--more-->
 <!-- toc -->
 
 ## Why I'm Happy
 
-The name of this post isn't just a clever play on words. I truly am a *happier* engineer thanks to AI-assisted coding.
+The title of this post isn't just a clever play on words. I genuinely am a *happier* engineer thanks to AI-assisted coding.
 
-I had many ideas and too little time to work on everything. The frustrating part wasn't programming itself - it was the gap between imagination and available hours. As I [wrote on Hacker News](https://news.ycombinator.com/item?id=45881365):
+Like many developers, I struggled with the gap between having ideas and having time to implement them. The frustration wasn't programming itself—I love writing code. The problem was scale: I had countless side project ideas and far too few hours to make them reality. As I [wrote on Hacker News](https://news.ycombinator.com/item?id=45881365):
 
 > I truly enjoy programming, but the most frustrating part for me was that I had many ideas and too little time to work on everything.
 > Thanks to AI I can now work on many side projects at a time, and most importantly just get things done quickly and most of the time in good enough (or sometimes excellent) results.
 
-With the same amount of time I can now build more things. The output increase is significant. It's not about the process, it's about the result, and Happy + Claude Code makes this possible from anywhere.
+AI assistance has transformed my development workflow. I can now tackle multiple projects simultaneously, ship features faster, and spend less time on repetitive tasks. The productivity boost is substantial—not because I'm writing more code, but because I'm focusing on the right problems: architecture, design, and creative solutions rather than boilerplate and debugging.
+
+What makes this truly powerful is mobility. Happy + Claude Code means I'm no longer tethered to my desk. I can review pull requests during my commute, debug issues while waiting in line, or deploy updates from my couch. The ability to make progress from anywhere—on a tablet, a phone, or a laptop—has fundamentally changed how I approach software development.
 
 ## What is Happy?
 
-[Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code and OpenAI's Codex, built by the community. See the [official documentation](https://happy.engineering/docs/) for full details. It lets you use Claude Code from your phone, tablet, or browser instead of being tied to a terminal or tmux session.
+[Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code, built by the community to untether your AI-assisted development from a traditional terminal. Think of it as a remote control for your coding environment—one that works from your phone, tablet, or browser instead of locking you into a tmux session or SSH connection. The [official documentation](https://happy.engineering/docs/) covers everything in depth, but here's the practical overview.
 
-Key features:
-- **Mobile & Web access** - Use Claude Code from iPhone, Android, or browser
-- **Real-time voice** - Speak commands and watch them execute (not just dictation)
-- **End-to-end encryption** - Zero-trust architecture with secure key exchange
-- **Session sync** - Continue conversations across devices
-- **Push notifications** - Get alerted when input is needed
+> **Note:** Happy is the client application that connects to Claude Code. Claude Code itself must be installed and running in your workspace or development environment.
 
-I haven't used the TTS or voice input features yet - the text interface is already powerful enough for my needs.
+### Core Features
 
-I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them via the [real-time sync feature](https://happy.engineering/docs/features/real-time-sync/).
+- **Mobile & Web Access** - Use Claude Code from iPhone, Android, or any modern browser
+- **Real-Time Voice** - Speak commands naturally and watch them execute live (not simple dictation—actual command parsing and execution)
+- **End-to-End Encryption** - Zero-trust architecture with secure key exchange keeps your code private
+- **Session Sync** - Start a conversation on your phone, continue on your laptop—everything stays in sync
+- **Push Notifications** - Get alerted when Claude needs your input, so you never miss a beat
 
-Despite what the [happy documentation](https://happy.engineering/docs/features/real-time-sync/) says:
+### How I Actually Use It
+
+I primarily use Happy on mobile devices—specifically my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone—leveraging the [real-time sync feature](https://happy.engineering/docs/features/real-time-sync/) to maintain continuity across devices. I haven't deeply explored the voice features yet; the text interface has proven more than sufficient for my workflow.
+
+The official documentation asks rhetorically:
 
 > Are you actually trying to write code on your phone?
 > No. Absolutely not. That would be miserable to spend all day on my phone.
 
-I don't use Happy the way it's advertised. When I'm commuting, waiting in line, or just away from my computer, being able to ping Claude Code from my phone to handle something is a real time-saver.
+But I've found a different use case that's equally valuable: **micro-sessions** throughout the day. When I'm commuting, waiting in line, or just away from my workstation, Happy lets me make progress in bite-sized chunks. It's not about replacing my desk—it's about reclaiming dead time.
 
-One example: configuring my cluster at home. I can ask Happy to set up a particular Helm chart in my GitOps repository, and it just works. This is exactly how I set up Jellyfin on my new cluster - no laptop required, just a quick conversation from my phone.
+#### A Real Example
 
-To get started, simply run:
-```bash
-npm i -g happy-coder && happy
+Here's how this works in practice: I recently needed to deploy Jellyfin to my home Kubernetes cluster while I was out running errands. Instead of waiting until I got home, I opened Happy on my phone and had a conversation:
+
+```
+"Set up Jellyfin in my cluster using Helm via GitOps"
 ```
 
-The project consists of several components:
-- [happy](https://github.com/slopus/happy) - Mobile and web client (React Native)
-- [happy-cli](https://github.com/slopus/happy-cli) - CLI to connect your local Claude Code to mobile device
-- [happy-server](https://github.com/slopus/happy-server) - Backend server
+Happy connected to my workspace, generated the Helm chart configuration, created the pull request to my GitOps repository, and handled the deployment—all while I was walking to the grocery store. By the time I got home, Jellyfin was running. No laptop required, no SSH pain, just a quick conversation from my phone.
+
+This is the real power of Happy: it transforms those "I'll handle this later" tasks into "I'll handle this now" moments.
+
+### Getting Started
+
+If you want to try Happy with the public server, installation is straightforward. First, ensure you have the latest LTS version of [Node.js](https://nodejs.org/) installed, then run:
+
+```bash
+npm install -g happy-coder && happy
+```
+
+This will install the Happy CLI and launch the setup wizard, which will guide you through connecting to the public Happy server or configuring your own.
+
+### Project Architecture
+
+Happy is modular by design, consisting of three main components:
+
+- **[happy](https://github.com/slopus/happy)** - The mobile and web client (built with React Native)
+- **[happy-cli](https://github.com/slopus/happy-cli)** - CLI tool that bridges your local Claude Code installation to mobile devices
+- **[happy-server](https://github.com/slopus/happy-server)** - Backend server that handles authentication, session management, and device synchronization
 
 ## Why I self-hosted
 
-I started using the public Happy server a while ago. However, over time, the API endpoint started timing out frequently, and eventually, it stopped working altogether. This is documented in [slopus/happy#295](https://github.com/slopus/happy/issues/295).
+> [!NOTE]
+> **Not everyone needs to self-host!** If the public Happy server works well for you, there's no need to run your own infrastructure. Self-hosting is only necessary if you encounter reliability issues (see [slopus/happy#295](https://github.com/slopus/happy/issues/295)) or want full control over your setup.
+
+I started using the public Happy server a while ago. However, over time, the API endpoint started timing out frequently, and eventually, it stopped working altogether.
 
 Since I rely on Claude Code for my daily work, I needed a reliable solution. The answer was clear: self-host the Happy server.
 
@@ -72,16 +98,16 @@ Since I rely on Claude Code for my daily work, I needed a reliable solution. The
 
 To self-host Happy like I do, you'll need a Kubernetes cluster with the following components:
 
-| Component | Purpose |
-|-----------|---------|
-| **Kubernetes cluster** | Container orchestration |
-| **Tailscale Operator** | Secure network access |
-| **Persistent Storage** | Database & file storage |
-| **PostgreSQL** | Happy server database (CloudNativePG) |
-| **Secrets Management** | API keys, credentials |
-| **Object Storage** | File uploads |
+| Component | Purpose | Recommended Implementation |
+|-----------|---------|---------------------------|
+| **Kubernetes cluster** | Container orchestration | Any K8s distribution (v1.24+) |
+| **Tailscale Operator** | Secure network access | [Tailscale Kubernetes Operator](https://tailscale.com/kb/1239/kubernetes-operator/) |
+| **Persistent Storage** | Database & file storage | Longhorn, Ceph, Rook, or cloud storage |
+| **PostgreSQL** | Happy server database | [CloudNativePG](https://cloudnative-pg.io/) operator (v1.22+) |
+| **Secrets Management** | API keys, credentials | OpenBao, HashiCorp Vault, or Kubernetes Secrets |
+| **Object Storage** | File uploads | Backblaze B2, MinIO, or S3-compatible storage |
 
-My cluster runs on [Talos Linux](https://www.talos.dev/), a purpose-built OS for Kubernetes that simplifies cluster management.
+My cluster runs on [Talos Linux](https://www.talos.dev/), a purpose-built OS for Kubernetes that simplifies cluster management and provides enhanced security through its immutable infrastructure approach. If you're just getting started with Kubernetes, consider lighter alternatives like [k3s](https://k3s.io/) or [microk8s](https://microk8s.io/) for testing before deploying to production.
 
 ## Why Not Claude Code via SSH?
 
@@ -97,127 +123,278 @@ Happy solves these issues by providing a proper client-server architecture that 
 
 ## The Happy Server Stack
 
-My Happy server runs on Kubernetes with the following components:
+My self-hosted Happy server runs on Kubernetes as a coordinated set of services. Here's what powers it:
 
-| Component | Description |
-|-----------|-------------|
-| **Happy Server** | Node.js/Express server (`ghcr.io/denysvitali/happy-server`) on port 3000 |
-| **PostgreSQL** | CloudNativePG cluster (1 instance, 10Gi storage on Longhorn) |
-| **Redis** | Single replica Redis 7 Alpine for caching/sessions |
-| **S3 Storage** | Backblaze B2 for file storage |
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **Happy Server** | Node.js/Express (`ghcr.io/denysvitali/happy-server`) | Main API server on port 3000 |
+| **PostgreSQL** | CloudNativePG (1 replica, 10Gi on Longhorn) | Persistent data storage |
+| **Redis** | Redis 7 Alpine (single replica) | Caching and session management |
+| **Object Storage** | Backblaze B2 (S3-compatible) | File uploads and attachments |
+
+### System Architecture
+
+Here's how everything connects together:
 
 ```mermaid
 graph TB
-    subgraph Devices[My Devices]
+    subgraph Devices["User Devices"]
         D1[Smartphone]
         D2[Daylight Tablet]
         D3[Laptop]
     end
 
-    subgraph HappyApp[Happy App]
-        HA[Happy App Instance]
+    subgraph HappyClient["Happy Client Apps"]
+        HA[Happy Mobile/Web]
     end
 
-    subgraph Network[Tailscale + Traefik]
-        direction TB
-        TS[Tailscale Network]
-        TR[Traefik Ingress]
+    subgraph Network["Secure Network Layer"]
+        TS[Tailscale VPN<br/>Mesh Network]
+        TR[Traefik Ingress<br/>SSL Termination]
     end
 
-    subgraph K8s[Kubernetes Cluster]
-        S["Happy Server"]
-        DB[(PostgreSQL)]
-        R[(Redis)]
-        W["Workspace Pods<br/>(with Happy Daemon)"]
+    subgraph K8s["Kubernetes Cluster (Talos)"]
+        subgraph HappyNamespace["happy Namespace"]
+            S[Happy Server<br/>Node.js on :3000]
+            DB[(PostgreSQL<br/>CloudNativePG)]
+            R[(Redis Cache<br/>v7 Alpine)]
+        end
+        subgraph WorkspaceNamespace["workspace Namespace"]
+            W[Workspace Pods<br/>dev-workspace container<br/>happy-daemon + Claude Code]
+        end
     end
 
-    subgraph External[External Services]
-        B2[Backblaze B2]
-        LLM1[MiniMax API]
-        LLM2[GLM API]
-        LLM3[Claude API]
+    subgraph External["External Services"]
+        B2[Backblaze B2<br/>S3-compatible Storage]
+        LLM[LLM API Providers<br/>MiniMax · GLM · Anthropic]
     end
 
-    Devices --> HappyApp
-    HappyApp --> Network
-    Network --> S
-    S --> DB
-    S --> R
-    S --> B2
-    S <--> W
-    W --> LLM1
-    W --> LLM2
-    W --> LLM3
+    subgraph Security["Security Layer"]
+        OB[OpenBao<br/>Secrets Management]
+    end
 
-    classDef tailscale fill:#663399,color:#fff
-    classDef k8s fill:#326CE5,color:#fff
-    class TS,TR tailscale
-    class K8s,S,DB,R,W k8s
+    Devices -->|"Encrypted TLS"| HappyClient
+    HappyClient -->|"Tailscale Tunnel"| Network
+    Network -->|"HTTP(S) Routing"| S
+    S -->|"SQL Queries"| DB
+    S -->|"Cache Operations"| R
+    S -->|"S3 Protocol"| B2
+    S <-->|"gRPC/HTTP<br/>Session Management"| W
+    W -->|"HTTPS API Calls"| LLM
+    S -->|"Fetch Secrets"| OB
+
+    classDef client fill:#2ecc71,stroke:#444,stroke-width:2px,color:#fff
+    classDef network fill:#9b59b6,stroke:#444,stroke-width:2px,color:#fff
+    classDef k8s fill:#3498db,stroke:#444,stroke-width:2px,color:#fff
+    classDef external fill:#e67e22,stroke:#444,stroke-width:2px,color:#fff
+    classDef security fill:#e74c3c,stroke:#444,stroke-width:2px,color:#fff
+
+    class D1,D2,D3,HA client
+    class TS,TR network
+    class S,DB,R,W k8s
+    class B2,LLM external
+    class OB security
 ```
 
-The server is exposed via [Tailscale Kubernetes Operator](/posts/tailscale-traefik-private-ca/) to Traefik, which handles ingress routing. Secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork.
+### How It Works
 
-The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts, ensuring the database schema is up-to-date before accepting connections.
+The architecture follows a clear flow:
+
+1. **Client Connection**: Your Happy app (mobile or web) connects through Tailscale, creating a secure peer-to-peer tunnel to your cluster. All traffic is encrypted at the network layer via Tailscale's WireGuard protocol.
+2. **Ingress Routing**: Traefik receives the traffic and routes it to the Happy Server service within Kubernetes. Traefik handles SSL termination and HTTP/HTTPS routing.
+3. **Server Processing**: Happy Server handles authentication, session management, and workspace creation. It fetches sensitive credentials (API keys, database passwords) from OpenBao at runtime.
+4. **Session Management**: I use a single persistent workspace. When you create a session, the `happy-daemon` running inside the workspace spawns a new Claude instance, which then connects to your configured LLM provider.
+5. **LLM Integration**: The workspace connects directly to your configured LLM provider (MiniMax, GLM, or Anthropic) via HTTPS API calls. This connection is independent of the Happy server and happens directly from the workspace pod.
+
+### Database & Storage
+
+The Happy Server uses an **init container** pattern to handle database migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+This runs Prisma migrations before the main container starts, ensuring your database schema is always up-to-date before the server accepts connections.
+
+**Why CloudNativePG?**
+
+I chose [CloudNativePG](https://cloudnative-pg.io/) over plain PostgreSQL containers because it provides:
+
+- Automated backups with retention policies
+- Automatic failover to standby replicas
+- Point-in-time recovery (PITR) capabilities
+- Connection pooling via PgBouncer integration
+- Native Kubernetes integration via Operators
+
+The PostgreSQL instance is configured with:
+- **1 replica** (can be scaled to 3 for high availability)
+- **10Gi persistent volume** on Longhorn (scalable as needed)
+- **Daily backups** to an off-cluster S3-compatible target
+
+> **Note:** For a production setup, I recommend running PostgreSQL with 3 replicas for automatic failover. My single-replica configuration is sufficient for personal use but wouldn't survive a node failure without manual intervention.
+
+### Secrets Management
+
+Rather than hardcoding API keys and passwords, I use [OpenBao](https://github.com/openbao/openbao) (HashiCorp Vault's open-source fork). The Happy Server retrieves secrets at runtime, keeping credentials out of Git and providing centralized rotation.
+
+Key benefits of this approach:
+- **Zero secrets in Git**: No API keys, passwords, or tokens in version control
+- **Dynamic secrets**: Support for time-limited credentials that auto-expire
+- **Audit logging**: Track which services access which secrets and when
+- **Centralized rotation**: Rotate credentials once in OpenBao, all services update automatically
+- **Kubernetes integration**: Native support for Kubernetes authentication methods
+
+The Happy Server is configured with OpenBao's Kubernetes authentication method, allowing pods to authenticate using their service accounts and retrieve only the secrets they're authorized to access.
+
+> **Alternative:** If OpenBao or Vault seems like overkill for your setup, you can start with Kubernetes Secrets (encrypted with [KMS](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)) and migrate to a dedicated secret manager later as your needs grow.
 
 ### Network Architecture
 
-My setup uses a hybrid Tailscale + Traefik approach (see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post for details):
+My hybrid approach combines Tailscale's mesh networking with Traefik's Kubernetes-native routing (full details in my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post):
 
-1. **Happy App** connects via Tailscale to reach the cluster
-2. **Traefik** handles ingress routing within the Kubernetes cluster
-3. **Happy Server** receives requests and manages workspace lifecycle
-4. **Workspaces** run as pods within the cluster, connecting to the Happy Server internally
+**Why this combination works well:**
 
-This architecture provides direct peer-to-peer connectivity while keeping services private within my tailnet. Tailscale handles authentication and encryption at the network layer, eliminating the need for TLS certificates on internal services.
+- **Tailscale** provides zero-configuration networking with built-in authentication and encryption using WireGuard protocol
+- **Traefik** offers intelligent ingress routing, SSL termination, and service discovery within the cluster via Kubernetes Ingress resources
+- **No internal TLS needed** because Tailscale encrypts everything at the network layer (WireGuard), simplifying certificate management
+- **Direct debugging access**: I can SSH into any workspace pod for troubleshooting if needed via Tailscale's direct pod access
+- **Private CA integration**: Custom Certificate Authority for internal services, enabling proper TLS without exposing services publicly
 
-If needed, I can SSH directly into any workspace container for debugging.
+This setup keeps everything private within my tailnet while maintaining clean separation between external access and internal services. The Happy server is only accessible through Tailscale, meaning no open ports on the public internet.
 
 ## Patching the Android App
 
-I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all - the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
+I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all—the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
 
-### Annoyances
+### The Challenge
 
-One quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open.
+The official Happy app enforces strict TLS certificate validation, which is great for security but problematic when using self-signed certificates or custom Tailscale domains. When you try to connect to a self-hosted instance via Tailscale, the app will reject the connection because it can't validate the certificate chain against a trusted root CA.
+
+### The Solution
+
+To work around this, you have two options:
+
+**Option 1: Build from source with custom certificates**
+1. Fork and clone [happy](https://github.com/slopus/happy)
+2. Add your custom certificate authority to the app's trust store
+3. Build the modified APK and install it on your device
+
+**Option 2: Use a reverse proxy with valid certificates (Recommended)**
+Instead of modifying the app, set up a reverse proxy (like Traefik or Nginx) with valid Let's Encrypt certificates. This is what I do—Traefik handles SSL termination and presents valid certificates to the Happy app, while Tailscale handles the secure transport layer.
+
+> **Security Note:** Option 2 is safer because you don't need to modify the app, and you get proper certificate validation. Tailscale's encryption happens at the network layer (below TLS), so you're not losing any security—just adding TLS on top for application compatibility.
+
+### Current Annoyances
+
+Even with everything working, there's one quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open. This is a known issue that the Happy community is aware of and working to address.
 
 ## My LLM Setup
 
-I've configured my Happy setup to use different LLM providers depending on the task. This gives me flexibility to optimize for cost, speed, or capability as needed.
+I've configured my Happy setup to use different LLM providers depending on the task at hand. This multi-provider approach gives me the flexibility to optimize for cost, speed, or capability based on what I'm trying to accomplish.
 
-Currently, I'm using Happy with three different models:
+### Choosing the Right Model
 
-### LLM Comparison
+Different tasks call for different tools. Here's how I think about it:
 
 | Model | Plan | Cost | Best For |
 |-------|------|------|----------|
-| **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month** (promotional first-month pricing) | Lightweight tasks, quick one-shots |
-| **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend, general coding |
-| **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step tasks |
+| **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month** (promotional pricing) | Quick one-offs, simple refactors, routine tasks |
+| **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend work, React/Vue components, general coding |
+| **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step refactors, architecture |
 
-I use MiniMax for quick tasks and one-shots where I need speed and low cost. GLM 4.7 is my go-to for frontend work where it surprisingly excels. Claude Opus 4.5 is reserved for complex multi-step tasks that require careful planning.
+**How I use them in practice:**
 
-### Provider Switching
+- **MiniMax** is my workhorse for fast, inexpensive tasks. When I need to quickly rename variables across a file, extract a function, or make routine changes, MiniMax gets the job done instantly at minimal cost.
 
-Switching between LLM providers (MiniMax, GLM, Anthropic) isn't something you can do at session creation time in the mobile app. The provider configuration is applied to the `happy daemon` when it starts. The community is working on this - [PR #272](https://github.com/slopus/happy/pull/272) adds one-touch profiles and multi-backend support.
+- **GLM 4.7** surprises me with its frontend capabilities. It handles React components, CSS adjustments, and UI-related work remarkably well. If I'm building or modifying user interfaces, GLM is usually my first choice.
 
-To make this work, the `happy daemon` needs to be started with specific environment variables. I use a simple setup script that I source when needed:
+- **Claude Opus 4.5** comes out for the heavy lifting. Complex refactors that require understanding multiple files, architectural decisions, or tasks that need careful planning and step-by-step execution—that's Opus territory. It's the most expensive, but for tricky problems it's worth every penny.
+
+### How Provider Switching Works
+
+Here's the current state of provider switching in Happy (as of this writing):
+
+**The limitation:** You can't switch providers from within the Happy mobile app when creating a new session. The provider configuration is locked in when the `happy daemon` process starts in your workspace.
+
+**The workaround:** I use shell scripts to set environment variables before starting the daemon. Each script configures a different provider by setting the `ANTHROPIC_*` environment variables that the daemon reads at startup.
+
+**The future:** The Happy community is actively working on this. [PR #272](https://github.com/slopus/happy/pull/272) proposes one-touch profile switching and multi-backend support, which would make this much smoother.
+
+### Setting Up Provider Scripts
+
+Here's my practical setup. I maintain separate scripts for each provider and source the one I need before starting a session:
+
+**MiniMax configuration** (`~/setup-minimax.sh`):
 
 ```bash
-~$ cat ~/setup-minimax.sh
 #!/bin/bash
 export ANTHROPIC_BASE_URL=https://api.minimax.io/anthropic
-export ANTHROPIC_AUTH_TOKEN=foo
+export ANTHROPIC_API_KEY=your-minimax-api-key
 export ANTHROPIC_DEFAULT_OPUS_MODEL="MiniMax-M2.1"
 export ANTHROPIC_DEFAULT_SONNET_MODEL="MiniMax-M2.1"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1"
-# export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1-lightning"
 ```
+
+**GLM configuration** (`~/setup-glm.sh`):
+
+```bash
+#!/bin/bash
+export ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+export ANTHROPIC_API_KEY=your-glm-api-key
+export ANTHROPIC_DEFAULT_OPUS_MODEL="glm-4.7"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="glm-4.7"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="glm-4.7"
+```
+
+**Claude configuration** (`~/setup-claude.sh`):
+
+```bash
+#!/bin/bash
+# Default Claude configuration (uses official Anthropic API)
+unset ANTHROPIC_BASE_URL  # Use default Anthropic endpoint
+export ANTHROPIC_API_KEY=your-claude-api-key
+export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4-5-20251101"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4-20250514"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4-20250926"
+```
+
+**Usage workflow:**
+
+```bash
+# Before creating a new Happy session, pick your provider:
+source ~/setup-minimax.sh    # For quick tasks
+# OR
+source ~/setup-glm.sh         # For frontend work
+# OR
+source ~/setup-claude.sh      # For complex tasks (uses official Anthropic API)
+```
+
+After sourcing the appropriate script, start the Happy daemon with your configured provider. This isn't seamless—it requires a bit of shell work before each session—but it lets me match the right model to the right task without breaking the bank.
+
+> **Security Note:** Store your API keys securely. Consider using a secret manager like [OpenBao](https://github.com/openbao/openbao), [HashiCorp Vault](https://www.vaultproject.io/), or at minimum [environment files](https://github.com/ko1nksm/shdotenv#readme) that aren't tracked in Git. Never commit API keys to version control.
+
+> **Pro Tip:** You can make this easier by creating shell aliases:
+> ```bash
+> alias happy-minimax='source ~/setup-minimax.sh && happy'
+> alias happy-glm='source ~/setup-glm.sh && happy'
+> alias happy-claude='source ~/setup-claude.sh && happy'
+> ```
+
+### Cost Optimization Strategy
+
+By mixing providers strategically, I keep my monthly LLM spending around $22-28 total instead of paying for Claude Pro for everything. Quick tasks that don't need Opus's reasoning capabilities go to MiniMax or GLM, saving the expensive model for when it actually matters.
 
 ## The Workspace Setup
 
-When you create a session in Happy, it spawns a **workspace** - a complete development environment running in a Kubernetes pod. Each workspace gives you an isolated shell where Claude Code can read files, run commands, and manage your codebase.
+When you create a session in Happy, it spawns a **workspace**—a complete development environment running in a Kubernetes pod. Each workspace gives you an isolated shell where Claude Code can read files, run commands, and manage your codebase.
 
 I use a custom [dev-workspace](https://github.com/denysvitali/dev-workspace) container image that provides everything I need for development. The workspace runs entirely as a non-root user for Kubernetes Pod Security Standards (restricted) compliance.
+
+> **Why custom workspaces?** While Happy provides default workspace images, building your own lets you:
+> - Pre-install your favorite tools and languages
+> - Configure shell preferences (zsh themes, git aliases, etc.)
+> - Set up persistent storage for Nix/store or other package managers
+> - Optimize for your specific workflow and development stack
 
 ### Workspace Features
 
@@ -302,6 +479,8 @@ I use a GitHub Personal Access Token (PAT) with access limited to only my author
 
 For my personal use case, the convenience of a shared workspace outweighs the security trade-off. Your tolerance for this risk may vary depending on your threat model.
 
+> **Alternative approach:** If you want better isolation without managing multiple workspaces, consider using [GitHub's fine-grained PATs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token) which can limit access to specific repositories and even specific permissions (read-only vs. read-write).
+
 ### Quick Reference
 
 | Component | Technology | Access |
@@ -324,15 +503,23 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 
 ## Conclusion
 
-Self-hosting Happy has given me a reliable way to use Claude Code across all my devices. While it required some patching and customization, the flexibility and control are worth it.
+Self-hosting Happy has given me a reliable, flexible way to use Claude Code across all my devices. The combination of Happy's mobile-first design, Claude Code's AI capabilities, and a well-architected Kubernetes backend creates a development experience that's both powerful and liberating.
+
+The ability to work from anywhere—on my phone during my commute, on my tablet from the couch, or on my laptop at my desk—has transformed how I think about development. I'm no longer tied to a traditional workstation, and I can reclaim those small pockets of time throughout the day that would otherwise be lost.
+
+Was it worth the effort? Absolutely. The setup required some upfront investment in learning Kubernetes, understanding certificates, and configuring the stack, but the payoff in terms of productivity and flexibility has been enormous. Every time I deploy a service from my phone or review code while waiting in line, I'm reminded that this was time well spent.
 
 ### Getting Started
 
 If you're interested in a similar setup, here's how to begin:
 
-1. **Try the public server first**: Run `npm i -g happy-coder && happy` to test Happy with the default public server
-2. **Explore the ecosystem**: Check out [Happy](https://happy.engineering), the [Happy repository](https://github.com/slopus/happy), and the [community Discord](https://discord.gg/Happy)
-3. **Consider self-hosting**: If you need reliability, ensure you have a running Kubernetes cluster and review the prerequisites in this post
+1. **Try the public server first**: Run `npm install -g happy-coder && happy` to test Happy with the default public server. This costs nothing and lets you experience the mobile workflow before committing to self-hosting.
+
+2. **Explore the ecosystem**: Check out [Happy](https://happy.engineering), the [Happy repository](https://github.com/slopus/happy), and the [community Discord](https://discord.gg/Happy). The community is active and welcoming—great places to ask questions and learn from others' setups.
+
+3. **Consider self-hosting**: If you find yourself relying on Happy daily (like I did), self-hosting gives you reliability and control. Start with a simple Kubernetes setup using [k3s](https://k3s.io/) or [microk8s](https://microk8s.io/), then review the prerequisites in this post for a production-grade deployment.
+
+4. **Start simple, iterate**: You don't need the full multi-provider LLM setup or custom workspace images to begin with. Start with one LLM provider (even Claude's free tier works for testing) and expand as you learn your usage patterns.
 
 ### Resources
 
@@ -343,3 +530,11 @@ If you're interested in a similar setup, here's how to begin:
 - [Happy Server GitHub](https://github.com/slopus/happy-server)
 - [My dev-workspace image](https://github.com/denysvitali/dev-workspace)
 - [Kubernetes configuration](https://github.com/denysvitali) (coming soon-ish)
+
+### Alternatives
+
+> **Looking for something simpler?** If Happy seems too complex for your needs, some folks in the community recommend [HAPI](https://github.com/tiann/hapi/blob/main/docs/guide/why-hapi.md) as a lighter-weight alternative. I haven't tried it personally, so I can't vouch for it, but it might be worth exploring if you don't need all of Happy's features.
+
+---
+
+**Have questions about my setup?** Feel free to reach out on [GitHub](https://github.com/denysvitali) or join the [Happy Discord](https://discord.gg/Happy) to chat with the community. I'm always happy to help fellow developers get started with their own Happy setups!
