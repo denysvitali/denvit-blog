@@ -161,6 +161,9 @@ graph TB
             DB[(PostgreSQL<br/>CloudNativePG)]
             R[(Redis Cache<br/>v7 Alpine)]
         end
+        subgraph SecurityNamespace["openbao Namespace"]
+            OB[OpenBao<br/>Secrets Management]
+        end
         subgraph WorkspaceNamespace["workspace Namespace"]
             W[Workspace Pods<br/>dev-workspace container<br/>happy-daemon + Claude Code]
         end
@@ -169,10 +172,6 @@ graph TB
     subgraph External["External Services"]
         B2[Backblaze B2<br/>S3-compatible Storage]
         LLM[LLM API Providers<br/>MiniMax · GLM · Anthropic]
-    end
-
-    subgraph Security["Security Layer"]
-        OB[OpenBao<br/>Secrets Management]
     end
 
     Devices -->|"Encrypted TLS"| HappyClient
@@ -188,14 +187,14 @@ graph TB
     classDef client fill:#2ecc71,stroke:#444,stroke-width:2px,color:#fff
     classDef network fill:#9b59b6,stroke:#444,stroke-width:2px,color:#fff
     classDef k8s fill:#3498db,stroke:#444,stroke-width:2px,color:#fff
+    classDef k8sSecurity fill:#e74c3c,stroke:#444,stroke-width:2px,color:#fff
     classDef external fill:#e67e22,stroke:#444,stroke-width:2px,color:#fff
-    classDef security fill:#e74c3c,stroke:#444,stroke-width:2px,color:#fff
 
     class D1,D2,D3,HA client
     class TS,TR network
     class S,DB,R,W k8s
+    class OB k8sSecurity
     class B2,LLM external
-    class OB security
 ```
 
 ### How It Works
