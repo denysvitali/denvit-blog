@@ -1,8 +1,7 @@
 +++
-date = '2025-01-05T00:00:00+01:00'
+date = '2026-01-12T00:00:00+01:00'
 draft = false
-hidden = true
-publishdate = '2026-01-06T00:00:00+01:00'
+publishdate = '2026-01-12T00:00:00+01:00'
 tags = ['kubernetes', 'claude-code', 'happy', 'self-hosted', 'homelab']
 title = "I'm a Happy engineer now"
 +++
@@ -32,7 +31,7 @@ With the same amount of time I can now build more things. The output increase is
 [Happy](https://happy.engineering) is an open-source mobile and web client for Claude Code and OpenAI's Codex, built by the community. See the [official documentation](https://happy.engineering/docs/) for full details. It lets you use Claude Code from your phone, tablet, or browser instead of being tied to a terminal or tmux session.
 
 Key features:
-- **Mobile & Web access** - Use Claude Code from iOS, Android, or browser
+- **Mobile & Web access** - Use Claude Code from iPhone, Android, or browser
 - **Real-time voice** - Speak commands and watch them execute (not just dictation)
 - **End-to-end encryption** - Zero-trust architecture with secure key exchange
 - **Session sync** - Continue conversations across devices
@@ -99,13 +98,19 @@ My Happy server runs on Kubernetes with the following components:
 ```mermaid
 graph TB
     subgraph Devices[My Devices]
-        D1[iPhone/Android]
+        D1[Smartphone]
         D2[Daylight Tablet]
         D3[Laptop]
     end
 
-    subgraph Tailscale[Tailscale Network]
-        H1[Happy App]
+    subgraph HappyApp[Happy App]
+        HA[Happy App Instance]
+    end
+
+    subgraph Network[Tailscale + Traefik]
+        direction TB
+        TS[Tailscale Network]
+        TR[Traefik Ingress]
     end
 
     subgraph K8s[Kubernetes Cluster]
@@ -122,39 +127,37 @@ graph TB
         LLM3[Claude API]
     end
 
-    Devices --> Tailscale
-    Tailscale --> S
+    Devices --> HappyApp
+    HappyApp --> Network
+    Network --> S
     S --> DB
     S --> R
     S --> B2
-    S --> W
+    S <--> W
     W --> LLM1
     W --> LLM2
     W --> LLM3
 
     classDef tailscale fill:#663399,color:#fff
     classDef k8s fill:#326CE5,color:#fff
-    class Tailscale tailscale
-    class K8s k8s
+    class TS,TR tailscale
+    class K8s,S,DB,R,W k8s
 ```
 
-The server is exposed via Tailscale using service annotations (`tailscale.com/hostname: happy`), and secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork.
-
-Tailscale offers a [free Personal plan](https://tailscale.com/pricing) for homelab use with up to 100 devices and 3 users.
+The server is exposed via [Tailscale Kubernetes Operator](/posts/tailscale-traefik-private-ca/) to Traefik, which handles ingress routing. Secrets are pulled from [OpenBao](https://github.com/openbao/openbao), HashiCorp's open-source secrets management fork.
 
 The deployment uses an init container to run `npx prisma migrate deploy` before the main app starts, ensuring the database schema is up-to-date before accepting connections.
 
-### Tailscale Integration
+### Network Architecture
 
-Both the Happy server and my workspaces are exposed via [Tailscale Kubernetes Operator](https://tailscale.com/kb/1236/kubernetes-operator):
-- **Happy Server**: `happy.<tailnet>.ts.net` - accessible from any Tailscale-connected device
-- **Workspaces**: Each workspace gets a Tailscale hostname like `workspace-denys.<tailnet>.ts.net`
+My setup uses a hybrid Tailscale + Traefik approach (see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post for details):
 
-This means I can connect from my phone, laptop, or any device with Tailscale installed without exposing services to the public internet. The Kubernetes Tailscale Operator handles the network configuration automatically, eliminating the hassle of configuring mTLS certificates - Tailscale handles all authentication and encryption at the network level.
+1. **Happy App** connects via Tailscale to reach the cluster
+2. **Traefik** handles ingress routing within the Kubernetes cluster
+3. **Happy Server** receives requests and manages workspace lifecycle
+4. **Workspaces** run as pods within the cluster, connecting to the Happy Server internally
 
-The security trade-off is worth noting: anyone with access to your Tailscale network can potentially reach these services. I mitigate this in two ways:
-1. Only authorizing trusted devices to my tailnet
-2. Using Tailscale ACLs to restrict which devices can connect to the Happy services
+This architecture provides direct peer-to-peer connectivity while keeping services private within my tailnet. Tailscale handles authentication and encryption at the network layer, eliminating the need for TLS certificates on internal services.
 
 If needed, I can SSH directly into any workspace container for debugging.
 
@@ -176,7 +179,7 @@ Currently, I'm using Happy with three different models:
 
 | Model | Plan | Cost | Best For |
 |-------|------|------|----------|
-| **MiniMax M2.1** | [Starter](https://platform.minimax.io/subscribe/coding-plan) | $10/month | Lightweight tasks, quick one-shots |
+| **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month** (promotional first-month pricing) | Lightweight tasks, quick one-shots |
 | **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend, general coding |
 | **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step tasks |
 
@@ -292,7 +295,7 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 
 | Component | Technology | Access |
 |-----------|------------|--------|
-| Happy Client | iOS/Android/Web | Tailscale network |
+| Happy Client | Android/Web | Tailscale network |
 | Happy Server | k8s + Node.js | `happy.<tailnet>.ts.net` |
 | Workspaces | dev-workspace container | SSH :2222 via Tailscale |
 | LLM Providers | MiniMax / GLM / Claude | Via Happy |
@@ -303,7 +306,7 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 
 | Service | Cost |
 |---------|------|
-| **LLM APIs** | ~$25-30/month (MiniMax $10 + GLM $3-6 + Claude Pro $17-20) |
+| **LLM APIs** | ~$17-28/month (MiniMax $2 + GLM $3-6 + Claude Pro $17-20) |
 | **Backblaze B2** | ~$5/month for file storage |
 | **Tailscale** | [Free for personal use](https://tailscale.com/pricing) |
 | **Kubernetes** | Self-hosted (no cloud costs) |
@@ -328,4 +331,4 @@ If you're interested in a similar setup, here's how to begin:
 - [Happy CLI GitHub](https://github.com/slopus/happy-cli)
 - [Happy Server GitHub](https://github.com/slopus/happy-server)
 - [My dev-workspace image](https://github.com/denysvitali/dev-workspace)
-- [Kubernetes configuration](https://github.com/denysvitali/homelab) (coming soon)
+- [Kubernetes configuration](https://github.com/denysvitali) (coming soon-ish)
