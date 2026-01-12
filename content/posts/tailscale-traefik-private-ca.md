@@ -168,6 +168,26 @@ routes:
 
 The `tailscale-bypass` mode creates two IngressRoutes:
 
+```mermaid
+flowchart LR
+    subgraph Tailnet["Tailscale Network"]
+        UserTS["Tailscale User"]
+    end
+
+    subgraph Internet["Public Internet"]
+        UserWeb["Web User"]
+    end
+
+    subgraph K8s["Kubernetes Cluster"]
+        Traefik["Traefik Pod"]
+        Auth["traefik-forward-auth\n(OIDC)"]
+        Service["Internal Service\n(e.g. ArgoCD)"]
+    end
+
+    UserTS -- "ts-secure:3443\n(No Auth)" --> Traefik --> Service
+    UserWeb -- "websecure:443\n(OIDC)" --> Traefik --> Auth --> Service
+```
+
 | EntryPoint | Access | Authentication |
 |------------|--------|----------------|
 | `ts-secure` | From Tailscale network | None (direct access) |
