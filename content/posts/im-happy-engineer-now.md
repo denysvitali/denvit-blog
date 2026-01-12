@@ -39,7 +39,16 @@ Key features:
 
 I haven't used the TTS or voice input features yet - the text interface is already powerful enough for my needs.
 
-I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them via the [real-time sync feature](https://happy.engineering/docs/features/real-time-sync/). When I need to continue a session on my desktop, I push my code to Git, pull it on my computer, and start fresh with a new context. This workflow works well for me and avoids sync-related issues.
+I mostly use Happy on mobile devices (my [Daylight DC-1](https://daylightcomputer.com/product) tablet and smartphone), syncing sessions between them via the [real-time sync feature](https://happy.engineering/docs/features/real-time-sync/).
+
+Despite what the [Happy announcement post](https://happy.engineering/posts/introducing-happy/) says:
+
+> Are you actually trying to write code on your phone?
+> No. Absolutely not. That would be miserable to spend all day on my phone.
+
+I use Happy differently. I'm not always in front of my computer - commuting, waiting at the doctor's office, or just away from my desk. Being able to nudge or ping Claude Code from a mobile app to do something is actually a life saver.
+
+One example: configuring my cluster at home. I can ask Happy to set up a particular Helm chart in my GitOps repository, and it just works. This is exactly how I set up Jellyfin on my new cluster - no laptop required, just a quick conversation from my phone.
 
 To get started, simply run:
 ```bash

@@ -1,7 +1,7 @@
 +++
-date = '2026-01-11T00:00:00+01:00'
+date = '2026-01-12T12:00:00+01:00'
 draft = false
-hidden = true
+publishdate = '2026-01-12T12:00:00+01:00'
 tags = ['kubernetes', 'tailscale', 'traefik', 'homelab', 'networking', 'mtls']
 title = "Tailscale + Traefik + Private CA: A Hybrid Approach to Homelab Networking"
 +++
@@ -83,6 +83,8 @@ flowchart TB
 
 ## Why Both Tailscale AND a Private CA?
 
+> **Note:** I don't yet use mTLS in my new cluster setup. I already have a private CA running on OpenBao, but I'm only using it for server authentication (TLS certificates for services). Client certificate authentication is a long-term plan to maintain a Tailscale / mTLS hybrid approach. The architecture described here is the target state I'm working toward.
+
 Two access paths for different use cases:
 
 | Method | Best For | Battery Impact |
@@ -92,7 +94,7 @@ Two access paths for different use cases:
 
 ### The Problem with Tailscale on Mobile
 
-Tailscale is excellent for permanent devices, but it keeps the WireGuard tunnel active in the background. User reports indicate noticeable battery drain on phones[^wireguard-battery], with some users reporting 5-10% additional battery usage with constant connection. For my Android devices, I needed a cleaner alternative.
+Tailscale is excellent for permanent devices, but it keeps the WireGuard tunnel active in the background. User reports and official documentation indicate noticeable battery drain on phones[^tailscale-battery], with exit node usage being a primary contributor. For my Android devices, I needed a cleaner alternative.
 
 ### The Solution: mTLS as Tailscale Alternative
 
@@ -200,10 +202,11 @@ This ensures external connections reach the correct node while keeping the inter
 
 This setup is the foundation for a more sophisticated security model:
 
-1. **Expand mTLS services**: Move more services to public mTLS access as apps get fixed
-2. **Service-to-service auth**: Pods authenticate to each other via mTLS certificates
-3. **Per-device certificates**: Issue certificates with device-specific metadata for audit trails
-4. **Zero-trust internal networking**: Internal services require validated certificates regardless of origin
+1. **Enable mTLS with existing CA**: Extend my OpenBao setup to support client certificate authentication
+2. **Expand mTLS services**: Move more services to public mTLS access as apps get fixed
+3. **Service-to-service auth**: Pods authenticate to each other via mTLS certificates
+4. **Per-device certificates**: Issue certificates with device-specific metadata for audit trails
+5. **Zero-trust internal networking**: Internal services require validated certificates regardless of origin
 
 I'll explore these possibilities in future posts.
 
@@ -220,4 +223,4 @@ The architecture is more complex, but it provides a clear path to internet-acces
 
 [^derp]: Tailscale DERP Servers - https://tailscale.com/kb/1232/derp-servers
 [^ports]: Tailscale Connection Types - https://tailscale.com/kb/1257/connection-types
-[^wireguard-battery]: WireGuard battery impact reports - https://news.ycombinator.com/item?id=22860871, https://primevpndefender.com/does-wireguard-vpn-drain-battery/
+[^tailscale-battery]: Tailscale battery drain on mobile - https://tailscale.com/kb/1023/troubleshooting, https://github.com/tailscale/tailscale/issues/13725
