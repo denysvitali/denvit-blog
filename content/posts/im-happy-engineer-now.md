@@ -232,18 +232,10 @@ The official Happy app enforces strict TLS certificate validation, which is grea
 
 ### The Solution
 
-To work around this, you have two options:
+In my case, I needed to patch the Android app to trust my private certificate authority—this involved forking [happy](https://github.com/slopus/happy), configuring Android's network security configuration (what [PR #278](https://github.com/slopus/happy/pull/278) enables), and building a modified APK. On the server side, Traefik handles SSL termination with my private CA.
 
-**Option 1: Build from source with custom certificates**
-1. Fork and clone [happy](https://github.com/slopus/happy)
-2. Add your custom certificate authority to the app's trust store
-3. Build the modified APK and install it on your device
-
-**Option 2: Use a reverse proxy with valid certificates (Recommended)**
-Instead of modifying the app, set up a reverse proxy (like Traefik or Nginx) with valid Let's Encrypt certificates. This is what I do—Traefik handles SSL termination and presents valid certificates to the Happy app, while Tailscale handles the secure transport layer.
-
-> [!WARNING]
-> Option 2 is safer because you don't need to modify the app, and you get proper certificate validation. Tailscale's encryption happens at the network layer (below TLS), so you're not losing any security—just adding TLS on top for application compatibility.
+> [!NOTE]
+> This patching is generally not necessary if you use a publicly trusted CA (such as Let's Encrypt). Public CAs are required to submit all certificates to Certificate Transparency logs, which means your hostname will be publicly visible in those logs. Using a private CA avoids this.
 
 ### Current Annoyances
 
