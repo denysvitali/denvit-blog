@@ -1,14 +1,10 @@
 +++
 date = '2026-01-12T00:00:00+01:00'
-summary = 'I explain what Happy is, why I self-host it, and how my Kubernetes-based setup works with multiple LLM providers.'
 draft = false
 publishdate = '2026-01-12T00:00:00+01:00'
 tags = ['kubernetes', 'claude-code', 'happy', 'self-hosted', 'homelab']
 title = "I'm a Happy engineer now"
 +++
-
-> [!NOTE]
-> This post is published, but I continue to refine its contents—sometimes multiple times per hour. Perfectionism shouldn't prevent sharing useful information.
 
 I'm now officially a Happy engineer!
 
