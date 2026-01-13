@@ -402,7 +402,7 @@ I use a GitHub Personal Access Token (PAT) with access limited to only my author
 
 - **[woodpecker-ci-mcp](https://github.com/denysvitali/woodpecker-ci-mcp)** - Access Woodpecker CI build statuses, manage pipelines, and retrieve logs for debugging CI failures.
 
-- **[mcp-searxng](https://github.com/ihor-sokoliuk/mcp-searxng)** - Perform web searches using my self-hosted SearXNG instance. I self-host SearXNG to get JSON output format, which public instances disable as an abuse prevention mechanism.
+- **[mcp-searxng](https://github.com/ihor-sokoliuk/mcp-searxng)** - Perform web searches using my self-hosted [SearXNG](https://searxng.org/) instance. I self-host SearXNG to get JSON output format, which public instances disable as an abuse prevention mechanism.
 
 > [!WARNING]
 > My current approach uses a single workspace for convenience. For stronger security isolation, consider running one workspace per repository with individual GitHub PATs for each - that way a compromised token only affects one repo.
