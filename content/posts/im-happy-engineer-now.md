@@ -217,7 +217,7 @@ This runs Prisma migrations before the main container starts, ensuring your data
 
 ### Network Architecture
 
-I use Tailscale for secure access combined with Traefik for ingress routing within the cluster. This hybrid approach keeps everything private within my tailnet—no open ports on the public internet. For full details on this setup, see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post.
+Both Traefik and Tailscale run inside the cluster. Tailscale uses `hostNetwork: true` to expose itself directly on the host network, while Traefik handles ingress routing internally. This keeps everything private within my tailnet—no open ports on the public internet. For full details on this setup, see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post.
 
 ## Patching the Android App
 
