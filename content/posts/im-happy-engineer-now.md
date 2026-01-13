@@ -144,13 +144,9 @@ Here's how everything connects together:
 ```mermaid
 graph TB
     subgraph Devices["User Devices"]
-        D1[Smartphone]
-        D2[Daylight Tablet]
-        D3[Laptop]
-    end
-
-    subgraph HappyClient["Happy Client Apps"]
-        HA[Happy Mobile/Web]
+        D1[Smartphone<br/>Happy App]
+        D2[Daylight Tablet<br/>Happy App]
+        D3[Laptop<br/>Happy Web]
     end
 
     subgraph Network["Secure Network Layer"]
@@ -177,13 +173,12 @@ graph TB
         LLM[LLM API Providers<br/>MiniMax · GLM · Anthropic]
     end
 
-    Devices -->|"Encrypted TLS"| HappyClient
-    HappyClient -->|"Tailscale Tunnel"| Network
+    Devices -->|"Tailscale Tunnel"| Network
     Network -->|"HTTP(S) Routing"| S
     S -->|"SQL Queries"| DB
     S -->|"Cache Operations"| R
     S -->|"S3 Protocol"| B2
-    S <-->|"gRPC/HTTP<br/>Session Management"| W
+    S <-->|"Session Management"| W
     W -->|"HTTPS API Calls"| LLM
     S -->|"Fetch Secrets"| OB
 
@@ -193,7 +188,7 @@ graph TB
     classDef k8sSecurity fill:#e74c3c,stroke:#444,stroke-width:2px,color:#fff
     classDef external fill:#e67e22,stroke:#444,stroke-width:2px,color:#fff
 
-    class D1,D2,D3,HA client
+    class D1,D2,D3 client
     class TS,TR network
     class S,DB,R,W k8s
     class OB k8sSecurity
@@ -206,9 +201,9 @@ The architecture follows a clear flow:
 
 1. **Client Connection**: Your Happy app (mobile or web) connects through Tailscale, creating a secure peer-to-peer tunnel to your cluster. All traffic is encrypted at the network layer via Tailscale's WireGuard protocol.
 2. **Ingress Routing**: Traffic routes through Traefik to the Happy Server service. (For details on my Tailscale + Traefik setup, see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post.)
-3. **Server Processing**: Happy Server handles authentication, session management, and user authentication.
-4. **Session Management**: I use a single persistent workspace. When you create a session, the `happy-daemon` running inside the workspace spawns a new Claude instance, which then connects to your configured LLM provider.
-5. **LLM Integration**: The wrapped `claude`  connects directly to your configured LLM provider (MiniMax, GLM, or Anthropic) via HTTPS API calls. This connection is independent of the Happy server and happens directly from the workspace pod.
+3. **Server Processing**: Happy Server handles authentication, session management, and workspace creation. It fetches sensitive credentials (API keys, database passwords) from OpenBao at runtime.
+4. **Session Management**: I use a single persistent workspace. The `happy-daemon` running inside the workspace waits for new sessions. When a new session is created, `claude` (wrapped) runs and the data is shared with Happy's server.
+5. **LLM Integration**: The workspace connects directly to your configured LLM provider (MiniMax, GLM, or Anthropic) via HTTPS API calls. This connection is independent of the Happy server and happens directly from the workspace pod.
 
 ### Database & Storage
 
@@ -226,7 +221,29 @@ I use Tailscale for secure access combined with Traefik for ingress routing with
 
 ## Patching the Android App
 
-Due to my setup memtioned before, I am using an https endpoint signed with my personal CA. Unfortunately this is not supported by the Happy Android app. I therefore had to patch it and [opened a PR](https://github.com/slopus/happy/pull/278).
+I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all—the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
+
+> [!TIP]
+> I've contributed [PR #278](https://github.com/slopus/happy/pull/278) which adds Android network security config to allow connections to local networks (including Tailscale) and sets up GitHub Actions CI for Android builds.
+
+### The Challenge
+
+The official Happy app enforces strict TLS certificate validation, which is great for security but problematic when using self-signed certificates or custom Tailscale domains. When you try to connect to a self-hosted instance via Tailscale, the app will reject the connection because it can't validate the certificate chain against a trusted root CA.
+
+### The Solution
+
+To work around this, you have two options:
+
+**Option 1: Build from source with custom certificates**
+1. Fork and clone [happy](https://github.com/slopus/happy)
+2. Add your custom certificate authority to the app's trust store
+3. Build the modified APK and install it on your device
+
+**Option 2: Use a reverse proxy with valid certificates (Recommended)**
+Instead of modifying the app, set up a reverse proxy (like Traefik or Nginx) with valid Let's Encrypt certificates. This is what I do—Traefik handles SSL termination and presents valid certificates to the Happy app, while Tailscale handles the secure transport layer.
+
+> [!WARNING]
+> Option 2 is safer because you don't need to modify the app, and you get proper certificate validation. Tailscale's encryption happens at the network layer (below TLS), so you're not losing any security—just adding TLS on top for application compatibility.
 
 ### Current Annoyances
 
@@ -392,6 +409,8 @@ I use a GitHub Personal Access Token (PAT) with access limited to only my author
 - **[argocd-mcp](https://github.com/denysvitali/argocd-mcp)** - Manage ArgoCD projects, applications, and repositories. Deploy, sync, and rollback applications without leaving the terminal.
 
 - **[woodpecker-ci-mcp](https://github.com/denysvitali/woodpecker-ci-mcp)** - Access Woodpecker CI build statuses, manage pipelines, and retrieve logs for debugging CI failures.
+
+- **[mcp-searxng](https://github.com/ihor-sokoliuk/mcp-searxng)** - Perform web searches using my self-hosted SearXNG instance. I self-host SearXNG to get JSON output format, which public instances disable as an abuse prevention mechanism.
 
 > [!WARNING]
 > My current approach uses a single workspace for convenience. For stronger security isolation, consider running one workspace per repository with individual GitHub PATs for each - that way a compromised token only affects one repo.
