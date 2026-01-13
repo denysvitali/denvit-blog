@@ -39,7 +39,7 @@ Cloud environments exacerbate this: [AWS NAT Gateways](https://tailscale.com/kb/
 
 For my setup, I wanted **direct peer-to-peer connectivity**. [DERP relays](https://tailscale.com/kb/1232/derp-servers) add latency and become a bottleneck — according to Tailscale's documentation, "[relayed connections] typically have higher latency" and "peer relays offer lower latency and better performance than DERP servers"[^derp]. I have a 10Gbps connection and I want to use all of it for services like my NGINX file server that serves Transmission downloads or any other bandwidth-intensive workload.
 
-I haven't yet run iperf3 to properly benchmark the link, but I was able to download files at 30 MB/s (240 Mbps) while on 5G — which means the connection wasn't going through DERP servers, as those would be significantly slower over a typical mobile connection.
+I haven't yet run [iperf3](https://iperf.fr/) to properly benchmark the link, but I was able to download files at 30 MB/s (240 Mbps) while on 5G — which means the connection wasn't going through DERP servers, as those would be significantly slower over a typical mobile connection.
 
 My homelab has only **one public IPv4 address**, which is a common constraint for residential and small ISP connections. This means I can't assign a unique public IP to each node. Instead, I need to use port mapping (NAT) on my router to direct traffic to the correct node.
 
