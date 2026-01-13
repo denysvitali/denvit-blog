@@ -292,6 +292,12 @@ Combining [Tailscale's](https://tailscale.com/kb/1151/what-is-tailscale) ease of
 
 The architecture is more complex, but it provides a clear path to internet-accessible services without Tailscale while keeping sensitive tools restricted to the tailnet.
 
+### What I Gained
+
+Most importantly, I'm finally able to utilize my full 10Gbps connection with direct peer-to-peer connectivity — no more DERP relay bottlenecks adding latency or limiting throughput. The `hostNetwork: true` configuration lets Tailscale establish direct connections from outside, bypassing Kubernetes NAT entirely.
+
+As a bonus, each Traefik/Tailscale pod running with `hostNetwork: true` can also function as an [exit node](https://tailscale.com/kb/1103/exit-nodes) when I'm traveling. This gives me multiple geographically distributed exit options within my own infrastructure, providing both privacy and the ability to access region-locked content from my home network.
+
 [^derp]: [Tailscale DERP Servers](https://tailscale.com/kb/1232/derp-servers) - Designated Encrypted Relay for Packets
 [^ports]: [Tailscale Connection Types](https://tailscale.com/kb/1257/connection-types) - Direct vs relayed connections
 [^tailscale-battery]: [Tailscale battery drain on mobile](https://tailscale.com/kb/1023/troubleshooting#mobile-device-battery-drains-too-quickly) - Known issue tracked in [GitHub #13725](https://github.com/tailscale/tailscale/issues/13725)
