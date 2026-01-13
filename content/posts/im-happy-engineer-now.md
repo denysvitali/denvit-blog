@@ -221,21 +221,24 @@ Both Traefik and Tailscale run inside the cluster. Tailscale uses `hostNetwork: 
 
 ## Patching the Android App
 
-I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all—the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
+I use Happy on my Android phone with my private Kubernetes cluster. I always want HTTPS enabled—even though Tailscale's WireGuard tunnel encrypts traffic at the network layer, relying solely on that would be a mistake. If Tailscale is disabled or I accidentally connect over a public Wi-Fi network without the VPN active, plain HTTP would leak sensitive data unencrypted. Defense in depth matters.
 
-> [!TIP]
-> I've contributed [PR #278](https://github.com/slopus/happy/pull/278) which adds Android network security config to support user-trusted certificate authorities and sets up GitHub Actions CI for Android builds.
+### Why My Own CA?
+
+I run a private certificate authority (via OpenBao - see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post for details). This gives me proper TLS with certificates trusted across all my devices, without exposing my internal hostnames to public Certificate Transparency logs (as Let's Encrypt and other public CAs require).
 
 ### The Challenge
 
-The official Happy app enforces strict TLS certificate validation, which is great for security but problematic when using self-signed certificates or custom Tailscale domains. When you try to connect to a self-hosted instance via Tailscale, the app will reject the connection because it can't validate the certificate chain against a trusted root CA.
+Android apps by default only trust certificates from the system trust store. My private CA certificates are installed in the Android User Trust Store, which the Happy app didn't recognize—causing connection failures when accessing my self-hosted instance.
 
 ### The Solution
 
-In my case, I needed to patch the Android app to trust my private certificate authority—this involved forking [happy](https://github.com/slopus/happy), configuring Android's network security configuration (what [PR #278](https://github.com/slopus/happy/pull/278) enables), and building a modified APK. On the server side, Traefik handles SSL termination with my private CA.
+I contributed [PR #278](https://github.com/slopus/happy/pull/278), which adds Android network security configuration to allow the app to recognize and trust certificate authorities from the User Trust Store. This PR also sets up GitHub Actions CI for Android builds.
 
-> [!NOTE]
-> This patching is generally not necessary if you use a publicly trusted CA (such as Let's Encrypt). Public CAs are required to submit all certificates to Certificate Transparency logs, which means your hostname will be publicly visible in those logs. Using a private CA avoids this.
+On the server side, Traefik handles SSL termination with certificates issued by my private CA. The combination gives me:
+- Proper HTTPS encryption (defense in depth beyond Tailscale)
+- No certificate hostname leaks in public CT logs
+- Certificates that work across all my devices via User Trust Store installation
 
 ### Current Annoyances
 
