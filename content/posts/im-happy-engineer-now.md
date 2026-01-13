@@ -224,24 +224,6 @@ npx prisma migrate deploy
 
 This runs Prisma migrations before the main container starts, ensuring your database schema is always up-to-date before the server accepts connections.
 
-**Why CloudNativePG?**
-
-I chose [CloudNativePG](https://cloudnative-pg.io/) over plain PostgreSQL containers because it provides:
-
-- Automated backups with retention policies
-- Automatic failover to standby replicas
-- Point-in-time recovery (PITR) capabilities
-- Connection pooling via PgBouncer integration
-- Native Kubernetes integration via Operators
-
-The PostgreSQL instance is configured with:
-- **1 replica** (can be scaled to 3 for high availability)
-- **10Gi persistent volume** on Longhorn (scalable as needed)
-- **Daily backups** to an off-cluster S3-compatible target
-
-> [!NOTE]
-> For a production setup, I recommend running PostgreSQL with 3 replicas for automatic failover. My single-replica configuration is sufficient for personal use but wouldn't survive a node failure without manual intervention.
-
 ### Secrets Management
 
 Rather than hardcoding API keys and passwords, I use [OpenBao](https://github.com/openbao/openbao) (HashiCorp Vault's open-source fork). The Happy Server retrieves secrets at runtime, keeping credentials out of Git and providing centralized rotation.
