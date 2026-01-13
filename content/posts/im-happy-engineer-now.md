@@ -210,9 +210,9 @@ The architecture follows a clear flow:
 
 1. **Client Connection**: Your Happy app (mobile or web) connects through Tailscale, creating a secure peer-to-peer tunnel to your cluster. All traffic is encrypted at the network layer via Tailscale's WireGuard protocol.
 2. **Ingress Routing**: Traffic routes through Traefik to the Happy Server service. (For details on my Tailscale + Traefik setup, see my [Tailscale + Traefik + Private CA](/posts/tailscale-traefik-private-ca/) post.)
-3. **Server Processing**: Happy Server handles authentication, session management, and workspace creation. It fetches sensitive credentials (API keys, database passwords) from OpenBao at runtime.
+3. **Server Processing**: Happy Server handles authentication, session management, and user authentication.
 4. **Session Management**: I use a single persistent workspace. When you create a session, the `happy-daemon` running inside the workspace spawns a new Claude instance, which then connects to your configured LLM provider.
-5. **LLM Integration**: The workspace connects directly to your configured LLM provider (MiniMax, GLM, or Anthropic) via HTTPS API calls. This connection is independent of the Happy server and happens directly from the workspace pod.
+5. **LLM Integration**: The wrapped `claude`  connects directly to your configured LLM provider (MiniMax, GLM, or Anthropic) via HTTPS API calls. This connection is independent of the Happy server and happens directly from the workspace pod.
 
 ### Database & Storage
 
@@ -223,20 +223,6 @@ npx prisma migrate deploy
 ```
 
 This runs Prisma migrations before the main container starts, ensuring your database schema is always up-to-date before the server accepts connections.
-
-### Secrets Management
-
-Rather than hardcoding API keys and passwords, I use [OpenBao](https://github.com/openbao/openbao) (HashiCorp Vault's open-source fork). The Happy Server retrieves secrets at runtime, keeping credentials out of Git and providing centralized rotation.
-
-Key benefits of this approach:
-- **Zero secrets in Git**: No API keys, passwords, or tokens in version control
-- **Dynamic secrets**: Support for time-limited credentials that auto-expire
-- **Audit logging**: Track which services access which secrets and when
-- **Centralized rotation**: Rotate credentials once in OpenBao, all services update automatically
-- **Kubernetes integration**: Native support for Kubernetes authentication methods
-
-> [!TIP]
-> If OpenBao or Vault seems like overkill for your setup, you can start with Kubernetes Secrets (encrypted with [KMS](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)) and migrate to a dedicated secret manager later as your needs grow.
 
 ### Network Architecture
 
