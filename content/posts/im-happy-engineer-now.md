@@ -224,7 +224,7 @@ I use Tailscale for secure access combined with Traefik for ingress routing with
 I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all—the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
 
 > [!TIP]
-> I've contributed [PR #278](https://github.com/slopus/happy/pull/278) which adds Android network security config to allow connections to local networks (including Tailscale) and sets up GitHub Actions CI for Android builds.
+> I've contributed [PR #278](https://github.com/slopus/happy/pull/278) which adds Android network security config to support user-trusted certificate authorities and sets up GitHub Actions CI for Android builds.
 
 ### The Challenge
 
