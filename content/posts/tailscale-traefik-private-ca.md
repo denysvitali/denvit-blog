@@ -6,7 +6,7 @@ tags = ['kubernetes', 'tailscale', 'traefik', 'homelab', 'networking', 'mtls']
 title = "Tailscale + Traefik + Private CA: A Hybrid Approach to Homelab Networking"
 +++
 
-I run a hybrid networking setup that combines [**Tailscale**](https://tailscale.com/kb/1151/what-is-tailscale) (a mesh VPN), [**Traefik**](https://doc.traefik.io/traefik/) (a cloud-native reverse proxy), and a **private CA** powered by [OpenBao](https://openbao.org) (an open-source secret management and PKI solution forked from HashiCorp Vault).
+I run a hybrid networking setup that combines [**Tailscale**](https://tailscale.com/kb/1151/what-is-tailscale) (a mesh VPN), [**Traefik**](https://doc.traefik.io/traefik/) (a cloud-native reverse proxy), and a **private CA** powered by [OpenBao](https://openbao.org) (an open-source secret management and PKI solution forked from [HashiCorp Vault](https://developer.hashicorp.com/vault/docs)).
 
 In this post, I'll explain why I chose this architecture and how the pieces fit together.
 
@@ -21,7 +21,7 @@ Before diving into the problem, let me briefly introduce each component:
 
 - **[Traefik](https://doc.traefik.io/traefik/)**: A modern HTTP/TCP reverse proxy and load balancer that integrates with Kubernetes (and other orchestrators) to automatically discover services and route traffic. It supports TLS termination, [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) (mutual TLS), middleware for authentication (OIDC, forward-auth), and can run as a DaemonSet with `hostNetwork: true`.
 
-- **[OpenBao](https://openbao.org)**: An open-source secret management solution (a community-driven fork of HashiCorp Vault) that provides secure secret storage, dynamic secrets, and a PKI engine for issuing TLS certificates from a private certificate authority.
+- **[OpenBao](https://openbao.org)**: An open-source secret management solution (a community-driven fork of [HashiCorp Vault](https://developer.hashicorp.com/vault/docs)) that provides secure secret storage, dynamic secrets, and a PKI engine for issuing TLS certificates from a private certificate authority.
 
 ## The Problem with Pure Tailscale
 
