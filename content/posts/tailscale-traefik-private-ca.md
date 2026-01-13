@@ -43,6 +43,13 @@ I haven't yet run iperf3 to properly benchmark the link, but I was able to downl
 
 My homelab has only **one public IPv4 address**, which is a common constraint for residential and small ISP connections. This means I can't assign a unique public IP to each node. Instead, I need to use port mapping (NAT) on my router to direct traffic to the correct node.
 
+This creates a **double NAT situation** in my setup:
+
+1. **Router-level NAT**: My MikroTik router maps external UDP ports to internal node IPs
+2. **Kubernetes-level NAT**: The CNI creates pod network namespaces with ClusterIPs
+
+The double NAT makes direct Tailscale connections even more difficult, which is why running Traefik with `hostNetwork: true` on specific nodes becomes crucial — it bypasses the Kubernetes NAT layer entirely for those pods.
+
 ## The Solution: Traefik as the Ingress Layer
 
 The key insight is simple: **route all traffic through Traefik pods running on machines with publicly reachable Tailscale IPs**.
