@@ -102,7 +102,8 @@ flowchart TB
 
 ## Why Both Tailscale AND a Private CA?
 
-> **Note:** I don't yet use mTLS in my new cluster setup. I already have a private CA running on OpenBao, but I'm only using it for server authentication (TLS certificates for services). Client certificate authentication is a long-term plan to maintain a Tailscale / mTLS hybrid approach. The architecture described here is the target state I'm working toward.
+> [!NOTE]
+> I don't yet use mTLS in my new cluster setup. I already have a private CA running on OpenBao, but I'm only using it for server authentication (TLS certificates for services). Client certificate authentication is a long-term plan to maintain a Tailscale / mTLS hybrid approach. The architecture described here is the target state I'm working toward.
 
 Two access paths for different use cases:
 
@@ -133,6 +134,9 @@ Access method is determined by DNS — each service gets one or the other:
 
 A service cannot be both — it's one or the other based on which IP the DNS resolves to.
 
+> [!TIP]
+> This DNS-based routing lets me gradually migrate services between access methods without changing application configurations.
+
 ### Why Some Services Need Tailscale
 
 The reason is **broken [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) support** in some applications. Take [Immich](https://immich.app) (a self-hosted photo management solution) as an example.
@@ -143,9 +147,12 @@ The reason is **broken [mTLS](https://doc.traefik.io/traefik/middlewares/http/pa
 - They **don't work reliably**: video playback, foreground/background uploads, downloads, and app crashes are all affected
 - The maintainers explicitly state these are **not a priority**
 
-**My PR #22768** ([better mTLS support](https://github.com/immich-app/immich/pull/22768)) attempted to fix this by integrating OkHttp with proper Android trust store support. However, it was closed with:
+> [!WARNING]
+> Before relying on mTLS for any application, verify it actually works. Many mobile apps have incomplete or broken TLS implementations that don't respect system certificate stores or properly handle client certificates.
 
-> "In its current form, it doesn't address the underlying issue and contains significant implementation flaws."
+**My PR #22768** ([better mTLS support](https://github.com/immich-app/immich/pull/22768)) attempted to fix this by integrating OkHttp with proper Android trust store support. However, it was closed by maintainer `shenlong-tanwen` with this feedback:
+
+> In its current form, it doesn't address the underlying issue and contains significant implementation flaws.
 
 The maintainers have explicitly stated they won't prioritize fixing this issue and closed my PR. Until Immich ships a proper mTLS implementation, it **must remain Tailscale-only** — the network-layer authentication is the only reliable security boundary.
 
@@ -186,6 +193,9 @@ routes:
 ```
 
 The `tailscale-bypass` mode creates two IngressRoutes:
+
+> [!IMPORTANT]
+> The YAML snippets above are abbreviated for clarity. Full Traefik configurations would include actual IngressRoute/IngressRouteTCP resources with proper TLS options, middleware references, and service definitions.
 
 ```mermaid
 flowchart LR
@@ -233,6 +243,9 @@ PORT=$((41600 + OCTET))
 | `192.168.10.23` | 23 | 41623 |
 
 This formula guarantees every node gets a unique port without manual coordination. I use 41600 as the base (you can use any port, Tailscale's default is 41641[^ports]), and adding the node's last octet creates a deterministic, conflict-free mapping (e.g., 41621 = 41600 + 21).
+
+> [!CAUTION]
+> Ensure your chosen port range doesn't conflict with other services on your nodes. The formula `41600 + last_octet` works for my /24 subnet but may need adjustment for different network configurations.
 
 ### Router Configuration
 
