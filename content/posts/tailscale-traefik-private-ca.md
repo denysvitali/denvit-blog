@@ -6,10 +6,22 @@ tags = ['kubernetes', 'tailscale', 'traefik', 'homelab', 'networking', 'mtls']
 title = "Tailscale + Traefik + Private CA: A Hybrid Approach to Homelab Networking"
 +++
 
-I run a hybrid networking setup that combines **Tailscale**, **Traefik**, and a **private CA** (powered by OpenBao). In this post, I'll explain why I chose this architecture and how the pieces fit together.
+I run a hybrid networking setup that combines [**Tailscale**](https://tailscale.com/kb/1151/what-is-tailscale) (a mesh VPN), [**Traefik**](https://doc.traefik.io/traefik/) (a cloud-native reverse proxy), and a **private CA** powered by [OpenBao](https://openbao.org) (an open-source secret management and PKI solution forked from HashiCorp Vault).
+
+In this post, I'll explain why I chose this architecture and how the pieces fit together.
 
 <!--more-->
 <!-- toc -->
+
+## Background: The Components
+
+Before diving into the problem, let me briefly introduce each component:
+
+- **[Tailscale](https://tailscale.com/kb/1151/what-is-tailscale)**: A zero-config mesh VPN built on [WireGuard](https://tailscale.com/kb/1035/wireguard) that creates secure, peer-to-peer connections between devices. It handles NAT traversal, relay fallback through DERP servers, and provides authentication through your identity provider.
+
+- **[Traefik](https://doc.traefik.io/traefik/)**: A modern HTTP/TCP reverse proxy and load balancer that integrates with Kubernetes (and other orchestrators) to automatically discover services and route traffic. It supports TLS termination, [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) (mutual TLS), middleware for authentication (OIDC, forward-auth), and can run as a DaemonSet with `hostNetwork: true`.
+
+- **[OpenBao](https://openbao.org)**: An open-source secret management solution (a community-driven fork of HashiCorp Vault) that provides secure secret storage, dynamic secrets, and a PKI engine for issuing TLS certificates from a private certificate authority.
 
 ## The Problem with Pure Tailscale
 
@@ -19,13 +31,13 @@ The Tailscale Kubernetes Operator creates proxies in their own network namespace
 
 1. **Proxies run behind NAT**: Each proxy pod gets a ClusterIP, and outbound traffic goes through the node's NAT
 2. **Symmetric/hard NAT behavior**: Kubernetes networking often exhibits "hard NAT" characteristics where the NAT device uses a different port for every outbound connection
-3. **DERP fallback**: When Tailscale detects hard NAT, it falls back to relay connections through DERP servers
+3. **[DERP](https://tailscale.com/kb/1232/derp-servers) fallback**: When Tailscale detects hard NAT, it falls back to relay connections through DERP servers (Designated Encrypted Relay for Packets)
 
 As Tailscale's documentation states, they ["can't guarantee direct connections on Kubernetes"](https://tailscale.com/blog/kubernetes-direct-connections) — this is a fundamental limitation of the Kubernetes networking model.
 
 Cloud environments exacerbate this: [AWS NAT Gateways](https://tailscale.com/kb/1445/kubernetes-operator-customization) are particularly known for hard NAT behavior, forcing all traffic through DERP relays.
 
-For my setup, I wanted **direct peer-to-peer connectivity**. DERP relays add latency and become a bottleneck — according to Tailscale's documentation, "[relayed connections] typically have higher latency" and "peer relays offer lower latency and better performance than DERP servers"[^derp]. I have a 10Gbps connection and I want to use all of it for services like my NGINX file server that serves Transmission downloads or any other bandwidth-intensive workload.
+For my setup, I wanted **direct peer-to-peer connectivity**. [DERP relays](https://tailscale.com/kb/1232/derp-servers) add latency and become a bottleneck — according to Tailscale's documentation, "[relayed connections] typically have higher latency" and "peer relays offer lower latency and better performance than DERP servers"[^derp]. I have a 10Gbps connection and I want to use all of it for services like my NGINX file server that serves Transmission downloads or any other bandwidth-intensive workload.
 
 I haven't yet run iperf3 to properly benchmark the link, but I was able to download files at 30 MB/s (240 Mbps) while on 5G — which means the connection wasn't going through DERP servers, as those would be significantly slower over a typical mobile connection.
 
@@ -77,7 +89,7 @@ flowchart TB
 
 2. **Direct connectivity**: Instead of going through DERP servers, clients connect directly to the Traefik pod's Tailscale IP on port 3443.
 
-3. **Traefik handles TLS**: Connections are TLS-terminated at Traefik, which can optionally require client certificates (mTLS) for certain routes.
+3. **Traefik handles TLS**: Connections are TLS-terminated at Traefik, which can optionally require [client certificates (mTLS)](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) for certain routes.
 
 4. **Load balancing**: Traefik's `weighted-round-robin` load balancing distributes traffic across backend services.
 
@@ -89,12 +101,12 @@ Two access paths for different use cases:
 
 | Method | Best For | Battery Impact |
 |--------|----------|----------------|
-| **Tailscale** | Laptops, desktops, servers | Minimal (always-on anyway) |
-| **mTLS** | Mobile devices | None (no background service) |
+| **[Tailscale](https://tailscale.com/kb/1151/what-is-tailscale)** | Laptops, desktops, servers | Minimal (always-on anyway) |
+| **[mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/)** | Mobile devices | None (no background service) |
 
 ### The Problem with Tailscale on Mobile
 
-Tailscale is excellent for permanent devices, but it keeps the WireGuard tunnel active in the background. User reports and official documentation indicate noticeable battery drain on phones[^tailscale-battery], with exit node usage being a primary contributor. For my Android devices, I needed a cleaner alternative.
+[Tailscale](https://tailscale.com/kb/1151/what-is-tailscale) is excellent for permanent devices, but it keeps the [WireGuard](https://tailscale.com/kb/1035/wireguard) tunnel active in the background. User reports and official documentation indicate noticeable battery drain on phones[^tailscale-battery], with exit node usage being a primary contributor. For my Android devices, I needed a cleaner alternative.
 
 ### The Solution: mTLS as Tailscale Alternative
 
@@ -109,14 +121,14 @@ Access method is determined by DNS — each service gets one or the other:
 
 | DNS Record | Access Method | Example |
 |------------|---------------|---------|
-| `*.example.com` → Public IP | mTLS (internet) | Web apps (Prometheus, Grafana) |
-| `*.example.com` → Tailscale IP | Tailscale-only | Internal tools, Immich |
+| `*.example.com` → Public IP | [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) (internet) | Web apps (Prometheus, Grafana) |
+| `*.example.com` → [Tailscale](https://tailscale.com/kb/1151/what-is-tailscale) IP | Tailscale-only | Internal tools, Immich |
 
 A service cannot be both — it's one or the other based on which IP the DNS resolves to.
 
 ### Why Some Services Need Tailscale
 
-The reason is **broken mTLS support** in some applications. Take [Immich](https://github.com/immich-app/immich) as an example.
+The reason is **broken [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) support** in some applications. Take [Immich](https://immich.app) (a self-hosted photo management solution) as an example.
 
 **Issue #15230** ([meta: experimental network features](https://github.com/immich-app/immich/issues/15230)) documents that Immich's mTLS implementation is fundamentally broken:
 
@@ -157,11 +169,11 @@ routes:
   internal-tool:
     auth: tailscale-only
 
-  # Tailscale + OIDC: direct access from tailnet, or internet access via OIDC identity provider
+  # Tailscale + [OIDC](https://openid.net/connect/): direct access from tailnet, or internet access via OIDC identity provider
   shared-service:
     auth: tailscale-bypass
 
-  # mTLS required: client certificate required for all access
+  # [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) required: client certificate required for all access
   sensitive-api:
     auth: mtls-strict
 ```
@@ -190,14 +202,14 @@ flowchart LR
 
 | EntryPoint | Access | Authentication |
 |------------|--------|----------------|
-| `ts-secure` | From Tailscale network | None (direct access) |
-| `websecure` | From internet | OIDC via `forward-auth` middleware |
+| `ts-secure` | From [Tailscale](https://tailscale.com/kb/1151/what-is-tailscale) network | None (direct access) |
+| `websecure` | From internet | [OIDC](https://openid.net/connect/) via `forward-auth` middleware |
 
 This allows internal users fast, auth-free access while external users authenticate through an identity provider like Auth0 or Google Workspace.
 
 ## UDP Port Assignment for Tailscale
 
-Each Traefik/Tailscale pod needs a unique UDP port for the WireGuard tunnel. I use a deterministic formula based on the node's IP address:
+Each Traefik/[Tailscale](https://tailscale.com/kb/1151/what-is-tailscale) pod needs a unique UDP port for the [WireGuard](https://tailscale.com/kb/1035/wireguard) tunnel. I use a deterministic formula based on the node's IP address:
 
 ```bash
 # Extract the last octet of the node's IP
@@ -231,7 +243,7 @@ This ensures external connections reach the correct node while keeping the inter
 
 This setup is the foundation for a more sophisticated security model:
 
-1. **Enable mTLS with existing CA**: Extend my OpenBao setup to support client certificate authentication
+1. **Enable mTLS with existing CA**: Extend my [OpenBao](https://openbao.org) PKI setup to support client certificate authentication
 2. **Expand mTLS services**: Move more services to public mTLS access as apps get fixed
 3. **Service-to-service auth**: Pods authenticate to each other via mTLS certificates
 4. **Per-device certificates**: Issue certificates with device-specific metadata for audit trails
@@ -239,9 +251,19 @@ This setup is the foundation for a more sophisticated security model:
 
 I'll explore these possibilities in future posts.
 
+## Why This Hybrid Approach?
+
+You might wonder: why not just use [Tailscale](https://tailscale.com/kb/1151/what-is-tailscale) for everything, or just use a reverse proxy with mTLS? Each approach has tradeoffs:
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| **Tailscale-only** | Zero config, works everywhere, built-in authentication | Battery drain on mobile, DERP relay dependency, some apps don't work well |
+| **mTLS-only** | No battery impact, full control, works with any client | Complex certificate management, every app needs mTLS support |
+| **Hybrid (my approach)** | Best of both worlds, defense-in-depth | More complex infrastructure, requires both systems |
+
 ## Conclusion
 
-Combining Tailscale's ease of use with Traefik's flexibility and a private CA gives me the best of all worlds:
+Combining [Tailscale's](https://tailscale.com/kb/1151/what-is-tailscale) ease of use with [Traefik's](https://doc.traefik.io/traefik/) flexibility and a private CA powered by [OpenBao](https://openbao.org) gives me the best of all worlds:
 
 - **Battery-efficient mobile access** via mTLS
 - **Tailscale for apps with broken mTLS** implementations
@@ -250,6 +272,6 @@ Combining Tailscale's ease of use with Traefik's flexibility and a private CA gi
 
 The architecture is more complex, but it provides a clear path to internet-accessible services without Tailscale while keeping sensitive tools restricted to the tailnet.
 
-[^derp]: Tailscale DERP Servers - https://tailscale.com/kb/1232/derp-servers
-[^ports]: Tailscale Connection Types - https://tailscale.com/kb/1257/connection-types
-[^tailscale-battery]: Tailscale battery drain on mobile - https://tailscale.com/kb/1023/troubleshooting, https://github.com/tailscale/tailscale/issues/13725
+[^derp]: [Tailscale DERP Servers](https://tailscale.com/kb/1232/derp-servers) - Designated Encrypted Relay for Packets
+[^ports]: [Tailscale Connection Types](https://tailscale.com/kb/1257/connection-types) - Direct vs relayed connections
+[^tailscale-battery]: [Tailscale battery drain on mobile](https://tailscale.com/kb/1023/troubleshooting#mobile-device-battery-drains-too-quickly) - Known issue tracked in [GitHub #13725](https://github.com/tailscale/tailscale/issues/13725)
