@@ -248,7 +248,7 @@ Different tasks call for different tools. Here's how I think about it:
 |-------|------|------|----------|
 | **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month first month** (then $10/month) | Quick one-offs, simple refactors, routine tasks |
 | **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend work, React/Vue components, general coding |
-| **Gemini 3.0** | [Antigravity](https://antigravity.com) | Free but limited usage | Specialized tasks, UI debugging |
+| **Gemini 3.0** | [Antigravity](https://antigravity.google) | Free but limited usage | Specialized tasks, UI debugging |
 | **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step refactors, architecture |
 
 **How I use them in practice:**
@@ -257,7 +257,7 @@ Different tasks call for different tools. Here's how I think about it:
 
 - **GLM 4.7** is my go-to model these days. It surprises me with its frontend capabilities, CSS adjustments, and UI-related work remarkably well. If I'm building or modifying user interfaces, GLM is usually my first choice. What really impresses me is that at times GLM 4.7 is even better than Claude Opus 4.5, and I'm finding myself switching to it more and more. I'd also much rather spend my money on Z.AI's open source models that are pushing close to SOTA, knowing that my spending helps support open development, than pay the "Anthropic tax" and perpetuate their closed model ecosystem.
 
-- **Gemini 3.0** (both Pro and Flash) via [Antigravity](https://antigravity.com) is my occasional tool for specialized tasks. Antigravity's UI debugging capability is fantastic. Being able to inspect and debug the interface directly is incredibly useful. That said, for most things GLM 4.7 is more than enough, so I only reach for Gemini when I need something specific.
+- **Gemini 3.0** (both Pro and Flash) via [Antigravity](https://antigravity.google) is my occasional tool for specialized tasks. Antigravity's UI debugging capability is fantastic. Being able to inspect and debug the interface directly is incredibly useful. That said, for most things GLM 4.7 is more than enough, so I only reach for Gemini when I need something specific.
 
 - **Claude Opus 4.5** comes out for the heavy lifting. Complex refactors that require understanding multiple files, architectural decisions, or tasks that need careful planning and step-by-step execution—that's Opus territory. That being said, given Anthropic's January 2026 crackdown on third-party tools like OpenCode, where they suddenly flipped a switch with no warning and no migration path, blocking tools that were using Claude Pro / Max subscription OAuth tokens outside the official CLI - I'm actively trying to detach myself from Anthropic's ecosystem. They also cut off xAI's access around the same time (OpenAI had been blocked back in August 2025 for benchmarking). The writing is on the wall: Anthropic is building a walled garden, and I'd rather not build my workflow on a platform that might pull the plug on third-party integrations at any moment. As [paddo.dev](https://paddo.dev/blog/anthropic-walled-garden-crackdown/) put it: "The era of subscription arbitrage is over."
 
