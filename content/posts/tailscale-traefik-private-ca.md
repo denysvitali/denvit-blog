@@ -17,7 +17,7 @@ In this post, I'll explain why I chose this architecture and how the pieces fit 
 
 Before diving into the problem, let me briefly introduce each component:
 
-- **[Tailscale](https://tailscale.com/kb/1151/what-is-tailscale)**: A zero-config mesh VPN built on [WireGuard](https://tailscale.com/kb/1035/wireguard) that creates secure, peer-to-peer connections between devices. It handles NAT traversal, relay fallback through DERP servers, and provides authentication through your identity provider.
+- **[Tailscale](https://tailscale.com/kb/1151/what-is-tailscale)**: A zero-config mesh VPN built on [WireGuard](https://tailscale.com/kb/1035/wireguard) that creates secure, peer-to-peer connections between devices. It handles NAT traversal, relay fallback through [DERP servers](https://tailscale.com/kb/1232/derp-servers), and provides authentication through your identity provider.
 
 - **[Traefik](https://doc.traefik.io/traefik/)**: A modern HTTP/TCP reverse proxy and load balancer that integrates with Kubernetes (and other orchestrators) to automatically discover services and route traffic. It supports TLS termination, [mTLS](https://doc.traefik.io/traefik/middlewares/http/passtlsclientcert/) (mutual TLS), middleware for authentication (OIDC, forward-auth), and can run as a DaemonSet with `hostNetwork: true`.
 
