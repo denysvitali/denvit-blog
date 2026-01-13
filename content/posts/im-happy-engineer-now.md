@@ -149,12 +149,11 @@ graph TB
         D3[Laptop<br/>Happy Web]
     end
 
-    subgraph Network["Secure Network Layer"]
-        TS[Tailscale VPN<br/>Mesh Network]
-        TR[Traefik Ingress<br/>SSL Termination]
-    end
-
     subgraph K8s["Kubernetes Cluster (Talos)"]
+        subgraph NetworkNamespace["Network Layer"]
+            TS[Tailscale<br/>hostNetwork: true]
+            TR[Traefik Ingress<br/>SSL Termination]
+        end
         subgraph HappyNamespace["happy Namespace"]
             S[Happy Server<br/>Node.js on :3000]
             DB[(PostgreSQL<br/>CloudNativePG)]
@@ -173,8 +172,9 @@ graph TB
         LLM[LLM API Providers<br/>MiniMax · GLM · Anthropic]
     end
 
-    Devices -->|"Tailscale Tunnel"| Network
-    Network -->|"HTTP(S) Routing"| S
+    Devices -->|"Tailscale Tunnel"| TS
+    TS --> TR
+    TR -->|"HTTP(S) Routing"| S
     S -->|"SQL Queries"| DB
     S -->|"Cache Operations"| R
     S -->|"S3 Protocol"| B2
