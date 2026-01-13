@@ -235,10 +235,6 @@ Key benefits of this approach:
 - **Centralized rotation**: Rotate credentials once in OpenBao, all services update automatically
 - **Kubernetes integration**: Native support for Kubernetes authentication methods
 
-**My OpenBao Configuration:**
-
-OpenBao runs in a highly available configuration within the cluster with multiple replicas for automatic failover. It uses Kubernetes authentication, allowing pods to authenticate using their service accounts and retrieve only the secrets they're authorized to access. Secrets are automatically synchronized to Kubernetes `Secret` resources using the [External Secrets Operator](https://external-secrets.io/), with automatic refresh when values change.
-
 > [!TIP]
 > If OpenBao or Vault seems like overkill for your setup, you can start with Kubernetes Secrets (encrypted with [KMS](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)) and migrate to a dedicated secret manager later as your needs grow.
 
@@ -248,30 +244,11 @@ I use Tailscale for secure access combined with Traefik for ingress routing with
 
 ## Patching the Android App
 
-I use Happy on my Android phone with my private Kubernetes cluster. Because Tailscale handles all encryption at the network layer, I don't need to worry about TLS certificates at all—the connection is already encrypted end-to-end by Tailscale. This eliminates the certificate management overhead entirely.
-
-### The Challenge
-
-The official Happy app enforces strict TLS certificate validation, which is great for security but problematic when using self-signed certificates or custom Tailscale domains. When you try to connect to a self-hosted instance via Tailscale, the app will reject the connection because it can't validate the certificate chain against a trusted root CA.
-
-### The Solution
-
-To work around this, you have two options:
-
-**Option 1: Build from source with custom certificates**
-1. Fork and clone [happy](https://github.com/slopus/happy)
-2. Add your custom certificate authority to the app's trust store
-3. Build the modified APK and install it on your device
-
-**Option 2: Use a reverse proxy with valid certificates (Recommended)**
-Instead of modifying the app, set up a reverse proxy (like Traefik or Nginx) with valid Let's Encrypt certificates. This is what I do—Traefik handles SSL termination and presents valid certificates to the Happy app, while Tailscale handles the secure transport layer.
-
-> [!WARNING]
-> Option 2 is safer because you don't need to modify the app, and you get proper certificate validation. Tailscale's encryption happens at the network layer (below TLS), so you're not losing any security—just adding TLS on top for application compatibility.
+Due to my setup memtioned before, I am using an https endpoint signed with my personal CA. Unfortunately this is not supported by the Happy Android app. I therefore had to patch it and [opened a PR](https://github.com/slopus/happy/pull/278).
 
 ### Current Annoyances
 
-Even with everything working, there's one quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open. This is a known issue that the Happy community is aware of and working to address.
+Even with everything working, there's one quirk on Android: the app tells Bluetooth devices it's on a call, even when voice interaction isn't being used. This means audio playback is interrupted when the app is open. See [this issue report for the details](https://github.com/slopus/happy/issues/236).
 
 ## My LLM Setup
 
@@ -285,18 +262,18 @@ Different tasks call for different tools. Here's how I think about it:
 |-------|------|------|----------|
 | **MiniMax M2.1** | [Coding Plan](https://platform.minimax.io/subscribe/coding-plan) | **$2/month first month** (then $10/month) | Quick one-offs, simple refactors, routine tasks |
 | **GLM 4.7** | [Lite](https://z.ai/subscribe) | $3-6/month (promotional pricing) | Frontend work, React/Vue components, general coding |
-| **Gemini 3.0** | [Antigravity](https://antigravity.com) | Pay-per-use | Specialized tasks, UI debugging |
+| **Gemini 3.0** | [Antigravity](https://antigravity.com) | Free but limited usage | Specialized tasks, UI debugging |
 | **Claude Opus 4.5** | [Pro](https://claude.com/pricing) | $17-20/month | Complex planning, multi-step refactors, architecture |
 
 **How I use them in practice:**
 
-- **MiniMax** is my workhorse for fast, inexpensive tasks. When I need to quickly rename variables across a file, extract a function, or make routine changes, MiniMax gets the job done instantly at minimal cost. I find MiniMax M2.1 to be more "stubborn" than GLM 4.7—it can be annoying at times, but this stubbornness is actually useful for very long tasks where you don't want the model to drift too much. MiniMax is also super cheap with generous limits, which I love, though it honestly feels "dumber" than GLM 4.7 overall.
+- **MiniMax** is my workhorse for fast, inexpensive tasks. When I need to quickly rename variables across a file, extract a function, or make routine changes, MiniMax gets the job done instantly at minimal cost. I find MiniMax M2.1 to be more "stubborn" than GLM 4.7. It can be annoying at times, but this stubbornness is actually useful for very long tasks where you don't want the model to drift too much. MiniMax is also super cheap with generous limits, which I love, though it honestly feels much "dumber" than GLM 4.7 overall.
 
-- **GLM 4.7** is my go-to model these days. It surprises me with its frontend capabilities—it handles React components, CSS adjustments, and UI-related work remarkably well. If I'm building or modifying user interfaces, GLM is usually my first choice. What really impresses me is that at times GLM 4.7 is even better than Claude Opus 4.5, and I'm finding myself switching to it more and more. I'd much rather spend my money on Z.AI's open source models that are pushing close to SOTA—knowing that my spending helps support open development—than pay the "Anthropic tax" and perpetuate their closed model ecosystem.
+- **GLM 4.7** is my go-to model these days. It surprises me with its frontend capabilities, CSS adjustments, and UI-related work remarkably well. If I'm building or modifying user interfaces, GLM is usually my first choice. What really impresses me is that at times GLM 4.7 is even better than Claude Opus 4.5, and I'm finding myself switching to it more and more. I'd also much rather spend my money on Z.AI's open source models that are pushing close to SOTA, knowing that my spending helps support open development, than pay the "Anthropic tax" and perpetuate their closed model ecosystem.
 
-- **Gemini 3.0** (both Pro and Flash) via [Antigravity](https://antigravity.com) is my occasional tool for specialized tasks. Antigravity's UI debugging capability is fantastic—being able to inspect and debug the interface directly is incredibly useful. That said, for most things GLM 4.7 is more than enough, so I only reach for Gemini when I need something specific.
+- **Gemini 3.0** (both Pro and Flash) via [Antigravity](https://antigravity.com) is my occasional tool for specialized tasks. Antigravity's UI debugging capability is fantastic. Being able to inspect and debug the interface directly is incredibly useful. That said, for most things GLM 4.7 is more than enough, so I only reach for Gemini when I need something specific.
 
-- **Claude Opus 4.5** comes out for the heavy lifting. Complex refactors that require understanding multiple files, architectural decisions, or tasks that need careful planning and step-by-step execution—that's Opus territory. It's the most expensive, but for tricky problems it's worth every penny. That said, given Anthropic's January 2026 crackdown on third-party tools like OpenCode—where they suddenly flipped a switch with no warning and no migration path, blocking tools that were using Claude Pro/Max subscription OAuth tokens outside the official CLI—I'm actively trying to detach myself from Anthropic's ecosystem. They also cut off xAI's access around the same time (OpenAI had been blocked back in August 2025 for benchmarking). The writing is on the wall: Anthropic is building a walled garden, and I'd rather not build my workflow on a platform that might pull the plug on third-party integrations at any moment. As [paddo.dev](https://paddo.dev/blog/anthropic-walled-garden-crackdown/) put it: "The era of subscription arbitrage is over."
+- **Claude Opus 4.5** comes out for the heavy lifting. Complex refactors that require understanding multiple files, architectural decisions, or tasks that need careful planning and step-by-step execution—that's Opus territory. That being said, given Anthropic's January 2026 crackdown on third-party tools like OpenCode, where they suddenly flipped a switch with no warning and no migration path, blocking tools that were using Claude Pro / Max subscription OAuth tokens outside the official CLI - I'm actively trying to detach myself from Anthropic's ecosystem. They also cut off xAI's access around the same time (OpenAI had been blocked back in August 2025 for benchmarking). The writing is on the wall: Anthropic is building a walled garden, and I'd rather not build my workflow on a platform that might pull the plug on third-party integrations at any moment. As [paddo.dev](https://paddo.dev/blog/anthropic-walled-garden-crackdown/) put it: "The era of subscription arbitrage is over."
 
 ### How Provider Switching Works
 
@@ -310,7 +287,7 @@ Here's the current state of provider switching in Happy (as of this writing):
 
 ### Setting Up Provider Scripts
 
-Here's my practical setup. I maintain separate scripts for each provider and source the one I need before starting a session:
+Here's my practical setup. I maintain separate scripts for each provider and source the one I need before starting a session. For example:
 
 **MiniMax configuration** (`~/setup-minimax.sh`):
 
@@ -323,62 +300,24 @@ export ANTHROPIC_DEFAULT_SONNET_MODEL="MiniMax-M2.1"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="MiniMax-M2.1"
 ```
 
-**GLM configuration** (`~/setup-glm.sh`):
-
-```bash
-#!/bin/bash
-export ANTHROPIC_BASE_URL=https://open.bigmodel.cn/api/paas/v4
-export ANTHROPIC_API_KEY=your-glm-api-key
-export ANTHROPIC_DEFAULT_OPUS_MODEL="glm-4.7"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="glm-4.7"
-export ANTHROPIC_DEFAULT_HAIKU_MODEL="glm-4.7"
-```
-
-**Claude configuration** (`~/setup-claude.sh`):
-
-```bash
-#!/bin/bash
-# Default Claude configuration (uses official Anthropic API)
-unset ANTHROPIC_BASE_URL  # Use default Anthropic endpoint
-export ANTHROPIC_API_KEY=your-claude-api-key
-export ANTHROPIC_DEFAULT_OPUS_MODEL="claude-opus-4-5-20251101"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="claude-sonnet-4-20250514"
-export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4-20250926"
-```
 
 **Usage workflow:**
 
 ```bash
-# Before creating a new Happy session, pick your provider:
-source ~/setup-minimax.sh    # For quick tasks
+# Before creating the Happy daemon, pick your provider:
+source ~/setup-minimax.sh
 # OR
-source ~/setup-glm.sh         # For frontend work
-# OR
-source ~/setup-claude.sh      # For complex tasks (uses official Anthropic API)
+source ~/setup-zai.sh
+
+# Then
+happy daemon start
 ```
 
-After sourcing the appropriate script, start the Happy daemon with your configured provider. This isn't seamless—it requires a bit of shell work before each session—but it lets me match the right model to the right task without breaking the bank.
-
-> [!WARNING]
-> Store your API keys securely. Consider using a secret manager like [OpenBao](https://github.com/openbao/openbao), [HashiCorp Vault](https://www.vaultproject.io/), or at minimum [environment files](https://github.com/ko1nksm/shdotenv#readme) that aren't tracked in Git. Never commit API keys to version control.
-
-> [!TIP]
-> You can make this easier by creating shell aliases:
-> ```bash
-> alias happy-minimax='source ~/setup-minimax.sh && happy'
-> alias happy-glm='source ~/setup-glm.sh && happy'
-> alias happy-claude='source ~/setup-claude.sh && happy'
-> ```
-
-### Cost Optimization Strategy
-
-By mixing providers strategically, I keep my monthly LLM spending around $22-36 total ($22 during promotional periods, $36 after) instead of paying for Claude Pro for everything. Quick tasks that don't need Opus's reasoning capabilities go to MiniMax or GLM, saving the expensive model for when it actually matters.
+After sourcing the appropriate script, start the Happy daemon with your configured provider. This isn't seamless—it requires a bit of shell work before each set of sessions.
 
 ## The Workspace Setup
 
-When you create a session in Happy, it spawns a **workspace**—a complete development environment running in a Kubernetes pod. Each workspace gives you an isolated shell where Claude Code can read files, run commands, and manage your codebase.
-
-I use a custom [dev-workspace](https://github.com/denysvitali/dev-workspace) container image that provides everything I need for development. The workspace runs entirely as a non-root user for Kubernetes Pod Security Standards (restricted) compliance.
+To run all my sessions I used a shared [dev-workspace](https://github.com/denysvitali/dev-workspace) container that provides everything I need for development. The workspace runs entirely as a non-root user for Kubernetes Pod Security Standards (restricted) compliance.
 
 **Multi-User Support:**
 
@@ -391,12 +330,6 @@ The workspace system supports multiple users through a template-based approach:
 
 > [!TIP]
 > While I currently use a single workspace for convenience, the template-based system makes it easy to provision separate workspaces for different users or projects. Each workspace has its own storage quota and SSH credentials, providing strong isolation between users.
-
-> **Why custom workspaces?** While Happy provides default workspace images, building your own lets you:
-> - Pre-install your favorite tools and languages
-> - Configure shell preferences (zsh themes, git aliases, etc.)
-> - Set up persistent storage for Nix/store or other package managers
-> - Optimize for your specific workflow and development stack
 
 ### Workspace Features
 
@@ -411,34 +344,6 @@ The dev-workspace image is a **containerized development environment** designed 
 | **SSH Server** | Dropbear on port 2222 (non-privileged) |
 | **Multi-Arch** | Built for both AMD64 and ARM64 |
 | **Persistence** | Template-based PVC (PersistentVolumeClaim) pattern for home + nix-store |
-
-#### Pre-installed Tools
-
-**Shell & CLI Utilities:**
-- Modern coreutils replacements: `bat`, `exa`, `fd`, `ripgrep`, `fzf`, `btop`
-- Shells: `bash`, `zsh` with autosuggestions/syntax highlighting
-- Terminal multiplexers: `tmux`, `screen`
-
-**Languages & Package Managers:**
-- Rust (via rustup)
-- Go
-- Python 3 + `uv` package manager
-- Node.js + npm/pnpm
-- **Nix** (single-user mode) with devenv
-
-**DevOps & Development:**
-- kubectl, GitHub CLI, Docker client
-- SSH tools: dropbear, mosh, openssh-client
-- Network tools: tcpdump, nmap, bind-tools, rsync
-
-#### Security & Operational Features
-
-1. **Rootless Operation**: All processes run as non-root user
-2. **SSH Key Authentication Only**: No password logins
-3. **Dynamic Host Keys**: Generated at runtime per pod instance
-4. **Graceful Signal Handling**: Proper SIGTERM cleanup
-5. **Health Checks**: Built-in dropbear + user shell verification
-6. **Tailscale Integration**: Offloaded to Kubernetes Operator (not bundled)
 
 #### Nix/Devenv Setup
 
@@ -496,8 +401,6 @@ Each workspace gets **60Gi storage** on Longhorn:
 - 50Gi for the Nix store (persists across restarts)
 - Remaining space for home directory and user data
 
-Longhorn provides snapshots and backups. I configure automatic snapshots hourly and daily backups to an off-cluster backup target for disaster recovery.
-
 ### MCP Tools
 
 I use a GitHub Personal Access Token (PAT) with access limited to only my authorized repositories. Within my workspace, I have several [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) servers configured via `~/.config/claude/mcp.json` to help me work with my projects:
@@ -532,7 +435,7 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 | Service | Cost |
 |---------|------|
 | **LLM APIs** | ~$22-36/month (MiniMax $2-10 + GLM $3-6 + Claude Pro $17-20) |
-| **Backblaze B2** | Negligible (a few MBs) |
+| **Backblaze B2** | Negligible (I only use a few MBs for this) |
 | **Tailscale** | [Free for personal use](https://tailscale.com/pricing) |
 | **Kubernetes** | Self-hosted (no cloud costs) |
 
@@ -540,9 +443,9 @@ For my personal use case, the convenience of a shared workspace outweighs the se
 
 Self-hosting Happy has given me a reliable, flexible way to use Claude Code across all my devices. The combination of Happy's mobile-first design, Claude Code's AI capabilities, and a well-architected Kubernetes backend creates a development experience that's both powerful and liberating.
 
-The ability to work from anywhere—on my phone during my commute, on my tablet from the couch, or on my laptop at my desk—has transformed how I think about development. I'm no longer tied to a traditional workstation, and I can reclaim those small pockets of time throughout the day that would otherwise be lost.
+The ability to work from anywhere - on my phone during my commute, on my tablet from the couch, or on my laptop at my desk - has transformed how I think about development. I'm no longer tied to a traditional workstation, and I can reclaim those small pockets of time throughout the day that would otherwise be lost.
 
-Was it worth the effort? Absolutely. The setup required some upfront investment in learning Kubernetes, understanding certificates, and configuring the stack, but the payoff in terms of productivity and flexibility has been enormous. Every time I deploy a service from my phone or review code while waiting in line, I'm reminded that this was time well spent.
+Was it worth the effort? Absolutely. The setup needed a bit of time, but the payoff in terms of productivity and flexibility has been enormous. And now, thanks to this setup, I can further improve it from my Happy app.
 
 ### Getting Started
 
