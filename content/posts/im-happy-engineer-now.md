@@ -453,7 +453,7 @@ If you're interested in a similar setup, here's how to begin:
 
 3. **Consider self-hosting**: If you find yourself relying on Happy daily (like I did), self-hosting gives you reliability and control. Start with a simple Kubernetes setup using [k3s](https://k3s.io/) or [microk8s](https://microk8s.io/), then review the prerequisites in this post for a production-grade deployment.
 
-4. **Start simple, iterate**: You don't need the full multi-provider LLM setup or custom workspace images to begin with. Start with one LLM provider (even Claude's free tier works for testing) and expand as you learn your usage patterns.
+4. **Start simple, iterate**: You don't need the full multi-provider LLM setup or custom workspace images to begin with. Start with one LLM provider (some even provide free tiers, and Claude allows people to try it out for 1 week for free using an invite link) and expand as you learn your usage patterns.
 
 ### Resources
 
