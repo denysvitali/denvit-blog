@@ -10,7 +10,7 @@
     "postinstall": "cd themes/pickles && pnpm install"
   },
   "devDependencies": {
-    "markdownlint-cli2": "^0.15.0",
-    "cspell": "^10.0.0"
+    "markdownlint-cli2": "^0.22.0",
+    "cspell": "^8.0.0"
   }
 }
