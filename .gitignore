@@ -5,6 +5,9 @@
 /static/css/style.css
 *.css.map
 
+# Local agent/editor config
+.claude/
+
 # devenv
 /.direnv
 .devenv*
