@@ -31,6 +31,15 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
+      - name: Ensure generated outputs are not tracked
+        run: |
+          tracked="$(git ls-files 'public/**' 'resources/**' 'static/css/**' 'themes/pickles/static/css/**')"
+          if [ -n "$tracked" ]; then
+            echo "Generated files must not be tracked:"
+            echo "$tracked"
+            exit 1
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v5
         with:
@@ -40,6 +49,16 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 10
+
+      - name: Install root Node dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
 
       - name: Setup Nix
         uses: cachix/install-nix-action@v31
@@ -80,6 +99,9 @@ jobs:
       - name: Index with Pagefind
         run: |
           nix-shell -p hugo pagefind --run "pagefind --site public"
+
+      - name: Visual smoke test
+        run: npm run test:visual
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

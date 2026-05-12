@@ -269,6 +269,7 @@
   }
 
   @include breakpoint.mq-down(md) {
+    display: none;
     padding: 14px 16px;
 
     > .tableOfContentContainer__body {

@@ -7,9 +7,11 @@
     "lint:spell": "cspell 'content/**/*.md'",
     "format": "markdownlint-cli2 'content/**/*.md' --fix",
     "build:css": "cd themes/pickles && pnpm exec sass assets/scss/style.scss:static/css/style.css --load-path=node_modules --no-source-map",
+    "test:visual": "playwright test",
     "postinstall": "cd themes/pickles && pnpm install"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "markdownlint-cli2": "^0.22.0",
     "cspell": "^8.0.0"
   }

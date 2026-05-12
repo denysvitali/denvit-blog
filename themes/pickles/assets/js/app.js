@@ -3,6 +3,117 @@ import Swiper, { Navigation } from 'swiper'
 Swiper.use([Navigation])
 
 document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.querySelector('.mobile-menu-toggle')
+  const overlay = document.getElementById('mobile-menu-overlay')
+  const closeBtn = document.getElementById('mobile-menu-close')
+  const searchToggle = document.querySelector('.search-toggle')
+  const searchContainer = document.getElementById('search-container')
+  const header = document.querySelector('.l-header')
+  const focusableSelector = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  let lastFocused = null
+
+  function getMenuFocusable () {
+    if (!overlay) return []
+    return Array.prototype.filter.call(
+      overlay.querySelectorAll(focusableSelector),
+      (el) => el.offsetParent !== null
+    )
+  }
+
+  function isMenuOpen () {
+    return overlay && overlay.classList.contains('is-open')
+  }
+
+  function openMenu () {
+    if (!toggle || !overlay) return
+    lastFocused = document.activeElement
+    toggle.setAttribute('aria-expanded', 'true')
+    overlay.hidden = false
+    document.body.classList.add('has-open-menu')
+    requestAnimationFrame(() => {
+      overlay.classList.add('is-open')
+      if (closeBtn) closeBtn.focus()
+    })
+  }
+
+  function closeMenu () {
+    if (!toggle || !overlay) return
+    toggle.setAttribute('aria-expanded', 'false')
+    overlay.classList.remove('is-open')
+    document.body.classList.remove('has-open-menu')
+    setTimeout(() => { overlay.hidden = true }, 300)
+    if (lastFocused && typeof lastFocused.focus === 'function') {
+      lastFocused.focus()
+    } else {
+      toggle.focus()
+    }
+  }
+
+  if (toggle && overlay) {
+    toggle.addEventListener('click', () => {
+      if (isMenuOpen()) closeMenu()
+      else openMenu()
+    })
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu)
+
+  if (overlay) {
+    overlay.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeMenu)
+    })
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (!isMenuOpen()) return
+    if (event.key === 'Escape' || event.key === 'Esc') {
+      event.preventDefault()
+      closeMenu()
+      return
+    }
+
+    if (event.key !== 'Tab') return
+    const focusables = getMenuFocusable()
+    if (focusables.length === 0) {
+      event.preventDefault()
+      return
+    }
+
+    const first = focusables[0]
+    const last = focusables[focusables.length - 1]
+    const active = document.activeElement
+    if (event.shiftKey && active === first) {
+      event.preventDefault()
+      last.focus()
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault()
+      first.focus()
+    } else if (!overlay.contains(active)) {
+      event.preventDefault()
+      first.focus()
+    }
+  })
+
+  if (searchToggle && searchContainer) {
+    searchToggle.addEventListener('click', () => {
+      const isHidden = searchContainer.hidden
+      searchContainer.hidden = !isHidden
+      searchToggle.setAttribute('aria-expanded', String(isHidden))
+      if (isHidden && searchContainer.querySelector('#search-desktop')) {
+        const input = searchContainer.querySelector('.pagefind-ui__search-input')
+        if (input) setTimeout(() => input.focus(), 100)
+      }
+    })
+  }
+
+  if (header) {
+    const onScroll = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 4)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+  }
+
   const zooming = new Zooming({
     scaleBase: 0.5
   })
@@ -187,8 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (tocFab && tocSheet && tocSheetBody) {
-    let inlineInView = true
+    let inlineInView = !mobileMQ.matches
     const updateFabVisibility = () => {
+      if (mobileMQ.matches) inlineInView = false
       const show = belowDesktopMQ.matches && !inlineInView
       tocFab.hidden = !show
       tocFab.classList.toggle('is-visible', show)
