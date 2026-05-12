@@ -23,7 +23,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+      HUGO_CACHEDIR: /tmp/hugo_cache
     steps:
       - name: Checkout
         uses: actions/checkout@v5
