@@ -72,9 +72,11 @@ jobs:
         run: |
           cd themes/pickles && pnpm install --frozen-lockfile
 
-      - name: Expose theme dependencies to Hugo
+      - name: Expose theme JS dependencies to Hugo
         run: |
-          ln -sfn "$PWD/themes/pickles/node_modules" "$PWD/node_modules"
+          mkdir -p "$PWD/node_modules"
+          ln -sfn "$PWD/themes/pickles/node_modules/swiper" "$PWD/node_modules/swiper"
+          ln -sfn "$PWD/themes/pickles/node_modules/zooming" "$PWD/node_modules/zooming"
 
       - name: Build CSS
         run: |
