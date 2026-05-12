@@ -274,6 +274,9 @@
     > .tableOfContentContainer__body {
       padding-left: 2px;
       overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
     ul li {
