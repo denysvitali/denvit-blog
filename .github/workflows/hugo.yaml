@@ -72,6 +72,7 @@ jobs:
       - name: Build with Hugo
         env:
           HUGO_ENVIRONMENT: production
+          HUGO_ASSET_VERSION: ${{ github.sha }}
           TZ: Europe/Zurich
         run: |
           nix-shell -p hugo pagefind --run "hugo --gc --minify --baseURL ${{ steps.pages.outputs.base_url }}/"

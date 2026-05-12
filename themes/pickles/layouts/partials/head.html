@@ -44,7 +44,8 @@
   {{ template "_internal/google_analytics.html" . }}
   {{ end }}
 
-  <link rel="stylesheet" href="{{ .Site.BaseURL }}css/style.css" />
+  {{ $assetVersion := getenv "HUGO_ASSET_VERSION" | default "dev" }}
+  <link rel="stylesheet" href="{{ "css/style.css" | absURL }}?v={{ $assetVersion | urlquery }}" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
   <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
   <!-- Custom css files as define in config.toml -->
