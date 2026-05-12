@@ -62,6 +62,7 @@
   }
   &__panel {
     position: relative;
+    box-sizing: border-box;
     background: var(--color-bg);
     color: var(--color-text, inherit);
     border: 1px solid var(--color-border);
@@ -119,9 +120,10 @@
     }
   }
   &__body {
+    box-sizing: border-box;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 6px 18px 22px;
+    padding: 6px 18px 22px 20px;
     overscroll-behavior: contain;
 
     nav ul {
@@ -133,8 +135,9 @@
     nav ul ul { padding-left: 16px; }
     nav li { list-style: none; }
     a {
+      box-sizing: border-box;
       display: block;
-      padding: 11px 10px;
+      padding: 11px 12px;
       min-height: 44px;
       border-radius: 8px;
       color: var(--color-text-secondary);

@@ -272,6 +272,7 @@
     padding: 14px 16px;
 
     > .tableOfContentContainer__body {
+      padding-left: 2px;
       overflow-x: hidden;
     }
 
@@ -279,14 +280,16 @@
       margin: 8px 0;
 
       a {
+        box-sizing: border-box;
         min-height: 40px;
-        padding: 9px 10px;
+        padding: 9px 12px;
         margin: 0;
         border-left: 0;
+        overflow: visible;
       }
 
       ul {
-        margin-left: 10px;
+        margin-left: 12px;
         padding-left: 10px;
         border-left: 1px solid var(--color-divider);
       }
