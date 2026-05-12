@@ -323,12 +323,14 @@ blockquote.alert {
     width: 1.2rem;
     text-align: center;
     opacity: 0.95;
+    color: inherit;
   }
 
   .alert-title {
     text-transform: uppercase;
     font-size: 1.1rem;
     letter-spacing: 0.06em;
+    color: inherit;
   }
 
   .alert-content {
@@ -348,31 +350,51 @@ blockquote.alert {
 
 blockquote.alert-note {
   border-left-color: $note-color;
-  .alert-heading { color: $note-color; }
+  .alert-heading,
+  .alert-title,
+  .alert-icon {
+    color: $note-color;
+  }
   .alert-content { color: var(--color-text); }
 }
 
 blockquote.alert-tip {
   border-left-color: $tip-color;
-  .alert-heading { color: $tip-color; }
+  .alert-heading,
+  .alert-title,
+  .alert-icon {
+    color: $tip-color;
+  }
   .alert-content { color: var(--color-text); }
 }
 
 blockquote.alert-important {
   border-left-color: $important-color;
-  .alert-heading { color: $important-color; }
+  .alert-heading,
+  .alert-title,
+  .alert-icon {
+    color: $important-color;
+  }
   .alert-content { color: var(--color-text); }
 }
 
 blockquote.alert-warning {
   border-left-color: $warning-color;
-  .alert-heading { color: $warning-color; }
+  .alert-heading,
+  .alert-title,
+  .alert-icon {
+    color: $warning-color;
+  }
   .alert-content { color: var(--color-text); }
 }
 
 blockquote.alert-caution {
   border-left-color: $caution-color;
-  .alert-heading { color: $caution-color; }
+  .alert-heading,
+  .alert-title,
+  .alert-icon {
+    color: $caution-color;
+  }
   .alert-content { color: var(--color-text); }
 }
 
