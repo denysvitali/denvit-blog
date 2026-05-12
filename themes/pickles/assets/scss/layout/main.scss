@@ -4,7 +4,7 @@
 .l-main {
   width: 100%;
   // Phones: lighter top, tighter bottom (footer adds ~64px above its border).
-  padding: 24px var(--l-main-padding-x) 16px;
+  padding: 28px var(--l-main-padding-x) 18px;
   padding-left: max(var(--l-main-padding-x), env(safe-area-inset-left));
   padding-right: max(var(--l-main-padding-x), env(safe-area-inset-right));
   box-sizing: border-box;
@@ -12,18 +12,18 @@
 
   // Small tablets
   @include breakpoint.mq-up(lmd) {
-    padding-top: 32px;
-    padding-bottom: 24px;
+    padding-top: 36px;
+    padding-bottom: 28px;
   }
 
   @include breakpoint.mq-up(lg) {
-    max-width: 1080px;
+    max-width: 1120px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
-    gap: 32px;
+    gap: 36px;
     align-items: start;
-    padding-top: 40px;
+    padding-top: 44px;
     padding-bottom: 32px;
   }
 }
@@ -32,21 +32,21 @@
 .l-main--list {
   max-width: 720px;
   margin: 0 auto;
-  padding-top: 10px;
+  padding-top: 12px;
 
   @include breakpoint.mq-up(lg) {
     display: block;
-    max-width: 700px;
-    padding-top: 14px;
+    max-width: 720px;
+    padding-top: 18px;
   }
 }
 
 // ToC sidebar layout for single post pages
 @include breakpoint.mq-up(xl) {
   .l-main:not(.l-main--list) {
-    grid-template-columns: 220px minmax(0, 720px) 100px;
-    max-width: 1160px;
-    gap: 40px;
+    grid-template-columns: 220px minmax(0, 720px) 120px;
+    max-width: 1200px;
+    gap: 44px;
     padding-left: var(--l-main-padding-x);
     padding-right: var(--l-main-padding-x);
   }
