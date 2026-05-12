@@ -38,6 +38,11 @@ jobs:
           cache: pnpm
           cache-dependency-path: themes/pickles/pnpm-lock.yaml
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Nix
         uses: cachix/install-nix-action@v31
         with:
