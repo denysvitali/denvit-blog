@@ -8,3 +8,6 @@
 # devenv
 /.direnv
 .devenv*
+
+# Dependency directories
+/node_modules
