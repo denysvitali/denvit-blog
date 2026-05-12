@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   HUGO_VERSION: '0.154.1'
@@ -22,12 +22,21 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           submodules: recursive
-          fetch-depth: 0
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: themes/pickles/pnpm-lock.yaml
 
       - name: Setup Nix
         uses: cachix/install-nix-action@v31
@@ -37,20 +46,24 @@ jobs:
             substituters = https://cache.nixos.org https://devenv.cachix.org
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= devenv.cachix.org-1:XVxkRQ/ScL7WeZ1XuLKR4X8RPgYSn6O4pFmsM5G7cPs=
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Install Node dependencies
         run: |
-          cd themes/pickles && pnpm install
+          cd themes/pickles && pnpm install --frozen-lockfile
 
       - name: Build CSS
         run: |
-          cd themes/pickles && npx sass-embedded assets/scss/style.scss:static/css/style.css --load-path=node_modules
+          cd themes/pickles && pnpm exec sass-embedded assets/scss/style.scss:static/css/style.css --load-path=node_modules
+
+      - name: Cache Hugo
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HUGO_CACHEDIR }}
+          key: ${{ runner.os }}-hugo-${{ hashFiles('hugo.toml', 'themes/pickles/theme.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-hugo-
 
       - name: Build with Hugo
         env:
-          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
           HUGO_ENVIRONMENT: production
           TZ: Europe/Zurich
         run: |
