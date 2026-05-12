@@ -1,11 +1,12 @@
 {{- partial "footer_custom.html" . }}
+{{- $assetVersion := getenv "HUGO_ASSET_VERSION" | default "dev" }}
 {{- $appJS := resources.Get "js/app.js" }}
 {{- if $appJS }}
 {{- $appBundle := $appJS | js.Build (dict "minify" hugo.IsProduction) }}
-<script type="text/javascript" src="{{ $appBundle.RelPermalink }}" defer></script>
+<script type="text/javascript" src="{{ $appBundle.RelPermalink }}?v={{ $assetVersion | urlquery }}" defer></script>
 {{- end }}
 {{ if .Site.Params.enableMobileNav | default true }}
-<script type="text/javascript" src="{{ .Site.BaseURL }}js/mobile-nav.js" defer></script>
-<script src="/pagefind/pagefind-ui.js"></script>
+<script type="text/javascript" src="{{ "js/mobile-nav.js" | absURL }}?v={{ $assetVersion | urlquery }}" defer></script>
+<script src="/pagefind/pagefind-ui.js?v={{ $assetVersion | urlquery }}"></script>
 {{ end }}
 {{ partial "mermaid_support.html" . }}
