@@ -59,7 +59,7 @@ jobs:
 
       - name: Build CSS
         run: |
-          cd themes/pickles && pnpm exec sass assets/scss/style.scss:static/css/style.css --load-path=node_modules
+          cd themes/pickles && pnpm exec sass assets/scss/style.scss:static/css/style.css --load-path=node_modules --no-source-map
 
       - name: Cache Hugo
         uses: actions/cache@v4
