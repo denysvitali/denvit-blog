@@ -1,0 +1,38 @@
+.c-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 16px 0 0;
+  padding: 0;
+  gap: 8px;
+
+  a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-secondary);
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: var(--color-accent);
+      border-color: var(--color-accent);
+      background-color: rgba(var(--color-accent), 0.1);
+    }
+  }
+
+  &__item {
+    margin: 0;
+    list-style: none;
+  }
+
+  &__icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+}

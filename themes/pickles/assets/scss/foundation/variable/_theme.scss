@@ -1,0 +1,133 @@
+// Light/Dark Mode Theme Variables using CSS Custom Properties
+// These will be compiled to CSS variables for runtime theming
+
+// Dark mode (default)
+:root {
+  // Layout metrics (single source of truth for sticky offsets / gutter)
+  --header-height: 52px;
+  --toc-offset: calc(var(--header-height) + 20px);
+  --l-main-padding-x: 20px;
+
+  // Background colors
+  --color-bg: #1c1c1e;
+  --color-bg-secondary: #2c2c2e;
+  --color-bg-tertiary: #3a3a3c;
+
+  // Text colors with hierarchy
+  --color-text: #f5f5f7;
+  --color-text-secondary: #8e8e93;
+  --color-text-tertiary: #6e6e73;
+
+  // Accent Color (Electric Blue - Apple Style)
+  --color-accent: #0a84ff;
+  --color-accent-rgb: 10, 132, 255;
+  --color-accent-hover: #409cff;
+
+  // Selection colors
+  --color-selection-bg: #0a84ff;
+  --color-selection-text: #fff;
+
+  // Deleted text
+  --color-del: #6e6e73;
+
+  // Header
+  --color-header-bg: rgba(28, 28, 30, 0.72);
+
+  // Scrollbar
+  --color-scrollbar-track: #1c1c1e;
+  --color-scrollbar-thumb: #3a3a3c;
+  --color-scrollbar-thumb-hover: hsla(0, 0%, 100%, 0.2);
+
+  // Mobile menu
+  --color-mobile-menu-bg: #f5f5f7;
+
+  // Related posts
+  --color-related-bg: #92c6f2;
+  --color-related-text: #fafafa;
+  --color-related-overlay: rgba(0, 0, 0, 0.3);
+  --color-related-overlay-hover: rgba(0, 0, 0, 0.6);
+
+  // Pagination
+  --color-pagination-bg: #555;
+  --color-pagination-arrow: #fafafa;
+
+  // Author
+  --color-author-separator: #999;
+
+  // Screen reader
+  --color-screen-reader-bg: #f1f1f1;
+
+  // Border and divider
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-divider: rgba(255, 255, 255, 0.08);
+}
+
+// Light mode
+@media (prefers-color-scheme: light) {
+  :root {
+    // Background colors
+    --color-bg: #ffffff;
+    --color-bg-secondary: #ffffff;
+    --color-bg-tertiary: #e5e5ea;
+
+    // Text colors with hierarchy
+    --color-text: #1c1c1e;
+    --color-text-secondary: #6e6e73;
+    --color-text-tertiary: #8e8e93;
+
+    // Accent Color
+    --color-accent: #007aff;
+    --color-accent-rgb: 0, 122, 255;
+    --color-accent-hover: #0056b3;
+
+    // Selection colors
+    --color-selection-bg: #007aff;
+    --color-selection-text: #fff;
+
+    // Deleted text
+    --color-del: #8e8e93;
+
+    // Header
+    --color-header-bg: rgba(255, 255, 255, 0.72);
+
+    // Scrollbar
+    --color-scrollbar-track: #f5f5f7;
+    --color-scrollbar-thumb: #c7c7cc;
+    --color-scrollbar-thumb-hover: hsla(0, 0%, 0%, 0.2);
+
+    // Mobile menu
+    --color-mobile-menu-bg: #333;
+
+    // Related posts
+    --color-related-bg: #007aff;
+    --color-related-text: #ffffff;
+    --color-related-overlay: rgba(255, 255, 255, 0.3);
+    --color-related-overlay-hover: rgba(0, 0, 0, 0.1);
+
+    // Pagination
+    --color-pagination-bg: #dddddd;
+    --color-pagination-arrow: #333333;
+
+    // Author
+    --color-author-separator: #999999;
+
+    // Screen reader
+    --color-screen-reader-bg: #000000;
+
+    // Border and divider
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-divider: rgba(0, 0, 0, 0.08);
+  }
+}
+
+// SCSS variables for use in the stylesheet (deprecated, prefer CSS variables)
+$color-bg: var(--color-bg);
+$color-bg-secondary: var(--color-bg-secondary);
+$color-bg-tertiary: var(--color-bg-tertiary);
+$color-text: var(--color-text);
+$color-text-secondary: var(--color-text-secondary);
+$color-text-tertiary: var(--color-text-tertiary);
+$color-accent: var(--color-accent);
+$color-accent-hover: var(--color-accent-hover);
+$color-border: rgba(255, 255, 255, 0.1);
+$color-divider: rgba(255, 255, 255, 0.08);

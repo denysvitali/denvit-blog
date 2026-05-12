@@ -1,0 +1,61 @@
+@use '../variable/breakpoint.scss' as breakpoint;
+@use '../variable/_theme.scss' as theme;
+
+.swiper-container {
+  height: 150px;
+}
+
+.swiper-wrapper {
+  margin: 0;
+  padding: 0;
+}
+
+.related-prev,
+.related-next {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-pagination-bg);
+  &:hover {
+    cursor: pointer;
+  }
+  &::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    width: 5px;
+    height: 5px;
+    border: solid var(--color-pagination-arrow);
+  }
+  @include breakpoint.mq-down(md) {
+    display: none !important;
+  }
+}
+
+.related-prev {
+  left: -32px;
+  &::after {
+    left: 1px;
+    border-width: 2px 0 0 2px;
+    transform: rotate(-45deg);
+  }
+}
+
+.related-next {
+  right: -32px;
+  &::after {
+    right: 1px;
+    border-width: 2px 2px 0 0;
+    transform: rotate(45deg);
+  }
+}

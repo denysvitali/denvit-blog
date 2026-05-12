@@ -1,0 +1,23 @@
+.c-tag {
+  display: inline-flex;
+  align-items: center;
+  margin: 4px 6px 4px 0;
+  padding: 6px 12px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background-color: var(--color-bg-tertiary);
+  border-radius: 20px;
+  transition: all 0.2s ease;
+
+  &::before {
+    display: none;
+  }
+
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+    filter: brightness(0.9);
+    color: var(--color-text);
+    transform: translateY(-1px);
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "hugo_theme_pickles",
+  "version": "2.1.0",
+  "description": "A modern Hugo theme",
+  "scripts": {
+    "start": "hugo server -s exampleSite --themesDir=../../ --theme=pickles",
+    "build": "hugo -s exampleSite --themesDir=../../ --theme=pickles",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mismith0227",
+  "license": "MIT",
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass-embedded": "^1.83.1"
+  },
+  "dependencies": {
+    "swiper": "^7.4.1",
+    "zooming": "^2.1.1"
+  }
+}

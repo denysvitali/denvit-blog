@@ -1,0 +1,33 @@
+@use '../../foundation/variable/font-family.scss' as fontFamily;
+
+.c-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  font-family: fontFamily.$font-primary;
+  font-size: 1.3rem; // 13-14px Apple metadata style
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+
+  .meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    &::after {
+      content: "·";
+      margin: 0 8px;
+      color: var(--color-text-tertiary);
+    }
+
+    &:last-child::after {
+      display: none;
+    }
+  }
+
+  // Hide the pipe separator (legacy)
+  .separator {
+    display: none;
+  }
+}

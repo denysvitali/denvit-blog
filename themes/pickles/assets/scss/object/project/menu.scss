@@ -1,0 +1,52 @@
+@use "../../foundation/variable/breakpoint.scss" as breakpoint;
+@use '../../foundation/variable/font-family.scss' as fontFamily;
+
+.p-menu {
+  margin-top: 0;
+  font-family: fontFamily.$font-primary;
+
+  &__lists {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+  }
+
+  &__listitem {
+    margin: 0;
+    list-style: none;
+
+    a {
+      display: inline-block;
+      padding: 6px 12px;
+      font-size: 1.3rem; // 13px Apple-style
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--color-text);
+        background-color: transparent;
+      }
+    }
+
+    &.active a {
+      color: var(--color-text);
+      background-color: transparent;
+    }
+
+    ul {
+      display: none; // Keep submenus hidden for simplicity
+    }
+  }
+
+  &__parent {
+    span {
+      color: var(--color-accent);
+    }
+  }
+}

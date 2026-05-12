@@ -1,0 +1,42 @@
+</main>
+<footer class="l-footer" data-pagefind-ignore>
+  <div class="l-footer-inner">
+    <p class="p-copyright">
+      {{ if ($.Param "author") }}
+      {{ if ($.Param "authorwebsite") }}
+      <a href="{{ $.Param " authorwebsite" }}">{{ $.Param "author" }}</a>
+      {{ else }}
+      {{ $.Param "author" }}
+      {{ end }}
+      {{ end }}
+      {{ if .Site.Lastmod }}
+      &nbsp;&middot;&nbsp;
+      {{ .Site.Lastmod.Format "2006" }}
+      {{ end }}
+    </p>
+    {{ if or ($.Param "github") ($.Param "twitter") ($.Param "telegram") }}
+    <p class="p-social">
+      {{ with ($.Param "github") }}
+      <a href="https://github.com/{{ . }}" aria-label="GitHub">
+        <i class="fa-brands fa-github"></i>
+      </a>
+      {{ end }}
+      {{ with ($.Param "twitter") }}
+      <a href="https://x.com/{{ . }}" aria-label="X">
+        <i class="fa-brands fa-x-twitter"></i>
+      </a>
+      {{ end }}
+      {{ with ($.Param "telegram") }}
+      <a href="https://t.me/{{ . }}" aria-label="Telegram">
+        <i class="fa-brands fa-telegram"></i>
+      </a>
+      {{ end }}
+    </p>
+    {{ end }}
+  </div>
+</footer>
+
+{{ partial "scripts.html" . }}
+</body>
+
+</html>

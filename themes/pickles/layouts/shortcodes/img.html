@@ -1,0 +1,17 @@
+{{/* layouts/shortcodes/img.html - Responsive image shortcode */ -}}
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" -}}
+{{- $class := .Get "class" -}}
+{{- $width := .Get "width" -}}
+{{- $height := .Get "height" -}}
+{{- $loading := .Get "loading" | default "lazy" -}}
+
+<img
+  src="{{ $src }}"
+  alt="{{ $alt }}"
+  {{- with $class }} class="{{ $class }}"{{- end }}
+  {{- with $width }} width="{{ $width }}"{{- end }}
+  {{- with $height }} height="{{ $height }}"{{- end }}
+  loading="{{ $loading }}"
+  decoding="async"
+/>
