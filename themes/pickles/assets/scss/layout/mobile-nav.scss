@@ -66,6 +66,12 @@
     display: none !important;
   }
 
+  /* Mobile search lives inside the menu overlay. */
+  .l-nav-wrapper .search-toggle,
+  .search-container {
+    display: none !important;
+  }
+
   /* Mobile header inner layout */
   .l-header-inner {
     gap: 8px;
