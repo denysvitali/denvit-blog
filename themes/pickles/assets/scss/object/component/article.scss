@@ -5,36 +5,40 @@
   // Article card - entire card is clickable
   &.p-list-article {
     position: relative; // anchor for stretched title link
-    margin-top: 48px;
-    padding-bottom: 32px;
+    margin-top: 0;
+    padding: 28px 0;
     border-bottom: 1px solid var(--color-divider);
+    border-top: none;
 
-    &:first-child {
-      margin-top: 0;
+    &:last-child {
+      border-bottom: none;
     }
 
     @include breakpoint.mq-down(md) {
-      margin-top: 24px;
-      padding-bottom: 20px;
+      padding: 22px 0;
     }
 
-    transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+
+    &:hover {
+      background-color: var(--color-bg-secondary);
+    }
 
     &:active {
-      transform: scale(0.98);
+      opacity: 0.85;
     }
   }
 
   &__title {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: 1.95rem;
+    font-weight: 500;
     line-height: 1.3;
     letter-spacing: -0.02em;
-    margin: 0 0 12px;
+    margin: 0 0 8px;
 
     @include breakpoint.mq-down(md) {
-      font-size: 1.8rem;
-      margin: 0 0 8px;
+      font-size: 1.75rem;
+      margin-bottom: 6px;
     }
 
     a {
@@ -58,14 +62,14 @@
 
   &__meta {
     font-family: fontFamily.$font-primary;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     line-height: 1.5;
     color: var(--color-text-secondary);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     font-weight: 400;
 
     @include breakpoint.mq-down(md) {
-      font-size: 1.2rem;
+      font-size: 1.18rem;
       margin-bottom: 10px;
 
       .meta-item::after {
@@ -93,18 +97,17 @@
   }
 
   &__summary {
-    font-size: 1.5rem;
+    font-size: 1.42rem;
     color: var(--color-text-secondary);
-    line-height: 1.6;
-    margin-bottom: 16px;
+    line-height: 1.65;
+    margin-bottom: 0;
     // Keep interactive children above the stretched ::after.
     position: relative;
     z-index: 2;
 
     @include breakpoint.mq-down(md) {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       line-height: 1.55;
-      margin-bottom: 0;
     }
 
     & p {

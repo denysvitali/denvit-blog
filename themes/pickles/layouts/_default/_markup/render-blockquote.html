@@ -15,11 +15,13 @@
   
   {{ if eq .Type "alert" }}
     <blockquote class="alert alert-{{ .AlertType }}">
-      <p class="alert-heading">
+      <div class="alert-heading">
         <i class="fas alert-icon {{ index $icons .AlertType }}"></i>
         <span class="alert-title">{{(index $titles .AlertType) }}</span>
-      </p>
-      {{ .Text }}
+      </div>
+      <div class="alert-content">
+        {{ .Text }}
+      </div>
     </blockquote>
   {{ else }}
     <blockquote>
