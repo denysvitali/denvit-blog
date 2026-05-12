@@ -303,13 +303,13 @@ $warning-color: #f79000;
 
 @mixin alert-variant($color) {
   --alert-color: #{$color};
-  --alert-bg: #{rgba($color, 0.09)};
+  --alert-bg: #{rgba($color, 0.1)};
   --alert-border: #{rgba($color, 0.28)};
 }
 
 blockquote.alert {
   --alert-color: var(--color-accent);
-  --alert-bg: rgba(var(--color-accent-rgb), 0.09);
+  --alert-bg: rgba(var(--color-accent-rgb), 0.1);
   --alert-border: rgba(var(--color-accent-rgb), 0.28);
 
   position: relative;
@@ -317,9 +317,7 @@ blockquote.alert {
   padding: 1.45rem 1.7rem 1.55rem 1.9rem;
   border: 1px solid var(--alert-border);
   border-radius: 12px;
-  background:
-    linear-gradient(90deg, var(--alert-bg), transparent 72%),
-    var(--color-bg-secondary);
+  background: color-mix(in srgb, var(--color-bg-secondary) 88%, var(--alert-bg));
   box-shadow: inset 4px 0 0 var(--alert-color);
 
   .alert-heading {
