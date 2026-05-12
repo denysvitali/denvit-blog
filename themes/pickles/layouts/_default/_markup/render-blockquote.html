@@ -1,0 +1,30 @@
+{{ $titles := dict
+    "caution" "Caution"
+    "important" "Important"
+    "note" "Note"
+    "tip" "Tip"
+    "warning" "Warning"
+}}
+{{ $icons := dict
+    "caution" "fa-exclamation-triangle"
+    "important" "fa-exclamation"
+    "note" "fa-info-circle"
+    "tip" "fa-lightbulb"
+    "warning" "fa-circle-exclamation"
+}}
+  
+  {{ if eq .Type "alert" }}
+    <blockquote class="alert alert-{{ .AlertType }}">
+      <p class="alert-heading">
+        <i class="fas alert-icon {{ index $icons .AlertType }}"></i>
+        <span class="alert-title">{{(index $titles .AlertType) }}</span>
+      </p>
+      {{ .Text }}
+    </blockquote>
+  {{ else }}
+    <blockquote>
+      {{ .Text }}
+    </blockquote>
+  {{ end }}
+  
+  

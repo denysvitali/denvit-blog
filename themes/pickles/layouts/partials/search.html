@@ -1,0 +1,13 @@
+{{ $id := .id | default "search" }}
+<div id="{{ $id }}"></div>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('{{ $id }}')) {
+      new PagefindUI({
+        element: "#{{ $id }}",
+        showSubResults: true,
+        debounceTimeoutMs: 300
+      });
+    }
+  });
+</script>

@@ -1,0 +1,11 @@
+{{- partial "footer_custom.html" . }}
+{{- $appJS := resources.Get "js/app.js" }}
+{{- if $appJS }}
+{{- $appBundle := $appJS | js.Build (dict "minify" hugo.IsProduction) }}
+<script type="text/javascript" src="{{ $appBundle.RelPermalink }}" defer></script>
+{{- end }}
+{{ if .Site.Params.enableMobileNav | default true }}
+<script type="text/javascript" src="{{ .Site.BaseURL }}js/mobile-nav.js" defer></script>
+<script src="/pagefind/pagefind-ui.js"></script>
+{{ end }}
+{{ partial "mermaid_support.html" . }}

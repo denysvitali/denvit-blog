@@ -1,0 +1,16 @@
+/public
+/resources
+/.hugo_build.lock
+/themes/static
+/static/css/style.css
+*.css.map
+
+# Local agent/editor config (any location)
+**/.claude/
+
+# devenv
+/.direnv
+.devenv*
+
+# Dependency directories
+/node_modules

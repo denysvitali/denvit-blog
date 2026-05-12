@@ -1,0 +1,12 @@
+<article class="c-article p-list-article">
+  <header>
+    <h2 class="c-title c-article__title"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+    <p class="c-article__meta">
+      <span class="meta-item">{{ partial "timestamp.html" . }}</span>{{ if not (.Param "hideReadingTime") }}
+      <span class="meta-item">{{ partial "reading_time.html" . }}</span>{{ end }}
+    </p>
+  </header>
+  <div class="c-article__summary">
+    {{ with .Description }}{{ . | plainify | safeHTML }}{{ else }}{{ .Summary | plainify | safeHTML }}{{ end }}
+  </div>
+</article>

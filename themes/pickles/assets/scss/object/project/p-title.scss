@@ -1,0 +1,21 @@
+@use '../../foundation/variable/font-family.scss' as fontFamily;
+@use '../../foundation/variable/_theme.scss' as theme;
+
+.p-title {
+  margin: 0;
+  font-family: fontFamily.$font-primary;
+  font-size: 4.4rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+
+  &__link {
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-accent);
+    }
+  }
+}

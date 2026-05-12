@@ -1,0 +1,51 @@
+@use "../../foundation/variable/breakpoint.scss" as breakpoint;
+@use '../../foundation/variable/_theme.scss' as theme;
+
+.p-author {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto 0;
+  box-sizing: border-box;
+  padding: 64px 20px;
+
+  @include breakpoint.mq-up(sm) {
+    display: flex;
+    margin: 80px auto 0;
+  }
+
+  // On single post pages, constrain to match article width (680px)
+  @include breakpoint.mq-up(xl) {
+    .l-main:not(.l-main--list) ~ & {
+      max-width: 680px;
+    }
+  }
+
+  &::before {
+    content: '* * *';
+    position: absolute;
+    top: -30px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--color-text-tertiary);
+    @include breakpoint.mq-up(sm) {
+      top: -50px;
+    }
+  }
+  &__name {
+    font-size: 2.8rem;
+  }
+  &__body {
+    flex: 1;
+    @include breakpoint.mq-up(sm) {
+      padding-left: 16px;
+    }
+    p {
+      margin: 0;
+    }
+  }
+}

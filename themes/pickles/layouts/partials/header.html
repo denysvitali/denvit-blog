@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}" prefix="og: http://ogp.me/ns#">
+{{ partial "head.html" . }}
+
+<body>
+  <a href="#main" class="skip-link p-screen-reader-text">{{ i18n "skip-to-content" }}</a>
+  {{ partial "svgpack-sprite.html" . }}
+  <header class="l-header" data-pagefind-ignore>
+    <div class="l-header-inner">
+      {{ if .IsPage }}
+      <p class="c-title p-title"><a href="{{ .Site.BaseURL }}" class="p-title__link">{{ .Site.Title }}</a></p>
+      {{ else }}
+      <h1 class="c-title p-title"><a href="{{ .Site.BaseURL }}" class="p-title__link">{{ .Site.Title }}</a></h1>
+      {{ end }}
+      {{ with ($.Param "subtitle") }}
+      <p class="p-subtitle">
+        {{ . }}
+      </p>
+      {{ end }}
+
+      <div class="l-nav-wrapper">
+        <button class="mobile-menu-toggle" aria-expanded="false" aria-label="Toggle navigation" aria-controls="mobile-menu-overlay">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        {{- partial "menu.html" . -}}
+        <button class="search-toggle" aria-label="Search" aria-expanded="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="M21 21l-4.35-4.35"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  {{- partial "header_custom.html" . }}
+
+  <!-- Full-screen mobile menu overlay -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" hidden>
+    <div class="mobile-menu-header">
+      <a href="{{ .Site.BaseURL }}" class="mobile-menu-logo">{{ .Site.Title }}</a>
+      <button class="mobile-menu-close" aria-label="Close menu" id="mobile-menu-close">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div class="mobile-menu-content">
+      {{- partial "menu.html" . -}}
+      <div class="mobile-menu-search">
+        {{- partial "search.html" (dict "id" "search-mobile") -}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Search container -->
+  <div class="search-container" id="search-container" hidden>
+    {{- partial "search.html" (dict "id" "search-desktop") -}}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var toggle = document.querySelector('.mobile-menu-toggle');
+      var overlay = document.getElementById('mobile-menu-overlay');
+      var closeBtn = document.getElementById('mobile-menu-close');
+      var searchToggle = document.querySelector('.search-toggle');
+      var searchContainer = document.getElementById('search-container');
+      var header = document.querySelector('.l-header');
+
+      var lastFocused = null;
+      var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+      function getFocusable() {
+        if (!overlay) return [];
+        return Array.prototype.filter.call(
+          overlay.querySelectorAll(FOCUSABLE),
+          function (el) { return el.offsetParent !== null; }
+        );
+      }
+
+      function isOpen() {
+        return overlay && overlay.classList.contains('is-open');
+      }
+
+      function openMenu() {
+        if (!toggle || !overlay) return;
+        lastFocused = document.activeElement;
+        toggle.setAttribute('aria-expanded', 'true');
+        overlay.hidden = false;
+        document.body.classList.add('has-open-menu');
+        requestAnimationFrame(function () {
+          overlay.classList.add('is-open');
+          if (closeBtn) closeBtn.focus();
+        });
+      }
+
+      function closeMenu() {
+        if (!toggle || !overlay) return;
+        toggle.setAttribute('aria-expanded', 'false');
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('has-open-menu');
+        setTimeout(function () { overlay.hidden = true; }, 300);
+        if (lastFocused && typeof lastFocused.focus === 'function') {
+          lastFocused.focus();
+        } else if (toggle) {
+          toggle.focus();
+        }
+      }
+
+      if (toggle && overlay) {
+        toggle.addEventListener('click', function () {
+          if (isOpen()) closeMenu(); else openMenu();
+        });
+      }
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeMenu);
+      }
+      if (overlay) {
+        overlay.querySelectorAll('a').forEach(function (link) {
+          link.addEventListener('click', closeMenu);
+        });
+      }
+
+      // Global key handling: Escape closes menu, Tab traps focus.
+      document.addEventListener('keydown', function (e) {
+        if (!isOpen()) return;
+        if (e.key === 'Escape' || e.key === 'Esc') {
+          e.preventDefault();
+          closeMenu();
+          return;
+        }
+        if (e.key === 'Tab') {
+          var focusables = getFocusable();
+          if (focusables.length === 0) {
+            e.preventDefault();
+            return;
+          }
+          var first = focusables[0];
+          var last = focusables[focusables.length - 1];
+          var active = document.activeElement;
+          if (e.shiftKey && active === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first.focus();
+          } else if (!overlay.contains(active)) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      });
+
+      // Search toggle
+      if (searchToggle && searchContainer) {
+        searchToggle.addEventListener('click', function () {
+          var isHidden = searchContainer.hidden;
+          searchContainer.hidden = !isHidden;
+          searchToggle.setAttribute('aria-expanded', isHidden);
+          if (isHidden && searchContainer.querySelector('#search-desktop')) {
+            var input = searchContainer.querySelector('.pagefind-ui__search-input');
+            if (input) {
+              setTimeout(function () { input.focus(); }, 100);
+            }
+          }
+        });
+      }
+
+      // Header scrolled-state for stronger divider once user scrolls.
+      if (header) {
+        var onScroll = function () {
+          header.classList.toggle('is-scrolled', window.scrollY > 4);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+    });
+  </script>
+  <main id="main" class="l-main{{ if not .IsPage }} l-main--list{{ end }}" data-pagefind-body>
+    {{ if and .IsPage (gt (len .TableOfContents) 30) }}
+    <aside class="tableOfContentContainer" id="tableOfContentContainer" aria-label="Table of contents">
+      <h3 class="tableOfContentContainer__title">
+        <span class="tableOfContentContainer__label">Table of contents</span>
+        <span class="tableOfContentContainer__count" aria-hidden="true"></span>
+        <span class="tableOfContentContainer__chevron" aria-hidden="true"></span>
+      </h3>
+      <div class="tableOfContentContainer__body">
+        {{ .TableOfContents }}
+      </div>
+    </aside>
+
+    <!-- Floating mobile TOC button + bottom sheet -->
+    <button type="button"
+            class="p-toc-fab"
+            id="tocFab"
+            aria-controls="tocSheet"
+            aria-expanded="false"
+            aria-label="Open table of contents"
+            hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="8"  y1="6"  x2="21" y2="6"></line>
+        <line x1="8"  y1="12" x2="21" y2="12"></line>
+        <line x1="8"  y1="18" x2="21" y2="18"></line>
+        <line x1="3"  y1="6"  x2="3.01" y2="6"></line>
+        <line x1="3"  y1="12" x2="3.01" y2="12"></line>
+        <line x1="3"  y1="18" x2="3.01" y2="18"></line>
+      </svg>
+      <span class="p-toc-fab__label">On this page</span>
+    </button>
+
+    <div class="p-toc-sheet" id="tocSheet" role="dialog" aria-modal="true"
+         aria-labelledby="tocSheetTitle" hidden>
+      <div class="p-toc-sheet__backdrop" data-toc-sheet-close></div>
+      <div class="p-toc-sheet__panel" role="document">
+        <div class="p-toc-sheet__handle" aria-hidden="true"></div>
+        <div class="p-toc-sheet__header">
+          <h3 id="tocSheetTitle" class="p-toc-sheet__title">On this page</h3>
+          <button type="button" class="p-toc-sheet__close" aria-label="Close"
+                  data-toc-sheet-close>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6"  x2="6"  y2="18"></line>
+              <line x1="6"  y1="6"  x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="p-toc-sheet__body" id="tocSheetBody">
+          {{ .TableOfContents }}
+        </div>
+      </div>
+    </div>
+    {{ end }}

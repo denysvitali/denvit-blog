@@ -1,0 +1,386 @@
+@use "../variable/font-family.scss" as fontFamily;
+// Theme variables with CSS custom properties for light/dark mode support
+@use "../variable/_theme.scss" as theme;
+@use "../variable/breakpoint.scss" as breakpoint;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: var(--color-text);
+  font-size: 1rem;
+  font-family: fontFamily.$font-primary;
+  line-height: 1.65;
+  background-color: var(--color-bg);
+  // Near-zero tracking; -0.01em was visibly tight on small body copy.
+  letter-spacing: -0.003em;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+// Custom scrollbar - thin and subtle
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-thumb-hover);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  font-family: fontFamily.$font-primary;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+// Fluid type scale: clamp(MIN @ phone, PREFERRED scales with vw, MAX @ desktop).
+h1 { font-size: clamp(2.4rem, 1.8rem + 3vw, 3.2rem); font-weight: 700; }
+h2 { font-size: clamp(2.0rem, 1.6rem + 2vw, 2.4rem); font-weight: 600; }
+h3 { font-size: clamp(1.7rem, 1.5rem + 1vw, 1.9rem); font-weight: 600; }
+h4 { font-size: clamp(1.55rem, 1.45rem + 0.5vw, 1.7rem); }
+h5 { font-size: clamp(1.4rem, 1.35rem + 0.25vw, 1.5rem); }
+h6 { font-size: clamp(1.2rem, 1.15rem + 0.2vw, 1.3rem); }
+
+p {
+  font-size: 1.6rem;
+  line-height: 1.7;
+  margin-bottom: 1.5em;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
+ul li { list-style: disc; }
+ol li { list-style: decimal; }
+
+li {
+  font-size: 1.6rem;
+  line-height: 1.7;
+  margin-bottom: 0.4em;
+
+  > ul,
+  > ol {
+    margin-top: 0.4em;
+  }
+}
+
+dt {
+  margin-top: 16px;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+dd {
+  margin: 8px 0 0 20px;
+  font-size: 1.6rem;
+}
+
+// Mobile-only vertical rhythm.
+@include breakpoint.mq-down(md) {
+  p { margin-bottom: 1.5em; }
+  li { margin-bottom: 0.55em; line-height: 1.75; }
+  dt { margin-top: 20px; }
+  dd { margin: 10px 0 0 18px; line-height: 1.7; }
+}
+
+pre {
+  display: block;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background-color: var(--color-bg-secondary);
+  font-size: 1.3rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  // Preserve code formatting; never break tokens mid-line.
+  white-space: pre;
+  word-wrap: normal;
+  overflow-wrap: normal;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+  font-family: fontFamily.$SF-Mono;
+
+  // Chroma line-number table: keep gutter from forcing layout wider.
+  .chroma { background: transparent; }
+  .lntable {
+    display: block;
+    width: 100%;
+    margin: 0;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  .lntable .lntd {
+    padding: 0;
+    border: 0;
+    vertical-align: top;
+
+    &:first-child {
+      width: 1%;
+      white-space: nowrap;
+      user-select: none;
+      padding-right: 12px;
+      color: var(--color-text-secondary);
+      opacity: 0.6;
+    }
+    &:last-child { width: 100%; }
+  }
+  .ln, .lnt { user-select: none; }
+
+  @include breakpoint.mq-down(md) {
+    padding: 12px 14px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+  }
+}
+
+code {
+  line-height: 1.7;
+  font-size: 1.4rem;
+  font-family: fontFamily.$SF-Mono;
+  word-break: break-word;
+}
+
+// Inline code: anywhere that isn't inside <pre>.
+:not(pre) > code {
+  padding: 2px 6px;
+  color: var(--color-text);
+  background-color: var(--color-bg-secondary);
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+// Reset for code inside <pre> (Chroma wraps tokens in many spans).
+pre code {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  font-size: inherit;
+  word-break: normal;
+  white-space: inherit;
+}
+
+// Tables: wrapped in .table-wrapper by render-table.html hook;
+// raw HTML tables fall back to scroll on the table itself.
+.table-wrapper {
+  position: relative;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 2em auto;
+  border-radius: 8px;
+  scrollbar-gutter: stable;
+
+  // Soft right-edge fade hinting at horizontal scroll.
+  &::after {
+    content: "";
+    position: sticky;
+    top: 0;
+    right: 0;
+    float: right;
+    width: 24px;
+    height: 100%;
+    margin-left: -24px;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0),
+      var(--color-bg) 90%
+    );
+  }
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 1.6rem;
+  width: 100%;
+
+  // Inside a wrapper, allow the table to be wider than container.
+  .table-wrapper & {
+    margin: 0;
+    min-width: max-content;
+  }
+}
+
+// Fallback for raw HTML tables without the render-hook wrapper.
+:not(.table-wrapper) > table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 2em auto;
+}
+
+th,
+td {
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: var(--color-bg-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-bg-secondary);
+}
+
+@include breakpoint.mq-down(md) {
+  table { font-size: 1.4rem; }
+  th, td { padding: 8px 10px; }
+}
+
+del {
+  color: var(--color-del);
+}
+
+blockquote {
+  margin: 24px 0;
+  padding: 16px 20px;
+  border-left: 3px solid var(--color-accent);
+  background-color: var(--color-bg-secondary);
+  border-radius: 0 8px 8px 0;
+
+  & * {
+    margin: 0;
+  }
+
+  p.alert-heading {
+    font-weight: 600;
+    margin-bottom: 0.6em;
+
+    .alert-icon {
+      margin-right: 4px;
+      width: 16px;
+      text-align: center;
+    }
+
+    span.alert-title {
+      font-weight: 600;
+    }
+  }
+}
+
+$note-color: #00a3d0;
+$tip-color: #309600;
+$important-color: #773cf6;
+$caution-color: #f63c3c;
+$warning-color: #f79000;
+
+blockquote.alert-note {
+  border-left-color: $note-color;
+  p.alert-heading { color: $note-color; }
+}
+
+blockquote.alert-tip {
+  border-left-color: $tip-color;
+  p.alert-heading { color: $tip-color; }
+}
+
+blockquote.alert-important {
+  border-left-color: $important-color;
+  p.alert-heading { color: $important-color; }
+}
+
+blockquote.alert-warning {
+  border-left-color: $warning-color;
+  p.alert-heading { color: $warning-color; }
+}
+
+blockquote.alert-caution {
+  border-left-color: $caution-color;
+  p.alert-heading { color: $caution-color; }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  // Graceful failure for broken images
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  overflow: hidden;
+
+  // Inline icons / emoji-sized images: opt out of block + radius.
+  &.inline,
+  &.emoji,
+  &.icon {
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 0;
+    overflow: visible;
+  }
+}
+
+// Constrain embedded media
+video,
+iframe {
+  max-width: 100%;
+  display: block;
+}
+
+video {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background-color: #000;
+}
+
+iframe {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: auto;
+  border: 0;
+  border-radius: 12px;
+}
+
+.video-shortcode {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-text);
+}

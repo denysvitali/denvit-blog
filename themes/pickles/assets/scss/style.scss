@@ -1,0 +1,40 @@
+@use '../../node_modules/swiper/swiper-bundle.min.css';
+@use 'foundation/lib/swiper-custom';
+@use 'foundation/base/normalize';
+@use 'foundation/base/base';
+
+/* fonts */
+@use 'fonts/opensans';
+
+/* layout */
+@use 'layout/header';
+@use 'layout/nav';
+@use 'layout/mobile-nav';
+@use 'layout/main';
+@use 'layout/footer';
+
+/* object */
+@use 'object/component/title';
+@use 'object/component/links';
+@use 'object/component/article';
+@use 'object/component/avatar';
+@use 'object/component/meta';
+@use 'object/component/tag';
+@use 'object/component/pagination';
+
+@use 'object/project/p-title';
+@use 'object/project/subtitle';
+@use 'object/project/tag-title';
+@use 'object/project/copyright';
+@use 'object/project/list-article';
+@use 'object/project/menu';
+@use 'object/project/author';
+@use 'object/project/p-pagination';
+@use 'object/project/p-article';
+@use 'object/project/p-toc-sheet';
+@use 'object/project/notfound';
+@use 'object/project/screen-reader-text';
+@use 'object/project/related';
+
+@use 'object/utility/display';
+@use 'object/utility/align';

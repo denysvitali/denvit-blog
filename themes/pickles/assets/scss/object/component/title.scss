@@ -1,0 +1,6 @@
+@use "../../foundation/variable/font-family.scss" as fontFamily;
+
+.c-title {
+  font-weight: 600;
+  font-family: fontFamily.$font-primary;
+}

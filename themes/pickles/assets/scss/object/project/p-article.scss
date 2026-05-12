@@ -1,0 +1,276 @@
+@use "../../foundation/variable/breakpoint.scss" as breakpoint;
+@use '../../foundation/variable/font-family.scss' as fontFamily;
+
+.p-article {
+  &__thumbnail {
+    margin-top: 24px;
+  }
+  &__body {
+    margin: 40px 0 30px;
+    word-wrap: break-word;
+    @include breakpoint.mq-up(sm) {
+      margin: 40px 0 60px;
+    }
+    // Anchor scroll offset - prevents content from hiding behind fixed header.
+    h1, h2, h3, h4, h5, h6 {
+      scroll-margin-top: var(--toc-offset, 72px);
+    }
+    img[data-action^='zoom'] {
+      &:hover {
+        cursor: zoom-in;
+      }
+    }
+    .zoom-img-wrap {
+      img {
+        &:hover {
+          cursor: zoom-out;
+        }
+      }
+    }
+
+    // Figures: center, give breathing room, scope captions
+    figure {
+      margin: 2em 0;
+      text-align: center;
+
+      img {
+        margin: 0 auto;
+        box-shadow: 0 1px 0 var(--color-border), 0 4px 16px rgba(0, 0, 0, 0.18);
+      }
+
+      figcaption {
+        margin-top: 10px;
+        padding: 0 8px;
+        font-size: 1.35rem;
+        line-height: 1.5;
+        color: var(--color-text-secondary);
+        font-style: italic;
+
+        h4 {
+          margin: 0 0 4px;
+          font-size: 1.45rem;
+          font-style: normal;
+          color: var(--color-text);
+        }
+
+        p {
+          margin: 0;
+          font-size: 1.35rem;
+          line-height: 1.5;
+        }
+
+        a {
+          color: var(--color-text-secondary);
+          text-decoration: underline;
+          text-decoration-color: var(--color-border);
+
+          &:hover {
+            color: var(--color-accent);
+          }
+        }
+      }
+    }
+
+    // Embedded media spacing
+    video,
+    iframe,
+    .video-shortcode {
+      margin: 2em auto;
+    }
+  }
+}
+
+// Table of Contents - Mobile inline collapsible, Desktop sticky sidebar
+.tableOfContentContainer {
+  margin: 18px 0;
+  padding: 16px 20px;
+  background: var(--color-bg-secondary);
+  border-radius: 12px;
+  line-height: 1.5;
+
+  // Hide entirely when Hugo emits an empty TOC shell.
+  &:has(> .tableOfContentContainer__body > nav:empty) {
+    display: none;
+  }
+
+  // Title with optional collapse chevron + section count
+  > .tableOfContentContainer__title,
+  > h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+    min-height: 32px;
+  }
+
+  .tableOfContentContainer__label { flex: 1 1 auto; }
+  .tableOfContentContainer__count {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    opacity: 0.8;
+  }
+  .tableOfContentContainer__chevron {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.25s ease;
+    flex: 0 0 auto;
+  }
+
+  // Animated collapse on mobile
+  > .tableOfContentContainer__body {
+    overflow: hidden;
+    transition: max-height 0.28s ease, opacity 0.2s ease, margin-top 0.2s ease;
+    max-height: 60vh;
+    opacity: 1;
+    margin-top: 8px;
+  }
+
+  &.is-collapsible {
+    > .tableOfContentContainer__title,
+    > h3 { cursor: pointer; }
+
+    &.is-collapsed > .tableOfContentContainer__body {
+      max-height: 0;
+      opacity: 0;
+      margin-top: 0;
+    }
+    &.is-collapsed > .tableOfContentContainer__title .tableOfContentContainer__chevron,
+    &.is-collapsed > h3 .tableOfContentContainer__chevron {
+      transform: rotate(45deg);
+    }
+    &:not(.is-collapsed) > .tableOfContentContainer__title .tableOfContentContainer__chevron,
+    &:not(.is-collapsed) > h3 .tableOfContentContainer__chevron {
+      transform: rotate(-135deg);
+    }
+  }
+
+  // Hugo's TableOfContents generates nested ULs
+  ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+
+    li {
+      margin: 12px 0;
+      font-size: 1.4rem;
+      list-style: none;
+
+      a {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        transition: color 0.2s ease;
+        display: block;
+        padding: 8px 0;
+        min-height: 32px;
+        font-size: 1.4rem;
+        line-height: 1.4;
+
+        &:hover {
+          color: var(--color-accent);
+        }
+      }
+
+      ul {
+        margin-left: 20px;
+        padding-left: 0;
+        list-style: none;
+
+        li {
+          list-style: none;
+          margin: 8px 0;
+
+          a {
+            font-size: 1.3rem;
+          }
+        }
+      }
+    }
+  }
+
+  // Desktop: Sticky sidebar
+  @include breakpoint.mq-up(xl) {
+    position: sticky;
+    top: var(--toc-offset, 72px);
+    z-index: 50;
+    margin: 0;
+    padding: 20px 24px;
+    background: transparent;
+    border-radius: 0;
+
+    > .tableOfContentContainer__title,
+    > h3 {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      cursor: default;
+    }
+    .tableOfContentContainer__chevron,
+    .tableOfContentContainer__count { display: none; }
+
+    > .tableOfContentContainer__body {
+      max-height: none !important;
+      opacity: 1 !important;
+      overflow: visible;
+    }
+
+    ul li {
+      font-size: 1.35rem;
+      list-style: none;
+      margin: 10px 0;
+
+      a {
+        padding: 8px 0;
+        border-left: 2px solid transparent;
+        padding-left: 12px;
+        margin-left: -12px;
+
+        &:hover {
+          border-left-color: var(--color-accent);
+        }
+      }
+
+      ul {
+        list-style: none;
+        margin-left: 16px;
+
+        li {
+          list-style: none;
+          margin: 8px 0;
+
+          a {
+            font-size: 1.3rem;
+          }
+        }
+      }
+    }
+  }
+
+  // ToC link styling (shared between mobile and desktop)
+  a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: all 0.15s ease;
+    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin: 0 -8px;
+    border-left: 2px solid transparent;
+
+    &:hover {
+      color: var(--color-accent);
+      background-color: var(--color-bg-tertiary);
+    }
+  }
+
+  // Active state for scroll spy
+  a.active {
+    color: var(--color-accent) !important;
+    border-left-color: var(--color-accent);
+  }
+}
