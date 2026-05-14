@@ -83,7 +83,7 @@ jobs:
           cd themes/pickles && pnpm exec sass assets/scss/style.scss:static/css/style.css --load-path=node_modules --no-source-map
 
       - name: Cache Hugo
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ env.HUGO_CACHEDIR }}
           key: ${{ runner.os }}-hugo-${{ hashFiles('hugo.toml', 'themes/pickles/theme.toml') }}
