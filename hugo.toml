@@ -11,6 +11,9 @@ anchor = "smart"
 [imaging.png]
 quality = 85
 
+[markup.goldmark.renderer]
+unsafe = true
+
 [params]
 paginate = 10
 twitter="DenysVitali"

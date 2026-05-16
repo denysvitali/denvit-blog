@@ -77,6 +77,107 @@
     .video-shortcode {
       margin: 2em auto;
     }
+
+    // Standalone images (i.e. {{< img >}} shortcode output that isn't wrapped in
+    // a <figure> or zoom container): give them the same breathing room.
+    > img {
+      margin: 2em auto;
+    }
+
+    // Chat bubbles — iOS-Messages style. Used by the {{% msg-user %}} /
+    // {{% msg-agent %}} shortcodes to render verbatim transcripts.
+    .chat-msg {
+      display: flex;
+      // Zero default — adjacent paragraphs carry all the gap margin so the
+      // visual spacing is symmetric. Margin-collapse between two block
+      // elements only keeps the larger of the two, so having both bubble and
+      // paragraph carry margin produced uneven gaps.
+      margin: 0;
+
+      .chat-bubble {
+        max-width: min(80%, 560px);
+        padding: 9px 13px;
+        border-radius: 18px;
+        line-height: 1.45;
+        font-size: 1.4rem;
+        word-wrap: break-word;
+        // Subtle gloss: top highlight + soft drop shadow.
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          0 1px 2px rgba(0, 0, 0, 0.12),
+          0 2px 8px rgba(0, 0, 0, 0.06);
+
+        > :first-child { margin-top: 0; }
+        > :last-child { margin-bottom: 0; }
+
+        p { margin: 0 0 0.6em; }
+        p:last-child { margin-bottom: 0; }
+
+        ul, ol { margin: 0.4em 0; padding-left: 1.4em; }
+        li { margin: 0.15em 0; }
+      }
+
+      &.chat-msg-user {
+        justify-content: flex-end;
+
+        .chat-bubble {
+          // Glossy blue: subtle vertical gradient from a touch lighter to the
+          // base accent color.
+          background-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.16),
+            rgba(255, 255, 255, 0) 55%
+          );
+          background-color: var(--color-accent);
+          color: #fff;
+          border-bottom-right-radius: 6px;
+
+          a { color: inherit; text-decoration: underline; }
+          code { background: rgba(255, 255, 255, 0.18); color: inherit; }
+        }
+      }
+
+      &.chat-msg-agent {
+        justify-content: flex-start;
+
+        .chat-bubble {
+          // Glossy gray: same idea, weaker gradient since the base is already light.
+          background-image: linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0) 60%
+          );
+          background-color: var(--color-bg-tertiary);
+          color: var(--color-text);
+          border-bottom-left-radius: 6px;
+        }
+      }
+
+      // On mobile, bubbles fill the content width so they don't look starved.
+      @include breakpoint.mq-down(md) {
+        .chat-bubble {
+          max-width: 100%;
+        }
+      }
+    }
+
+    // Consecutive bubbles sit close together.
+    .chat-msg + .chat-msg {
+      margin-top: 4px;
+    }
+    .chat-msg:has(+ .chat-msg) {
+      margin-bottom: 4px;
+    }
+
+    // Narration paragraphs adjacent to bubbles carry the full gap on both
+    // sides (since the bubbles themselves have margin: 0). Symmetric:
+    // bubble↔narration is the same gap on top and bottom of the narration.
+    p:has(+ .chat-msg) {
+      margin-bottom: 0.8em;
+    }
+    .chat-msg + p {
+      margin-top: 0.8em;
+    }
   }
 }
 
