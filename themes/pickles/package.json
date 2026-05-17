@@ -16,7 +16,7 @@
     "sass-embedded": "^1.83.1"
   },
   "dependencies": {
-    "swiper": "^7.4.1",
+    "swiper": "^12.0.0",
     "zooming": "^2.1.1"
   }
 }
