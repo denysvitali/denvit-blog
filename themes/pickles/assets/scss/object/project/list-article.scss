@@ -1,7 +1,7 @@
 // Card spacing lives in component/article.scss under `.c-article.p-list-article`.
 .p-list-article {
   &:first-child {
-    padding-top: 0;
+    padding-top: 24px;
     margin-top: 0;
   }
 

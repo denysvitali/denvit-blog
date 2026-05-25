@@ -30,14 +30,14 @@
 
 // Single-column layout for list pages (home, categories, tags)
 .l-main--list {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
-  padding-top: 12px;
+  padding-top: 8px;
 
   @include breakpoint.mq-up(lg) {
     display: block;
-    max-width: 720px;
-    padding-top: 18px;
+    max-width: 760px;
+    padding-top: 12px;
   }
 }
 

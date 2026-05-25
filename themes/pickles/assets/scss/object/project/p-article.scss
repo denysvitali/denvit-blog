@@ -284,6 +284,8 @@
     max-height: 60vh;
     opacity: 1;
     margin-top: 8px;
+    margin-inline: -4px;
+    padding-inline: 4px;
   }
 
   &.is-collapsible {
