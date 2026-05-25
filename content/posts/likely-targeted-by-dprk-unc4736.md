@@ -1,0 +1,376 @@
++++
+date = '2026-05-25T00:00:00+00:00'
+draft = false
+publishdate = '2026-05-25T00:00:00+00:00'
+tags = ['security', 'malware', 'dprk', 'crypto', 'supply-chain', 'social-engineering']
+title = 'I was likely targeted by DPRK in a sophisticated developer malware campaign'
++++
+
+<!-- cspell:words Advin AppleJeus Citrine Dokkaebi Enkrypt Kaiko Keplr Liquality MELANI MetaMask Overlord Pulsynk Solflare TronLink Xverse Yandex defanged wazero -->
+
+On 25 May 2026, I received a remote smart-contract-security recruiting email from "Olivia Ben" at "Pulsynk." It asked me to clone a GitLab repository called `rekt-db` and open it in VS Code or Cursor. The repository turned out to contain a hidden folder-open task, a malicious extension installer, and native wallet/credential-stealing binaries for macOS and Linux.
+
+<!--more-->
+<!-- toc -->
+
+I did not run it. The mechanics are consistent with DPRK developer-targeting campaigns such as Microsoft's [Contagious Interview](https://www.microsoft.com/en-us/security/blog/2026/03/11/contagious-interview-malware-delivered-through-fake-developer-job-interviews/) ([MITRE G1052](https://attack.mitre.org/groups/G1052/)), but I am treating the attribution as tradecraft similarity, not proof of operator identity.
+
+## Methodology note
+
+I treated the email as suspicious from the outset, but I did not start with a dedicated research VM. I opened the GitLab repository through my hardened browser and browsed the files there. Once I noticed the `.vscode/tasks.json` folder-open task and the `env.sh` script containing base64-encoded material, I stopped manual inspection and handed the analysis to Kimi 2.6 in Agent mode, which runs with its own sandbox. I did not execute any of the scripts or binaries on my workstation. Static analysis was then supplemented with Kimi 2.6, and I uploaded the relevant samples to VirusTotal for additional analysis.
+
+I reported the repository to GitLab Trust & Safety (`abuse@gitlab.com`), notified Advin Servers (`abuse@advinservers.com`) as the hosting provider for the C2 IP, and submitted a report to the [Swiss National Cyber Security Centre (NCSC)](https://www.report.ncsc.admin.ch/en/chat?path=406%3E407%3E1%3E318%3EREP-43). I do not expect a follow-up from NCSC, but reporting it there still creates a record.
+
+## The email
+
+I am not looking for a new job. What made me curious was how this landed in my mailbox at all: Proton Mail usually catches spam and phishing attempts quite effectively, but this one went straight to the inbox.
+
+The email followed a template now familiar to anyone tracking developer-targeted social engineering. The sender used a plausible name, a fabricated company with a live website (`pulsynk.org`, [archive](https://archive.ph/L58Mh)), and a salary figure calibrated to attract experienced security engineers. The website immediately gave me AI slop vibes, but ironically that also matched what I might expect from a very early-stage startup trying to look bigger than it is.
+
+<img src="https://dczr6n989nd4s7.archive.ph/L58Mh/4858e83b9e6003e28c588d8f2767a75fcf3912c2/scr.png" alt="Archived screenshot of the Pulsynk website captured on 25 May 2026" loading="lazy" decoding="async">
+
+<section class="mailbox-message" aria-label="Email from Olivia Ben at Pulsynk">
+  <div class="mailbox-message__topbar">
+    <span class="mailbox-message__logo"></span>
+    <span class="mailbox-message__product">Email message</span>
+  </div>
+  <article class="mailbox-message__pane">
+      <header class="mailbox-message__header">
+        <div class="mailbox-message__subject">Smart Contract Security Engineer - Pulsynk (Remote)</div>
+        <dl class="mailbox-message__meta">
+          <div>
+            <dt>From</dt>
+            <dd>Olivia Ben &lt;oliviaben@hr.pulsynk.org&gt;</dd>
+          </div>
+          <div>
+            <dt>To</dt>
+            <dd>not-real@denv.it</dd>
+          </div>
+          <div>
+            <dt>Reply-To</dt>
+            <dd>alex@pulsynk.org</dd>
+          </div>
+          <div>
+            <dt>Date</dt>
+            <dd>Mon, 25 May 2026 07:35:01 +0000</dd>
+          </div>
+        </dl>
+      </header>
+      <div class="mailbox-message__body">
+        <p>Hi denysvitali,</p>
+        <p>After reviewing your GitHub profile, I believe your background and experience make you an excellent fit for this opportunity.</p>
+        <p>Pulsynk is hiring a Smart Contract Security Engineer (Foundry / Anchor) on a remote basis. The role centers on rekt-db, our open dataset of on-chain exploits with structured post-mortems and PoC scaffolding for Foundry and Anchor.</p>
+        <p>The role focuses on curating exploit metadata, writing precise post-mortems, and shipping reproducible PoCs in Foundry or Anchor. Strong Solidity or Anchor fundamentals, and comfort reading complex exploit traces, are required.</p>
+        <p>Clone the repo below, review the code, and let us know your strengths, your honest opinions, and the ideas you would bring. Strong candidates start with a 3-month paid onboarding at 8K USD / month, and join the team full-time on successful completion.</p>
+        <p>The repository currently has a single baseline commit by design -- we are still at the startup stage, and this scaffold is the test project we share with each candidate so we can compare approaches and pick the engineer who will own the next iterations.</p>
+        <p>v1.0 ships in 4 weeks. We are looking for engineers who can help us reach that milestone.</p>
+        <p class="mailbox-message__label">Open it in your editor</p>
+        <p><strong>VS Code</strong></p>
+        <pre><code>git clone hxxps://gitlab[.]com/pulsynk-org/rekt-db[.]git &amp;&amp; cd rekt-db &amp;&amp; code .</code></pre>
+        <p><strong>Cursor</strong></p>
+        <pre><code>git clone hxxps://gitlab[.]com/pulsynk-org/rekt-db[.]git &amp;&amp; cd rekt-db &amp;&amp; cursor .</code></pre>
+        <p class="mailbox-message__label">How to apply</p>
+        <p>If this looks relevant, reply with a CV or a brief note about your background and we will take it from there.</p>
+        <p>Looking forward to hearing whether the role is a fit.</p>
+        <p>Thanks,<br>Olivia Ben<br>Pulsynk</p>
+        <p class="mailbox-message__footer">&copy; 2026 Pulsynk<br>One-time outreach based on public GitHub activity. Reply "no thanks" and we will not contact you again.</p>
+      </div>
+  </article>
+</section>
+
+I intentionally defanged the repository URL above so the commands are not directly copy-pasteable, although this post should already be a good reminder not to copy and paste random commands from strangers anyway.
+
+### Why it reached the inbox
+
+The headers explain why this did not look obviously suspicious to mail filtering:
+
+| Header signal | Value |
+| :-- | :-- |
+| Delivery time | `Mon, 25 May 2026 07:35:03 +0000` |
+| Sending service | Mailgun |
+| Sending IP | `159.135.228[.]5` |
+| Return-Path | `bounce+...@hr.pulsynk.org` |
+| DKIM | `pass`, signing domain `hr.pulsynk.org` |
+| SPF | `pass`, `smtp.mailfrom=hr.pulsynk.org` |
+| DMARC | `pass`, policy `p=none` |
+| From | `Olivia Ben <oliviaben@hr.pulsynk.org>` |
+| Sender | `oliviaben@hr.pulsynk.org` |
+| Reply-To | `alex@pulsynk.org` |
+| Proton spam score | `0` |
+| Proton action | `inbox` |
+
+The important point is that email authentication only proves that the message was authorized by the domain sending it. It does not prove that the company is real, that the recruiter is legitimate, or that the repository is safe. In this case, the attacker-controlled infrastructure was clean enough to pass SPF, DKIM, and DMARC, and Proton did exactly what those signals suggested: delivered it to the inbox.
+
+The repository name, `rekt-db`, signalled cryptocurrency expertise. Inside, the directory structure mimicked a security research database: one subfolder allegedly contained exploit analysis for the Radiant Capital 2024 incident. This is a common technique in developer-targeted social engineering - embedding content that signals domain knowledge to the intended victim.
+
+Notably, the author of the email either mistook my current employer, [kaiko.ai](https://kaiko.ai/) - which builds clinical AI assistants and tools for healthcare teams - for the crypto market data company [Kaiko](https://www.kaiko.com/), or deliberately conflated the two. Microsoft has reported that Contagious Interview targets extend beyond the cryptocurrency industry into adjacent technical fields, so this may have been a deliberate casting of a wide net rather than a targeting error.
+
+The ask was simple: clone the repository and open it in "VS Code or Cursor" to review the contents before the interview. This ambiguity matters. VS Code and Cursor share a common extension and task format, but their security defaults have diverged in ways relevant to this attack chain (see [What developers should do](#what-developers-should-do)).
+
+## What the sample appears to do
+
+### Attack chain
+
+The repository contains a `.vscode/tasks.json` file defining a task named "Lint" with `runOn: folderOpen`. When a victim opens the folder in VS Code or Cursor, the task executes automatically. The task runs a platform-specific setup script - `setup-env.sh` on macOS/Linux, `setup-env.cmd` on Windows, with `setup-env-launcher.vbs` as a Windows helper. These scripts install a Visual Studio Code extension packaged as a `.vsix` file.
+
+This is not magic. [VS Code workspace tasks](https://code.visualstudio.com/docs/debugtest/tasks) are a normal feature, and `runOptions.runOn: "folderOpen"` is designed to run a task when a folder is opened. In a trusted repository, that can be convenient. In an unsolicited interview repository, it turns the editor itself into the execution path. GitLab has published a useful writeup on [detecting and preventing Contagious Interview IDE attacks](https://about.gitlab.com/blog/how-to-detect-and-prevent-contagious-interview-ide-attacks/), and Jamf has documented related abuse of [Visual Studio Code tasks and Workspace Trust prompts](https://www.jamf.com/blog/threat-actors-expand-abuse-of-visual-studio-code/).
+
+The extension masquerades as "Google Update Support" from publisher `google-dev-tools`, uses the activation event `onStartupFinished`, and carries the extension ID `google-dev-tools.google-update-support`. Once loaded, it drops native Go binaries for three platforms:
+
+- macOS Apple Silicon (`darwin-arm64`)
+- macOS Intel (`darwin-amd64`)
+- Linux x86-64 (`linux-amd64`)
+
+So the first defensive measure, apparently, would have been opening it on my [Surface Pro X running Linux](https://github.com/linux-surface/surface-pro-x): Linux, yes, but `arm64`, and therefore not in the payload menu. /s
+
+On macOS, the implant presents a fake "System Security Update" password dialog to harvest the user's login credentials. On all platforms, it collects:
+
+- Cryptocurrency wallet data for MetaMask, Phantom, Exodus, Keplr, Coin98, Xverse, Solflare, TronLink, Backpack, OKX Wallet, MathWallet, Liquality, Enkrypt, and CLI wallets
+- Browser credentials and session data from Chrome, Firefox, Brave, Opera, Opera GX, Vivaldi, Yandex, Safari, and Edge
+- SSH private keys (`~/.ssh/id_*`)
+- `.env` files and package-manager tokens (npm, pnpm, Yarn)
+- Git remote URLs and configuration
+- Keychain/keyring data (macOS Keychain, Linux `login.keyring`, Windows Credential Manager)
+
+The native binary appears to be a build of the `overlord-client/cmd/agent` implant. It supports file operations, process listing, command execution, wazero-based script execution, backup scheduling, and enforces a single-instance mutex via lock files. It communicates with a C2 server over an encrypted WebSocket connection.
+
+Collected data is compressed into ZIP archives and exfiltrated to three upload endpoints:
+
+- `/api/company-wallet/upload`
+- `/api/company-wallet/upload-raw`
+- `/api/company-wallet/bandwidth-probe`
+
+The C2 server is `23.137.105[.]75:5173`, hosted by [Advin Services LLC](https://advinservers.com/) (AS22295). [AbuseIPDB](https://www.abuseipdb.com/check/23.137.105.75) currently shows old reports but a `0%` confidence of abuse score, so it looks effectively clean there right now. I do not have report privileges on AbuseIPDB, so I could not submit it there myself; I contacted Advin Servers at `abuse@advinservers.com` and asked them to stop serving malware from that host.
+
+The WebSocket connection is authenticated using environment variables: `OVERLORD_SERVER`, `OVERLORD_AGENT_TOKEN`, and `OVERLORD_TLS_CA`. The extension's internal configuration references `companyWalletServerUrl`, `companyWalletClientId`, and `companyWalletAgentToken` - naming that suggests the authors attempted to camouflage malicious traffic as benign integration with a corporate wallet service.
+
+Logging paths vary by platform:
+
+- Linux: `~/.local/share/google/agent.log`
+- Windows: `%LOCALAPPDATA%\Google\setup-env.log`
+
+One ridiculous detail from the behavioral analysis: the malware logs its own execution in `~/.local/share/google/agent.log`. lol.
+
+```text
+[agent] bootstrap: pid=2280 ppid=2279 GOOS=linux GOARCH=amd64 hidden=true
+[agent] bootstrap: resolved_primary_agent_log_path="/root/.local/share/google/agent.log"
+[config] Agent token loaded from build-time (len=64)
+[TLS] WARNING: Certificate verification is DISABLED. This is insecure!
+[auth] using agent token: 16d93ae8dba964e5...
+connecting to wss://23.137.105.75:5173 (TLS verify: false)
+[companywallet] backup scheduler started (single run after 5s, periodic interval 2h0m0s disabled after phase2, elevate=true ask_consent=false)
+connected successfully to wss://23.137.105.75:5173
+[companywallet] local-extension-data: zipped disk="/home/bruno/.config/google-chrome/Default/Local Extension Settings/ghbmnnjooekpmoecnnnilnnbdlolhkhi/000003.log"
+[companywallet] phase1-zip: firefox extension storage file entries=2
+```
+
+That excerpt confirms several parts of the analysis at once: Linux execution, hidden mode, build-time token loading, disabled TLS verification, connection to the C2, the backup scheduler, and collection of browser extension storage into the Phase 1 ZIP.
+
+The VirusTotal hash for the observed VSIX sample is [`3b1ff1ac2120b0a9b852e686d10b4b2526d41f08c4c6361160efeefb588aaf77`](https://www.virustotal.com/gui/file/3b1ff1ac2120b0a9b852e686d10b4b2526d41f08c4c6361160efeefb588aaf77/behavior).
+
+### The Overlord RAT connection
+
+The environment variable names (`OVERLORD_*`), the Go client/agent architecture, and the use of WebSocket port `5173` overlap with the public [Overlord project](https://github.com/vxaboveground/Overlord). That project describes a Go-based remote access tool with encrypted WebSocket transport and a default administrative panel on port `5173`. This public tooling uses environment variables including `OVERLORD_AGENT_TOKEN` and `OVERLORD_TLS_CA` that match the strings found in the analysed sample.
+
+This overlap is significant. The `OVERLORD_*` strings are evidence that the operators used or adapted a public RAT framework - they are not, in isolation, indicators of a unique or state-developed malware family. Port `5173` is used both by the Overlord RAT's default configuration and by the Vite development server, making it a plausible choice for blending into developer traffic but also one with an alternative explanation. These observations weaken any direct attribution chain that relies solely on string artifacts or port choice.
+
+The malware described here may represent a previously unreported family or a fork of the public Overlord framework. Either way, the technical overlap with public tooling must be acknowledged before any actor-level attribution is attempted.
+
+## How this maps to public reporting
+
+The following assessment uses a four-tier confidence scale:
+
+| Level | Meaning |
+| :-- | :-- |
+| Observed | Directly witnessed in the analysed sample |
+| High-confidence inference | Strong technical or contextual inference with limited plausible alternatives |
+| Public analogue | Matches a documented campaign or technique, but actor linkage is unproven |
+| Unverified | Claimed by other sources or speculated, not independently confirmed |
+
+### Tradecraft overlap
+
+| Element | Assessment | Supporting reporting |
+| :-- | :-- | :-- |
+| Fake recruiting email | Public analogue - Contagious Interview (G1052) | Microsoft: DPRK threat actors use fake job interviews to trick software developers into installing malware |
+| Repository with trojanized coding challenge | Public analogue - Contagious Interview | MITRE ATT&CK: G1052 |
+| VS Code task automation for payload delivery | Public analogue - similar to G1052 methods | GitLab and Jamf reporting on IDE task abuse |
+| macOS fake password prompt | Public analogue - AppleJeus/UNC4736 (G1049) | CISA/FBI advisories on AppleJeus-style trojans |
+| Native Go binary targeting crypto wallets | Observed | This sample |
+| WebSocket C2 on port `5173` | Observed | This sample; also consistent with public Overlord RAT defaults |
+| VSIX extension sideloading | Observed | This sample |
+
+### Actor overlap
+
+[Contagious Interview](https://attack.mitre.org/groups/G1052/) (MITRE G1052) and AppleJeus/UNC4736 ([MITRE G1049](https://attack.mitre.org/groups/G1049/), [Malpedia UNC4736](https://malpedia.caad.fkie.fraunhofer.de/actor/unc4736)) are different threat clusters tracked by different identifiers. Contagious Interview is a social-engineering campaign targeting developers with fake job interviews and trojanized repositories. AppleJeus/UNC4736 is a cryptocurrency-focused cluster associated with trojanized trading applications. The original malware families attributed to UNC4736 - AppleJeus, TAXHAUL, COLDCAT, SIMPLESEA - are not the tooling observed here. The Go binary, VSIX delivery mechanism, WebSocket C2, and `OVERLORD_*` environment strings do not match documented UNC4736 tooling.
+
+That said, the tradecraft (fake recruiting, developer targeting, crypto wallet theft) has been linked to North Korean state interests by [Microsoft](https://www.microsoft.com/en-us/security/blog/2026/03/11/contagious-interview-malware-delivered-through-fake-developer-job-interviews/), [GitLab](https://about.gitlab.com/blog/gitlab-threat-intelligence-reveals-north-korean-tradecraft/), the [FBI](https://www.ic3.gov/psa/2024/psa240903), [Unit 42](https://unit42.paloaltonetworks.com/north-korean-threat-actors-lure-tech-job-seekers-as-fake-recruiters/), and others. The Swiss NCSC (MELANI) published a case in 2023 describing a Swiss resident targeted via a fake job offer that led to malware installation - a local precedent for this incident class. I assess that this sample is consistent with DPRK developer-targeting tradecraft, but the specific tooling may be new or derived from public frameworks rather than a documented state-developed implant.
+
+I do not assert a specific APT identifier for this activity. The evidence supports tradecraft similarity, not actor confirmation.
+
+## What developers should do
+
+### Before you inspect any untrusted repository
+
+Do not open an unknown repository with anything whose job is to execute, index, render, or "helpfully" automate code.
+
+That includes the obvious tools - VS Code, Cursor, JetBrains IDEs, shell scripts, package managers - but also less obvious ones. Vim is "just an editor" until it is not: the recent [Vim modeline advisory](https://github.com/vim/vim/security/advisories/GHSA-2gmj-rpqf-pxvh) describes arbitrary command execution when a crafted file is opened. For agentic coding tools such as Claude Code, Codex, or similar harnesses, prompt injection is probably even more common than the kind of attack described here.
+
+My preferred first pass is boring: use Chrome or Chromium to read the repository through the web UI. A browser RCE is still possible, but it is a much harder target than convincing a developer to hand execution to an editor, terminal, package manager, or coding agent. This does not make browser review perfect. Source rendering can still be misleading: Unicode directionality tricks, RTL/LTR control characters, homoglyphs, and [Trojan Source](https://trojansource.codes/) style attacks can make code appear different from what tools actually parse. But as a first screen, web UI inspection is usually a better starting point than cloning and opening the folder locally.
+
+For any unknown repository:
+
+1. Treat public code as untrusted by default. Check the maintainer, history, issues, releases, and whether the link came through a trustworthy channel, but do not let those signals turn into automatic trust.
+
+1. Inspect risky metadata in the web UI before cloning or opening: `.vscode/tasks.json`, `.vscode/extensions.json`, `.vscode/launch.json`, shell scripts, package lifecycle hooks, Git hooks, editor configuration, binaries, archives, and obfuscated JavaScript.
+
+1. If local inspection is necessary, use an isolated VM or disposable container with no credentials, no SSH keys, no browser sessions, no password manager, no wallet material, and no access to production systems.
+
+1. If you use VS Code, keep [Workspace Trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust) enabled, do not grant trust to folders from untrusted sources, and make sure automatic tasks are disabled.
+
+1. Do not hand the repository to Claude Code, Codex, or any other coding agent unless the agent itself is running in a throwaway sandbox. Treat agent access as equivalent to giving an automated operator a terminal in the project.
+
+### Detection
+
+Do not rely on string matching alone for detecting this type of implant. The extension name ("Google Update Support"), publisher (`google-dev-tools`), and file paths (`~/.local/share/google/agent.log`) are trivially changed between campaigns. Monitor for:
+
+- Unexpected VS Code extensions from unknown publishers
+- New `.vsix` installations that do not originate from the Visual Studio Marketplace
+- Outbound WebSocket connections from `Code Helper`, `Cursor Helper`, or `Extension Host` processes to non-standard ports
+- New login items or LaunchAgents on macOS that reference unsigned Go binaries
+- Unexpected password prompts claiming to be "System Security Update"
+
+### Where to report
+
+- GitLab Trust & Safety (`abuse@gitlab.com`) for malicious repositories hosted on GitLab
+- Hosting provider abuse desk (for example, `abuse@advinservers.com` for Advin Services)
+- Swiss NCSC (`ncsc.admin.ch`) for Swiss residents if the incident involves significant data loss or financial theft
+- Your employer's security team if the compromise occurred on a corporate device
+
+## Closing
+
+This incident demonstrates a mature, repeatable tradecraft: recruit developers with plausible job offers, deliver payloads through trusted development tools, and harvest the credentials and assets that grant access to real value. The technical barriers are low - a GitLab repository, a VS Code task, a publicly available RAT framework. The targeting barrier is lower still. Any developer who clones code from a stranger is a viable target. Verify before you trust, and isolate before you open.
+
+## Appendix A: Indicators of Compromise
+
+### Network indicators
+
+| Indicator | Type | Notes |
+| :-- | :-- | :-- |
+| `23.137.105[.]75` | IPv4 | C2 server; Advin Services LLC (AS22295) |
+| `wss://23.137.105[.]75:5173` | WebSocket URL | Encrypted C2 channel |
+| `/api/company-wallet/upload` | URL path | ZIP exfiltration endpoint |
+| `/api/company-wallet/upload-raw` | URL path | Raw data exfiltration endpoint |
+| `/api/company-wallet/bandwidth-probe` | URL path | C2 connectivity check |
+
+### File indicators
+
+| Path / Pattern | Platform | Purpose |
+| :-- | :-- | :-- |
+| `.vscode/tasks.json` | Cross-platform | Triggers payload on folder open |
+| `setup-env.sh` | macOS / Linux | Extension installer script |
+| `setup-env.cmd` | Windows | Extension installer script |
+| `setup-env-launcher.vbs` | Windows | VBScript launcher helper |
+| `google-update-support-*.vsix` | Cross-platform | Malicious extension package |
+| `~/.local/share/google/agent.log` | Linux | Implant activity log |
+| `%LOCALAPPDATA%\Google\setup-env.log` | Windows | Implant activity log |
+| `overlord-client/cmd/agent/companywallet` | Cross-platform | Native implant binary path observed in strings |
+
+### Extension metadata
+
+| Field | Value |
+| :-- | :-- |
+| Extension ID | `google-dev-tools.google-update-support` |
+| Display name | `Google Update Support` |
+| Publisher | `google-dev-tools` |
+| Activation event | `onStartupFinished` |
+
+### Configuration keys
+
+| Key | Description |
+| :-- | :-- |
+| `companyWalletServerUrl` | C2 server URL |
+| `companyWalletClientId` | Client identifier |
+| `companyWalletAgentToken` | Authentication token |
+
+### Environment variables
+
+| Variable | Purpose |
+| :-- | :-- |
+| `OVERLORD_SERVER` | C2 server address |
+| `OVERLORD_AGENT_TOKEN` | Agent authentication token |
+| `OVERLORD_TLS_CA` | TLS CA certificate for C2 |
+
+### Detection hashes
+
+| Hash | Sample |
+| :-- | :-- |
+| `3b1ff1ac2120b0a9b852e686d10b4b2526d41f08c4c6361160efeefb588aaf77` | VSIX payload (VirusTotal) |
+
+## Appendix B: Detection Strings
+
+The following strings were identified in the analysed sample and may be useful for YARA rules, EDR queries, or memory forensics. Operators may change these between campaigns; use as behavioural signals, not definitive detection.
+
+### Extension / configuration strings
+
+```text
+google-dev-tools.google-update-support
+Google Update Support
+google-dev-tools
+companyWalletServerUrl
+companyWalletClientId
+companyWalletAgentToken
+```
+
+### Environment / C2 strings
+
+```text
+OVERLORD_SERVER
+OVERLORD_AGENT_TOKEN
+OVERLORD_TLS_CA
+/api/company-wallet/upload
+/api/company-wallet/upload-raw
+/api/company-wallet/bandwidth-probe
+```
+
+### Log / path strings
+
+```text
+~/.local/share/google/agent.log
+%LOCALAPPDATA%\Google\setup-env.log
+```
+
+### Implant / binary strings
+
+```text
+overlord-client/cmd/agent
+companywallet
+```
+
+### Target application strings
+
+Wallet and browser names observed in binary:
+
+```text
+MetaMask
+Phantom
+Exodus
+Keplr
+Coin98
+Xverse
+Solflare
+TronLink
+Backpack
+OKX Wallet
+MathWallet
+Liquality
+Enkrypt
+Chrome
+Firefox
+Brave
+Opera
+Opera GX
+Vivaldi
+Yandex
+Safari
+Edge
+```
