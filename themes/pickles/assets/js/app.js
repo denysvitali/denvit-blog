@@ -114,6 +114,61 @@ document.addEventListener('DOMContentLoaded', () => {
     onScroll()
   }
 
+  const copyMarkdownButton = document.querySelector('[data-copy-markdown]')
+  const copyMarkdownSource = document.getElementById('copyMarkdownSource')
+
+  function copyMarkdownWithSelection (source) {
+    const selection = window.getSelection()
+    const selectedRange = selection && selection.rangeCount > 0
+      ? selection.getRangeAt(0)
+      : null
+
+    source.focus({ preventScroll: true })
+    source.select()
+    const didCopy = document.execCommand('copy')
+    source.blur()
+
+    if (selection) {
+      selection.removeAllRanges()
+      if (selectedRange) selection.addRange(selectedRange)
+    }
+
+    if (!didCopy) throw new Error('Copy command failed')
+  }
+
+  if (copyMarkdownButton && copyMarkdownSource) {
+    const label = copyMarkdownButton.querySelector('[data-copy-markdown-label]')
+    const defaultText = label ? label.textContent : copyMarkdownButton.textContent
+    const successText = copyMarkdownButton.dataset.copyMarkdownSuccess || 'Copied'
+    let resetCopyLabelTimer = null
+
+    copyMarkdownButton.addEventListener('click', async () => {
+      copyMarkdownButton.disabled = true
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(copyMarkdownSource.value)
+        } else {
+          copyMarkdownWithSelection(copyMarkdownSource)
+        }
+
+        if (label) label.textContent = successText
+        window.clearTimeout(resetCopyLabelTimer)
+        resetCopyLabelTimer = window.setTimeout(() => {
+          if (label) label.textContent = defaultText
+        }, 1600)
+      } catch (error) {
+        if (label) label.textContent = 'Copy failed'
+        window.clearTimeout(resetCopyLabelTimer)
+        resetCopyLabelTimer = window.setTimeout(() => {
+          if (label) label.textContent = defaultText
+        }, 2200)
+      } finally {
+        copyMarkdownButton.disabled = false
+      }
+    })
+  }
+
   const zooming = new Zooming({
     scaleBase: 0.5
   })

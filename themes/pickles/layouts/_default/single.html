@@ -20,6 +20,13 @@
       {{ range .Params.tags }}
       <a href="{{ absURL "tags" }}/{{ . | urlize }}" class="c-tag">{{ . }}</a>
       {{ end }}
+      <div class="p-article__actions">
+        <button type="button" class="p-article__copy-markdown" data-copy-markdown data-copy-markdown-success="Copied">
+          <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          <span data-copy-markdown-label>Copy as markdown</span>
+        </button>
+      </div>
+      <textarea id="copyMarkdownSource" class="p-article__markdown-source" readonly aria-hidden="true" tabindex="-1">{{ printf "# %s\n\n%s" .Title .RawContent }}</textarea>
       {{ end }}
     </header>
 {{ with .Params.thumbnail }}

@@ -53,6 +53,22 @@ test('callouts use static type-tinted backgrounds', async ({ page }) => {
   expect(style.backgroundColor).not.toBe('rgba(0, 0, 0, 0)')
 })
 
+test('posts can copy their source as markdown', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  await page.goto(articlePath)
+
+  const copyButton = page.locator('[data-copy-markdown]')
+  await expect(copyButton).toBeVisible()
+  await expect(copyButton).toContainText('Copy as markdown')
+
+  await copyButton.click()
+  await expect(copyButton).toContainText('Copied')
+
+  const copied = await page.evaluate(() => navigator.clipboard.readText())
+  expect(copied).toContain('# Tailscale + Traefik + Private CA')
+  expect(copied).toContain('I run a hybrid networking setup')
+})
+
 test('desktop keeps desktop navigation visible', async ({ page, isMobile }) => {
   test.skip(isMobile, 'desktop-only smoke')
 
