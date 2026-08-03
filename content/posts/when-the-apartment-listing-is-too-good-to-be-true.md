@@ -1,7 +1,7 @@
 +++
-date = '2026-08-04T00:00:00+00:00'
+date = '2026-08-04T00:00:00+02:00'
 draft = false
-publishdate = '2026-08-04T00:00:00+00:00'
+publishdate = '2026-08-04T00:00:00+02:00'
 tags = ['security', 'scam', 'fraud', 'social-engineering', 'osint', 'switzerland']
 title = 'When the apartment listing is too good to be true'
 +++
