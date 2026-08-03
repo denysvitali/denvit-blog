@@ -61,7 +61,9 @@
   </div>
 
   <main id="main" class="l-main{{ if not .IsPage }} l-main--list{{ end }}" data-pagefind-body>
-    {{ if and .IsPage (gt (len .TableOfContents) 30) }}
+    {{ $toc := "" }}
+    {{ if .IsPage }}{{ $toc = partial "toc.html" . }}{{ end }}
+    {{ if and .IsPage (gt (len $toc) 30) }}
     <aside class="tableOfContentContainer" id="tableOfContentContainer" aria-label="Table of contents">
       <h3 class="tableOfContentContainer__title">
         <span class="tableOfContentContainer__label">Table of contents</span>
@@ -69,7 +71,7 @@
         <span class="tableOfContentContainer__chevron" aria-hidden="true"></span>
       </h3>
       <div class="tableOfContentContainer__body">
-        {{ .TableOfContents }}
+        {{ $toc }}
       </div>
     </aside>
 
@@ -110,7 +112,7 @@
           </button>
         </div>
         <div class="p-toc-sheet__body" id="tocSheetBody">
-          {{ .TableOfContents }}
+          {{ $toc }}
         </div>
       </div>
     </div>

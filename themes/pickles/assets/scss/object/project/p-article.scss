@@ -2,15 +2,48 @@
 @use '../../foundation/variable/font-family.scss' as fontFamily;
 
 .p-article {
+  > header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+
+    h1 {
+      margin: 0 0 12px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+  }
+
   &__thumbnail {
     margin-top: 24px;
+  }
+
+  // Byline and the copy action belong to the same tier of information, so they
+  // share a row and only stack once the line no longer fits.
+  &__meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+
+    // The tag component carries its own margins for inline use; the flex gap
+    // owns the spacing here.
+    .c-tag {
+      margin: 0;
+    }
   }
 
   &__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 18px;
   }
 
   &__copy-markdown {
@@ -18,14 +51,14 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    min-height: 40px;
-    padding: 8px 12px;
+    min-height: 32px;
+    padding: 6px 12px;
     border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-bg-secondary);
-    color: var(--color-text);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--color-text-secondary);
     font-family: fontFamily.$font-primary;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 600;
     line-height: 1.2;
     cursor: pointer;
@@ -78,6 +111,74 @@
         &:hover {
           cursor: zoom-out;
         }
+      }
+    }
+
+    // Collapsible blocks (e.g. original-language transcripts) need their own
+    // breathing room: when closed they collapse to the summary line and would
+    // otherwise sit flush against the following paragraph.
+    details {
+      margin: 1.5em 0 2em;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background-color: var(--color-bg-secondary);
+
+      // The summary has to read as an affordance: without a visible chevron and
+      // a button-like surface it disappears into the surrounding body text.
+      summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+        line-height: 1;
+        list-style: none;
+        user-select: none;
+
+        &::-webkit-details-marker {
+          display: none;
+        }
+
+        // Chevron, rotated when the block is open. Drawn as a mask rather than
+        // a rotated border-corner: the glyph is already centred in its own box,
+        // so rotating about that centre keeps the apex on the text's midline in
+        // every state instead of needing a per-state nudge.
+        &::before {
+          content: '';
+          flex: 0 0 auto;
+          width: 12px;
+          height: 12px;
+          background-color: currentColor;
+          $chevron: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M4.5 2.25 8.25 6 4.5 9.75" fill="none" stroke="black" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+          -webkit-mask: $chevron center / contain no-repeat;
+          mask: $chevron center / contain no-repeat;
+          transition: transform 0.15s ease-in-out;
+        }
+
+        &:hover {
+          color: var(--color-text);
+        }
+      }
+
+      &[open] > summary {
+        border-bottom: 1px solid var(--color-border);
+
+        &::before {
+          transform: rotate(90deg);
+        }
+      }
+
+      // Inner content needs padding the summary already carries.
+      > *:not(summary) {
+        padding: 0 16px;
+      }
+
+      > blockquote:not(summary) {
+        margin: 16px;
+        padding-right: 16px;
       }
     }
 
@@ -277,20 +378,28 @@
     flex: 0 0 auto;
   }
 
-  // Animated collapse on mobile
+  // Animated collapse on mobile. `overflow: hidden` is what drives the
+  // max-height transition, but it also clips horizontally (CSS won't let
+  // overflow-x stay visible while overflow-y is hidden). The gutter below must
+  // therefore be at least as wide as the links' negative margin (8px), or the
+  // hover pill — and the first glyph behind it — gets shaved off.
   > .tableOfContentContainer__body {
     overflow: hidden;
     transition: max-height 0.28s ease, opacity 0.2s ease, margin-top 0.2s ease;
-    max-height: 60vh;
     opacity: 1;
     margin-top: 8px;
-    margin-inline: -4px;
-    padding-inline: 4px;
+    margin-inline: -8px;
+    padding-inline: 8px;
   }
 
   &.is-collapsible {
     > .tableOfContentContainer__title,
     > h3 { cursor: pointer; }
+
+    // The clamp is the open end of the collapse animation, so it only belongs
+    // where the collapse actually exists. As a base rule it silently truncated
+    // long TOCs with no way to scroll to the remainder.
+    > .tableOfContentContainer__body { max-height: 60vh; }
 
     &.is-collapsed > .tableOfContentContainer__body {
       max-height: 0;
@@ -323,7 +432,10 @@
         text-decoration: none;
         transition: color 0.2s ease;
         display: block;
-        padding: 8px 0;
+        // Horizontal padding has to match the -8px bleed further down, so the
+        // label sits back on the container's text edge rather than flush
+        // against the hover pill.
+        padding: 8px;
         min-height: 32px;
         font-size: 1.4rem;
         line-height: 1.4;
@@ -350,8 +462,10 @@
     }
   }
 
-  // Desktop: Sticky sidebar
-  @include breakpoint.mq-up(xl) {
+  // Desktop: sticky sidebar. Gated at lg because that is where .l-main becomes
+  // a two-column grid and puts this aside in its own column — and where app.js
+  // stops treating it as the inline card.
+  @include breakpoint.mq-up(lg) {
     position: sticky;
     top: var(--toc-offset, 72px);
     z-index: 50;
@@ -369,10 +483,18 @@
     .tableOfContentContainer__chevron,
     .tableOfContentContainer__count { display: none; }
 
+    // A TOC taller than the viewport would otherwise have its tail parked
+    // permanently below the fold, since the sticky box never scrolls past it.
     > .tableOfContentContainer__body {
-      max-height: none !important;
+      max-height: calc(100vh - var(--toc-offset, 72px) - 32px) !important;
       opacity: 1 !important;
-      overflow: visible;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      // overflow-y: auto forces overflow-x to clip, so the gutter has to clear
+      // the -12px bleed the links below use.
+      margin-inline: -12px;
+      padding-inline: 12px;
     }
 
     ul li {

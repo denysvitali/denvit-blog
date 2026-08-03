@@ -296,7 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
       let firstOffset = 0
 
       headings.forEach((h) => {
-        if (!h.id || !linkMap[h.id]) return
+        // Hugo's TOC stops at h3, so an h4 has an entry in linkMap but no
+        // links in it. Letting one win would blank the highlight out entirely
+        // instead of leaving its parent section marked.
+        if (!h.id || !linkMap[h.id] || !linkMap[h.id].length) return
         const off = h.offsetTop - margin
         if (off <= scrollY && off > maxOffset) {
           maxOffset = off
@@ -311,7 +314,21 @@ document.addEventListener('DOMContentLoaded', () => {
       allLinks.forEach((a) => a.classList.remove('active'))
       if (activeId && linkMap[activeId]) {
         linkMap[activeId].forEach((a) => a.classList.add('active'))
+        keepActiveInView(linkMap[activeId][0])
       }
+    }
+
+    // The sticky sidebar scrolls internally once the TOC outgrows the
+    // viewport, which can leave the highlighted entry outside it. Nudge that
+    // scroller — never the page — to keep the current section in sight.
+    function keepActiveInView (link) {
+      if (!link) return
+      const scroller = link.closest('.tableOfContentContainer__body')
+      if (!scroller || scroller.scrollHeight <= scroller.clientHeight) return
+      const lr = link.getBoundingClientRect()
+      const sr = scroller.getBoundingClientRect()
+      if (lr.top >= sr.top && lr.bottom <= sr.bottom) return
+      scroller.scrollTop += lr.top - sr.top - (sr.height - lr.height) / 2
     }
 
     let ticking = false

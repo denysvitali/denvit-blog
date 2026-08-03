@@ -4,7 +4,7 @@
     <header>
       <h1>{{ .Title }}</h1>
       {{ if eq (.Type | singularize) "post" }}
-      <div>
+      <div class="p-article__meta-row">
         <div class="c-meta">
           {{ if not (.Param "hideDate") }}
           {{ partial "timestamp.html" . }}
@@ -16,16 +16,20 @@
           {{ partial "reading_time.html" . }}
           {{ end }}
         </div>
+        <div class="p-article__actions">
+          <button type="button" class="p-article__copy-markdown" data-copy-markdown data-copy-markdown-success="Copied">
+            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+            <span data-copy-markdown-label>Copy as markdown</span>
+          </button>
+        </div>
       </div>
-      {{ range .Params.tags }}
-      <a href="{{ absURL "tags" }}/{{ . | urlize }}" class="c-tag">{{ . }}</a>
+      {{ with .Params.tags }}
+      <div class="p-article__tags">
+        {{ range . }}
+        <a href="{{ absURL "tags" }}/{{ . | urlize }}" class="c-tag">{{ . }}</a>
+        {{ end }}
+      </div>
       {{ end }}
-      <div class="p-article__actions">
-        <button type="button" class="p-article__copy-markdown" data-copy-markdown data-copy-markdown-success="Copied">
-          <i class="fa-regular fa-copy" aria-hidden="true"></i>
-          <span data-copy-markdown-label>Copy as markdown</span>
-        </button>
-      </div>
       <textarea id="copyMarkdownSource" class="p-article__markdown-source" readonly aria-hidden="true" tabindex="-1">{{ printf "# %s\n\n%s" .Title .RawContent }}</textarea>
       {{ end }}
     </header>

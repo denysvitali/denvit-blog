@@ -1,0 +1,57 @@
+{{- /*
+  Table of contents built from the rendered content instead of .TableOfContents,
+  so headings that belong to quoted material rather than to the article's own
+  outline can be left out. Hugo's TOC has no notion of nesting context: a `##`
+  inside a <details> transcript or a blockquote lands in the sidebar next to the
+  author's own sections, which is misleading. Everything inside those two
+  containers is dropped here before the outline is derived.
+
+  The emitted markup mirrors Hugo's (<nav id="TableOfContents"> + nested <ul>),
+  because app.js and the TOC styles key off that structure.
+*/ -}}
+{{- $content := .Content -}}
+{{- range findRE `(?s)<details[\s>].*?</details>` $content -}}
+  {{- $content = replace $content . "" -}}
+{{- end -}}
+{{- range findRE `(?s)<blockquote[\s>].*?</blockquote>` $content -}}
+  {{- $content = replace $content . "" -}}
+{{- end -}}
+
+{{- $items := slice -}}
+{{- range findRE `(?s)<h[23][^>]*>.*?</h[23]>` $content -}}
+  {{- $tag := . -}}
+  {{- $id := "" -}}
+  {{- with findRE `id="[^"]*"` $tag 1 -}}
+    {{- $id = replaceRE `id="([^"]*)"` "$1" (index . 0) -}}
+  {{- end -}}
+  {{- $text := trim (replaceRE `<[^>]*>` "" $tag) " \n\t" -}}
+  {{- if $id -}}
+    {{- $items = $items | append (dict "level" (int (substr $tag 2 1)) "id" $id "text" $text) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $items -}}
+  {{- $base := (index $items 0).level -}}
+  {{- /* The wrapper below supplies the outermost <ul>, so depth starts at 1. */ -}}
+  {{- $depth := 1 -}}
+  {{- $out := "" -}}
+  {{- range $i, $it := $items -}}
+    {{- $want := add (sub $it.level $base) 1 -}}
+    {{- if eq $i 0 -}}
+    {{- else if gt $want $depth -}}
+      {{- range seq (sub $want $depth) -}}{{- $out = printf "%s<ul>" $out -}}{{- end -}}
+    {{- else -}}
+      {{- $out = printf "%s</li>" $out -}}
+      {{- if gt $depth $want -}}
+        {{- range seq (sub $depth $want) -}}{{- $out = printf "%s</ul></li>" $out -}}{{- end -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $depth = $want -}}
+    {{- $out = printf `%s<li><a href="#%s">%s</a>` $out $it.id $it.text -}}
+  {{- end -}}
+  {{- $out = printf "%s</li>" $out -}}
+  {{- if gt $depth 1 -}}
+    {{- range seq (sub $depth 1) -}}{{- $out = printf "%s</ul></li>" $out -}}{{- end -}}
+  {{- end -}}
+  {{- printf `<nav id="TableOfContents"><ul>%s</ul></nav>` $out | safeHTML -}}
+{{- end -}}
