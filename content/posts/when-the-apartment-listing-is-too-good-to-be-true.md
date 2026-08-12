@@ -151,7 +151,7 @@ I asked for the link. It arrived immediately:
 
 That last line is defensive. Mail from a freshly registered `.de` domain has a good chance of being filtered, and a spam label arriving at the moment the victim is deciding whether any of this is real would break the spell.
 
-The property page is preserved as an [archive.is snapshot](https://archive.is/sCl1e): generic hero image, stock trust badges, AI-generated copy that says a lot and commits to nothing.
+The property page is preserved as an [archive.is snapshot](https://archive.is/sCl1e). Looks pretty scammy.
 
 ## What each element is doing
 
