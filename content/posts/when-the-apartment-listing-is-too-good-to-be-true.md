@@ -335,5 +335,3 @@ It registered a bait account, walked `register.php` → `book.php` → `payment.
 > 1. **thyssenkrupp brand protection** (brandabuse@thyssenkrupp.com) — they pursue trademark abuse aggressively
 
 </details>
-
-I am describing what the operation does, not who runs it. The persona is fake by construction; the only real-world identities involved are the hosting account and the receiving bank account.
