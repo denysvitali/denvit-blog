@@ -1,3 +1,3 @@
 [tools]
-hugo = "0.154.1"
+hugo = "0.165.0"
 "ubi:CloudCannon/pagefind" = "1.5.2"
