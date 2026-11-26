@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       swiper:
-        specifier: ^7.4.1
-        version: 7.4.1
+        specifier: ^12.0.0
+        version: 12.2.0
       zooming:
         specifier: ^2.1.1
         version: 2.1.1
@@ -187,9 +187,6 @@ packages:
     resolution: {integrity: sha512-pGjwhsmsp4kL2RTz08wcOlGN83otlqHeD/Z5T8GXZB+/YcpQ/dgo+lbU8ZsGxV0HIvqqxo9l7mqYwyYMD9bKDg==}
     engines: {node: '>=0.10'}
     hasBin: true
-
-  dom7@4.0.6:
-    resolution: {integrity: sha512-emjdpPLhpNubapLFdjNL9tP06Sr+GZkrIHEXLWvOGsytACUrkbeIdjO5g77m00BrHTznnlcNqgmn7pCN192TBA==}
 
   electron-to-chromium@1.5.267:
     resolution: {integrity: sha512-0Drusm6MVRXSOJpGbaSVgcQsuB4hEkMpHXaVstcPmhu5LIedxs1xNK/nIxmQIU/RPC0+1/o0AVZfBTkTNJOdUw==}
@@ -484,9 +481,6 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
-  ssr-window@4.0.2:
-    resolution: {integrity: sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==}
-
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
@@ -499,8 +493,8 @@ packages:
     resolution: {integrity: sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q==}
     engines: {node: '>=10'}
 
-  swiper@7.4.1:
-    resolution: {integrity: sha512-dhbL4tpYFvHug1J7GnKElfTi6EYhlZy/vNZRhHkWFyUsWZ1Vovipxj3la5gqllMogygXJMe3zvVv+f6eppvWiA==}
+  swiper@12.2.0:
+    resolution: {integrity: sha512-K8uXsBZU6ME97Ia3xbBge8IRCnR1lOmIILzvY/jGVic7dSTQ530s3uO8RvXbPUtkkXLWIwmZLRPbtDxRWVAFdg==}
     engines: {node: '>= 4.7.0'}
 
   sync-child-process@1.0.2:
@@ -702,10 +696,6 @@ snapshots:
 
   detect-libc@1.0.3:
     optional: true
-
-  dom7@4.0.6:
-    dependencies:
-      ssr-window: 4.0.2
 
   electron-to-chromium@1.5.267: {}
 
@@ -948,8 +938,6 @@ snapshots:
 
   source-map-js@1.2.1: {}
 
-  ssr-window@4.0.2: {}
-
   string-width@4.2.3:
     dependencies:
       emoji-regex: 8.0.0
@@ -964,10 +952,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  swiper@7.4.1:
-    dependencies:
-      dom7: 4.0.6
-      ssr-window: 4.0.2
+  swiper@12.2.0: {}
 
   sync-child-process@1.0.2:
     dependencies:
